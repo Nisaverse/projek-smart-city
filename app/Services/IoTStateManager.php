@@ -193,11 +193,12 @@ class IoTStateManager
         if (!isset($data['power'])) {
             $basePower = ($this->state['lamps'][$lampId]['brightness'] / 100) * 6;
             $variation = rand(-3, 3) / 10;
-            $this->state['lamps'][$lampId]['power'] = round($basePower + $variation, 1);
-        } else {
-            // Pastikan tipe data float dan dibulatkan 1 desimal
-            $this->state['lamps'][$lampId]['power'] = round((float)$data['power'], 1);
-        }
+             // ✅ TAMBAHKAN max(0, ...) DI SINI
+    $this->state['lamps'][$lampId]['power'] = round(max(0, $basePower + $variation), 1);
+} else {
+    // ✅ TAMBAHKAN max(0, ...) DI SINI JUGA (jaga-jaga jika ESP32 kirim negatif)
+    $this->state['lamps'][$lampId]['power'] = round(max(0, (float)$data['power']), 1);
+}
         
         $this->saveState();
     }
@@ -345,4 +346,58 @@ class IoTStateManager
             'avg_waste_level' => round(array_sum(array_column($waste, 'level')) / 4),
         ];
     }
+
+    /**
+ * Re-evaluate auto logic setelah threshold atau mode berubah
+ * Ini memastikan lampu otomatis ON/OFF sesuai kondisi terbaru
+ */
+public function reEvaluateAutoLogic()
+{
+    $settings = $this->getAutoSettings();
+    $lightLevel = $this->state['sensor_light_level'] ?? 0;
+    $controlMode = $this->state['control_mode'] ?? 'manual';
+    
+    // Hanya evaluate jika mode auto_sensor aktif
+    if ($controlMode === 'auto_sensor' && ($settings['auto_sensor_enabled'] ?? false)) {
+        $isDark = $lightLevel < $settings['sensor_threshold'];
+        
+        // Update semua lampu berdasarkan kondisi cahaya
+        foreach ($this->state['lamps'] as &$lamp) {
+            $lamp['status'] = $isDark ? 1 : 0;
+            $lamp['brightness'] = $isDark ? 90 : 0;
+            $lamp['power'] = round(($lamp['brightness'] / 100) * 6, 1);
+        }
+        
+        $this->saveState();
+        return true;
+    }
+    
+    // Jika mode auto_schedule, evaluate berdasarkan waktu
+    if ($controlMode === 'auto_schedule' && ($settings['auto_schedule_enabled'] ?? false)) {
+        $currentHour = (int)now()->format('H');
+        $currentMinute = (int)now()->format('i');
+        $currentTime = $currentHour * 60 + $currentMinute;
+        
+        $onTimeMinutes = ($settings['schedule_on_hour'] * 60) + $settings['schedule_on_minute'];
+        $offTimeMinutes = ($settings['schedule_off_hour'] * 60) + $settings['schedule_off_minute'];
+        
+        $isNightTime = false;
+        if ($onTimeMinutes > $offTimeMinutes) {
+            $isNightTime = ($currentTime >= $onTimeMinutes) || ($currentTime < $offTimeMinutes);
+        } else {
+            $isNightTime = ($currentTime >= $onTimeMinutes) && ($currentTime < $offTimeMinutes);
+        }
+        
+        foreach ($this->state['lamps'] as &$lamp) {
+            $lamp['status'] = $isNightTime ? 1 : 0;
+            $lamp['brightness'] = $isNightTime ? 85 : 0;
+            $lamp['power'] = round(($lamp['brightness'] / 100) * 6, 1);
+        }
+        
+        $this->saveState();
+        return true;
+    }
+    
+    return false;
+}
 }

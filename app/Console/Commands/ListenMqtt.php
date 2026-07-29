@@ -105,30 +105,38 @@ $this->info("✅ Subscribed and waiting for messages...");
     }
 
     private function handleLampMessage($topic, $data)
-    {
-        $lampId = null;
-        
-        if (preg_match('/lamp_(\d+)/', $topic, $matches)) {
-            $lampId = 'lamp_' . $matches[1];
-        } elseif (isset($data['lamp_id'])) {
-            $lampId = $data['lamp_id'];
-        } else {
-            $lampId = 'lamp_1';
-        }
-
-        $updateData = [];
-        if (isset($data['status'])) $updateData['status'] = (int)$data['status'];
-        if (isset($data['brightness'])) $updateData['brightness'] = (int)$data['brightness'];
-        if (isset($data['power'])) $updateData['power'] = (float)$data['power'];
-
-        if (!empty($updateData)) {
-            $this->info("   💡 Updating lamp: $lampId");
-            $this->stateManager->updateLamp($lampId, $updateData);
-            $this->info("   ✅ Lamp updated successfully");
-        } else {
-            $this->warn("   ⚠️ No valid lamp data to update");
-        }
+{
+    $lampId = null;
+    
+    if (preg_match('/lamp_(\d+)/', $topic, $matches)) {
+        $lampId = 'lamp_' . $matches[1];
+    } elseif (isset($data['lamp_id'])) {
+        $lampId = $data['lamp_id'];
+    } else {
+        $lampId = 'lamp_1';
     }
+
+    $updateData = [];
+    if (isset($data['status'])) $updateData['status'] = (int)$data['status'];
+    if (isset($data['brightness'])) $updateData['brightness'] = (int)$data['brightness'];
+    if (isset($data['power'])) $updateData['power'] = (float)$data['power'];
+
+    if (!empty($updateData)) {
+        $this->info("   💡 Updating lamp: $lampId");
+        $this->stateManager->updateLamp($lampId, $updateData);
+        $this->info("   ✅ Lamp updated successfully");
+    } else {
+        $this->warn("   ⚠️ No valid lamp data to update");
+    }
+
+    // ✅ TAMBAHKAN BAGIAN INI UNTUK MENANGKAP DATA SENSOR CAHAYA
+    if (isset($data['light_level']) || isset($data['sensor_light_level'])) {
+        $lightLevel = $data['light_level'] ?? $data['sensor_light_level'];
+        $this->info("   🌞 Updating light level: {$lightLevel}%");
+        $this->stateManager->setSensorLightLevel((float)$lightLevel);
+        $this->info("   ✅ Light level updated successfully");
+    }
+}
 
     private function handleWasteMessage($topic, $data)
     {

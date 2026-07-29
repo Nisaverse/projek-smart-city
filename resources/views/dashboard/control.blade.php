@@ -409,8 +409,60 @@
     document.addEventListener('DOMContentLoaded', () => {
         loadAutoSettings();
         fetchLampData();
+        loadActiveMode();
     });
 
     setInterval(fetchLampData, 15000);
+
+    // ===== FUNGSI UNTUK LOAD MODE AKTIF SAAT HALAMAN DIBUKA =====
+function applyModeToUI(mode) {
+    currentMode = mode;
+    
+    // Reset semua card
+    document.querySelectorAll('.mode-card').forEach(card => {
+        card.classList.remove('active');
+        card.style.borderColor = 'var(--border-color)';
+        card.style.background = 'var(--bg-card)';
+    });
+    
+    // Highlight card yang aktif (ID yang benar: mode-manual, mode-auto-schedule, mode-auto-sensor)
+    const activeCardId = 'mode-' + mode.replace('_', '-');
+    const activeCard = document.getElementById(activeCardId);
+    if (activeCard) {
+        activeCard.classList.add('active');
+        activeCard.style.borderColor = '#3b82f6';
+        activeCard.style.background = 'rgba(59,130,246,0.1)';
+    }
+
+    // Tampilkan/sembunyikan panel settings
+    document.getElementById('autoSettingsPanel').style.display = (mode !== 'manual') ? 'block' : 'none';
+    document.getElementById('scheduleSettings').style.display = (mode === 'auto_schedule') ? 'block' : 'none';
+    document.getElementById('sensorSettings').style.display = (mode === 'auto_sensor') ? 'block' : 'none';
+
+    // Update label mode
+    const modeLabels = {
+        'manual': 'Manual Control - Anda mengontrol lampu secara langsung',
+        'auto_schedule': `Auto Schedule - Lampu nyala ${autoSettings.schedule_on_hour || 17}:${String(autoSettings.schedule_on_minute || 30).padStart(2,'0')} - ${autoSettings.schedule_off_hour || 6}:${String(autoSettings.schedule_off_minute || 0).padStart(2,'0')}`,
+        'auto_sensor': `Auto Sensor - Lampu nyala saat cahaya < ${autoSettings.sensor_threshold || 35}`
+    };
+    document.getElementById('currentModeLabel').textContent = modeLabels[mode];
+
+    // Disable/enable lamp control
+    const lampContainer = document.getElementById('lampControlContainer');
+    if (lampContainer) lampContainer.classList.toggle('lamp-card-disabled', mode !== 'manual');
+    document.getElementById('quickActions').style.display = (mode === 'manual') ? 'block' : 'none';
+}
+
+// Load mode aktif dari backend saat halaman dibuka
+function loadActiveMode() {
+    fetch('/api/lamp')
+        .then(r => r.json())
+        .then(data => {
+            if (data.control_mode) {
+                applyModeToUI(data.control_mode);
+            }
+        })
+        .catch(err => console.error('Gagal load mode:', err));
+}
 </script>
 @endpush

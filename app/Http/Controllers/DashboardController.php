@@ -109,6 +109,7 @@ class DashboardController extends Controller
         ]);
 
         $this->stateManager->updateAutoSettings($validated);
+        $this->stateManager->reEvaluateAutoLogic();
         return response()->json([
             'success' => true, 
             'settings' => $this->stateManager->getAutoSettings()
