@@ -167,21 +167,41 @@ class IoTStateManager
     }
 
     public function updateLamp($lampId, $data)
-    {
-        if (isset($this->state['lamps'][$lampId])) {
-            foreach ($data as $key => $value) {
-                if (isset($this->state['lamps'][$lampId][$key])) {
-                    $this->state['lamps'][$lampId][$key] = $value;
-                }
+{
+    if (isset($this->state['lamps'][$lampId])) {
+        foreach ($data as $key => $value) {
+            if (isset($this->state['lamps'][$lampId][$key])) {
+                $this->state['lamps'][$lampId][$key] = $value;
             }
-            
+        }
+
+         // ✅ TAMBAHKAN INI: Handle mode dari ESP32
+        if (isset($data['mode'])) {
+            if ($data['mode'] === 'AUTO') {
+                // Jika ESP32 kirim mode AUTO, cek apakah auto_schedule atau auto_sensor
+                // Default ke manual jika tidak ada setting auto yang aktif
+                $settings = $this->getAutoSettings();
+                if (!($settings['auto_schedule_enabled'] ?? false) && !($settings['auto_sensor_enabled'] ?? false)) {
+                    $this->state['control_mode'] = 'manual';
+                }
+            } elseif ($data['mode'] === 'MANUAL') {
+                $this->state['control_mode'] = 'manual';
+            }
+        }
+        
+        // ✅ PERBAIKAN: Hanya hitung power jika payload TIDAK mengirim nilai power
+        if (!isset($data['power'])) {
             $basePower = ($this->state['lamps'][$lampId]['brightness'] / 100) * 6;
             $variation = rand(-3, 3) / 10;
             $this->state['lamps'][$lampId]['power'] = round($basePower + $variation, 1);
-            
-            $this->saveState();
+        } else {
+            // Pastikan tipe data float dan dibulatkan 1 desimal
+            $this->state['lamps'][$lampId]['power'] = round((float)$data['power'], 1);
         }
+        
+        $this->saveState();
     }
+}
 
     public function setControlMode($mode)
     {

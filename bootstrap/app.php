@@ -21,6 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->command('iot:apply-auto-logic')->everyMinute();
+       // $schedule->command('iot:apply-auto-logic')->everyMinute();
     })
     ->create();

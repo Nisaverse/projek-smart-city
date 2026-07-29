@@ -353,10 +353,10 @@
                 <i class="fas fa-lightbulb"></i> Smart Lamp
             </a>
             <a href="{{ route('smart-waste') }}" class="nav-item {{ request()->routeIs('smart-waste') ? 'active' : '' }}">
-                <i class="fas fa-trash-alt"></i> Smart Waste
+                <i class="fas fa-trash-alt"></i> Smart Waste (beta)
             </a>
             <a href="{{ route('smart-parking') }}" class="nav-item {{ request()->routeIs('smart-parking') ? 'active' : '' }}">
-                <i class="fas fa-car"></i> Smart Parking
+                <i class="fas fa-car"></i> Smart Parking (beta)
             </a>
                         <div class="nav-label">Control</div>
             <a href="{{ route('control') }}" class="nav-item {{ request()->routeIs('control') ? 'active' : '' }}">
