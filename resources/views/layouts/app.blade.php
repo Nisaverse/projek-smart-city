@@ -324,17 +324,67 @@
         .content-area { padding-bottom: 60px; }
 
         /* ===== RESPONSIVE ===== */
+                /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.show { transform: translateX(0); }
-            .main-content { margin-left: 0; }
-            .mqtt-bar { left: 0; }
+            /* Sidebar tersembunyi di kiri layar */
+            .sidebar { 
+                transform: translateX(-100%); 
+                box-shadow: 5px 0 15px rgba(0,0,0,0.5); /* Bayangan saat muncul */
+            }
+            /* Sidebar muncul saat class 'show' ditambahkan */
+            .sidebar.show { 
+                transform: translateX(0); 
+            }
+            
+            /* Konten utama memenuhi layar */
+            .main-content { 
+                margin-left: 0; 
+                width: 100%;
+            }
+            
+            /* MQTT Bar menyesuaikan lebar layar */
+            .mqtt-bar { 
+                left: 0; 
+                padding: 8px 15px;
+                font-size: 0.7rem;
+            }
+            
+            /* Perkecil padding area konten agar tidak sempit di HP */
+            .content-area { 
+                padding: 15px; 
+                padding-bottom: 70px; /* Ruang untuk MQTT bar */
+            }
+            
+            .top-bar {
+                padding: 15px;
+            }
+        }
+
+        /* ===== SIDEBAR OVERLAY (Baru) ===== */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 999; /* Di bawah sidebar (1000), di atas konten */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(2px); /* Efek blur keren di HP */
+        }
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
         }
     </style>
     @stack('styles')
 </head>
-<body>
 
+
+<body>
+    <!-- OVERLAY UNTUK MOBILE (Klik di sini untuk tutup sidebar) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -371,13 +421,9 @@
 
         <!-- Logout Button -->
 <div style="margin-top: auto; padding: 15px; border-top: 1px solid var(--border-color);">
-    <form method="POST" action="/logout" style="margin: 0;">
-        @csrf
-        <button type="submit" class="btn btn-danger w-100" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>Logout</span>
-        </button>
-    </form>
+    <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">
+    <i class="fas fa-sign-out-alt"></i> Logout
+</button>
     <div class="text-center mt-2" style="font-size: 0.75rem; color: var(--text-secondary);">
         <i class="fas fa-user-shield"></i> {{ session('admin_username', 'Admin') }}
     </div>
@@ -405,9 +451,9 @@
         <!-- Top Bar -->
         <div class="top-bar">
             <div style="display:flex; align-items:center; gap:15px;">
-                <button class="btn btn-sm d-md-none" onclick="document.getElementById('sidebar').classList.toggle('show')" style="color:var(--text-primary);">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <button class="btn btn-sm d-md-none" id="sidebarToggleBtn" style="color:var(--text-primary);">
+    <i class="fas fa-bars"></i>
+</button>
                 <h5>@yield('page-title', 'Dashboard')</h5>
             </div>
             <div class="user-info">
@@ -441,6 +487,25 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+        
+                // ===== SIDEBAR TOGGLE LOGIC (Baru) =====
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', toggleSidebar);
+        }
+
+        // Tutup sidebar jika overlay diklik (UX Mobile yang baik)
+        if (overlay) {
+            overlay.addEventListener('click', toggleSidebar);
+        }
 
         // ===== MQTT CLIENT =====
         let mqttClient = null;
@@ -513,48 +578,59 @@
     let lastWasteCheck = 0;
 
     function showGlobalWasteNotification(binName, location, level) {
-        const container = document.getElementById('globalWasteNotification');
-        
-        // Buat toast
-        const toast = document.createElement('div');
-        toast.style.cssText = `
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid #ef4444;
-            border-left: 4px solid #ef4444;
-            border-radius: 10px;
-            padding: 15px 20px;
-            color: #e2e8f0;
-            box-shadow: 0 10px 40px rgba(239, 68, 68, 0.3);
-            animation: slideInRight 0.4s ease-out;
-            pointer-events: auto;
-            position: relative;
-            overflow: hidden;
-        `;
-        
-        toast.innerHTML = `
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-                <div style="width:32px; height:32px; border-radius:50%; background:rgba(239,68,68,0.2); display:flex; align-items:center; justify-content:center; font-size:1rem;">
-                    🗑️
+    const container = document.getElementById('globalWasteNotification');
+    
+    // Buat toast
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid #ef4444;
+        border-left: 4px solid #ef4444;
+        border-radius: 10px;
+        padding: 15px 20px;
+        color: #e2e8f0;
+        box-shadow: 0 10px 40px rgba(239, 68, 68, 0.3);
+        animation: slideInRight 0.4s ease-out;
+        pointer-events: auto;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 10px;
+    `;
+    
+    toast.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                <div style="width:32px; height:32px; border-radius:50%; background:rgba(239,68,68,0.2); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">
+                    ️
                 </div>
-                <div style="font-weight:700; font-size:0.95rem; color:#ef4444;">
-                    ⚠️ ${binName} PENUH!
+                <div style="flex:1;">
+                    <div style="font-weight:700; font-size:0.95rem; color:#ef4444; margin-bottom:4px;">
+                        ⚠️ ${binName} PENUH!
+                    </div>
+                    <div style="font-size:0.85rem; color:#94a3b8;">
+                        <strong>${location}</strong> mencapai <strong>${level}%</strong>. Segera lakukan pengangkutan!
+                    </div>
                 </div>
             </div>
-            <div style="font-size:0.85rem; color:#94a3b8; margin-left:42px;">
-                <strong>${location}</strong> mencapai <strong>${level}%</strong>. Segera lakukan pengangkutan!
-            </div>
-        `;
-        
-        container.appendChild(toast);
+            <button onclick="this.closest('div[style*=\"background\"]').remove()" 
+                    style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:1.2rem; padding:0; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:4px; transition:all 0.2s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff'"
+                    onmouseout="this.style.background='none'; this.style.color='#94a3b8'">
+                ×
+            </button>
+        </div>
+    `;
+    
+    container.appendChild(toast);
 
-        // Auto remove setelah 6 detik
-        setTimeout(() => {
-            if (toast.parentElement) {
-                toast.style.animation = 'slideOutRight 0.3s ease-in forwards';
-                setTimeout(() => toast.remove(), 300);
-            }
-        }, 6000);
-    }
+    // Auto remove setelah 10 detik (lebih lama agar sempat dibaca)
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideOutRight 0.3s ease-in forwards';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 10000);
+}
 
     function checkGlobalWasteAlerts() {
         // Cek setiap 30 detik (tidak terlalu sering)
@@ -628,5 +704,40 @@
     });
     </script>
     @stack('scripts')
+
+    <!-- MODAL KONFIRMASI LOGOUT -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: #1e293b; color: #f1f5f9; border: 1px solid #334155; border-radius: 10px;">
+            
+            <div class="modal-header" style="border-bottom: 1px solid #334155;">
+                <h5 class="modal-title" id="logoutModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i> Konfirmasi Logout
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body" style="font-size: 0.95rem;">
+                Apakah Anda yakin ingin keluar dari sistem SmartCity?
+                <br>
+                <small class="text-muted" style="font-size: 0.8rem;">Anda harus login kembali untuk mengakses dashboard.</small>
+            </div>
+            
+            <div class="modal-footer" style="border-top: 1px solid #334155;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                
+                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Ya, Logout
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
 </body>
 </html>

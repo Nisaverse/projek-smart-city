@@ -3,8 +3,24 @@
 @section('page-title', 'Smart Waste Monitoring')
 
 @section('content')
+<!-- MUTE NOTIFICATION TOGGLE -->
+<div class="data-card mb-4" style="border-left: 4px solid #8b5cf6; background: linear-gradient(to right, rgba(139,92,246,0.1), transparent); position: relative; z-index: 100;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="pointer-events: none;">
+            <h6><i class="fas fa-bell-slash"></i> Notifikasi Waste Bin</h6>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">
+                Aktifkan/mute notifikasi "Bin Penuh" yang muncul di pojok kanan atas
+            </p>
+        </div>
+        <div class="toggle-switch" style="pointer-events: auto; z-index: 1000; position: relative;">
+            <input type="checkbox" id="wasteNotificationToggle" checked onchange="toggleWasteNotifications(this.checked)">
+            <span class="toggle-slider"></span>
+        </div>
+    </div>
+</div>
+
 <!-- TOAST NOTIFICATION CONTAINER -->
-<div id="toastContainer" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; max-width:350px;"></div>
+<div id="toastContainer" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; max-width:350px; pointer-events:none;"></div>
 
 <!-- WASTE BINS CARDS -->
 <div class="row g-4" id="wasteContainer">
@@ -36,6 +52,27 @@
 
 @push('styles')
 <style>
+
+    .toggle-switch {
+    position: relative;
+    z-index: 1000 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+.toggle-switch input {
+    cursor: pointer !important;
+}
+
+.toggle-slider {
+    cursor: pointer !important;
+}
+
+/* Pastikan tidak ada yang blocking */
+.data-card {
+    position: relative;
+    z-index: 1;
+}
     /* Toast Notification Styles */
     .toast-notification {
         background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -48,6 +85,7 @@
         animation: slideInRight 0.4s ease-out;
         position: relative;
         overflow: hidden;
+        pointer-events: auto;
     }
 
     .toast-notification::before {
@@ -118,7 +156,8 @@
         border: none;
         color: #64748b;
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 1.2rem;
+        z-index: 10;
     }
 
     .toast-close:hover { color: #ef4444; }
@@ -207,6 +246,57 @@
     // Track notifikasi yang sudah ditampilkan (hindari spam)
     let notifiedBins = {};
     let alertHistoryData = JSON.parse(localStorage.getItem('wasteAlertHistory') || '[]');
+    let wasteNotificationsEnabled = true;
+
+    // ===== 1. LOAD STATUS MUTE SAAT HALAMAN DIBUKA =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedStatus = localStorage.getItem('wasteNotificationsEnabled');
+        if (savedStatus !== null) {
+            wasteNotificationsEnabled = savedStatus === 'true';
+        }
+        
+        const toggle = document.getElementById('wasteNotificationToggle');
+        if (toggle) {
+            toggle.checked = wasteNotificationsEnabled;
+        }
+        
+        renderHistory();
+        fetchWasteData();
+    });
+
+    // ===== 2. FUNGSI TOGGLE MUTE =====
+    function toggleWasteNotifications(enabled) {
+        wasteNotificationsEnabled = enabled;
+        localStorage.setItem('wasteNotificationsEnabled', enabled);
+        
+        showFeedbackToast(
+            enabled ? '🔔 Notifikasi Waste diaktifkan' : '🔕 Notifikasi Waste dimute',
+            enabled ? '#10b981' : '#f59e0b'
+        );
+    }
+
+    // ===== 3. FEEDBACK TOAST (KHUSUS UNTUK TOGGLE) =====
+    function showFeedbackToast(message, bgColor) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        toast.style.borderLeftColor = bgColor;
+        
+        toast.innerHTML = `
+            <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            <div class="toast-header">
+                <div class="toast-title" style="color: ${bgColor}">${message}</div>
+            </div>
+        `;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 3000);
+    }
 
     function getLevelColor(level) {
         if (level > 80) return '#ef4444';
@@ -214,7 +304,7 @@
         return '#10b981';
     }
 
-    // ===== CHART =====
+    // ===== 4. CHART =====
     const wasteCtx = document.getElementById('wasteChart')?.getContext('2d');
     let wasteChart;
     if (wasteCtx) {
@@ -240,7 +330,7 @@
         });
     }
 
-    // ===== RENDER BINS =====
+    // ===== 5. RENDER BINS =====
     function renderWasteBins(data) {
         const container = document.getElementById('wasteContainer');
         container.innerHTML = '';
@@ -258,7 +348,7 @@
                                 <i class="fas fa-trash-alt"></i>
                             </div>
                             <span style="background:${isFull ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'}; color:${color}; padding:4px 12px; border-radius:20px; font-size:0.75rem; font-weight:600;">
-                                ${isFull ? '️ PENUH' : '✅ Normal'}
+                                ${isFull ? '⚠️ PENUH' : '✅ Normal'}
                             </span>
                         </div>
                         <h6 style="margin-bottom:5px;">${binNames[key]}</h6>
@@ -281,8 +371,12 @@
         });
     }
 
-    // ===== CEK & TAMPILKAN NOTIFIKASI =====
+    // ===== 6. CEK & TAMPILKAN NOTIFIKASI (DENGAN PENGECEKAN MUTE) =====
     function checkNotification(binKey, bin) {
+        // ✅ PENTING: Cek apakah notifikasi sedang dimute
+        const isMuted = localStorage.getItem('wasteNotificationsEnabled') === 'false';
+        if (isMuted) return; // Berhenti di sini, jangan tampilkan notifikasi
+
         const isFull = bin.level > 80;
         const binName = binNames[binKey];
         const location = bin.location;
@@ -290,7 +384,7 @@
         // Tampilkan notifikasi jika penuh dan belum dinotif untuk level ini
         if (isFull && notifiedBins[binKey] !== bin.level) {
             notifiedBins[binKey] = bin.level;
-            showToast(binName, location, bin.level);
+            showWasteToast(binName, location, bin.level);
             addToHistory(binName, location, bin.level);
         }
 
@@ -300,8 +394,8 @@
         }
     }
 
-    // ===== TAMPILKAN TOAST NOTIFICATION =====
-    function showToast(binName, location, level) {
+    // ===== 7. TAMPILKAN TOAST WASTE (NOTIFIKASI BIN PENUH) =====
+    function showWasteToast(binName, location, level) {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
         toast.className = 'toast-notification';
@@ -326,7 +420,7 @@
         }, 5000);
     }
 
-    // ===== TAMBAH KE RIWAYAT =====
+    // ===== 8. TAMBAH KE RIWAYAT =====
     function addToHistory(binName, location, level) {
         const now = new Date();
         const timeStr = now.toLocaleString('id-ID', {
@@ -359,7 +453,7 @@
         renderHistory();
     }
 
-    // ===== RENDER RIWAYAT =====
+    // ===== 9. RENDER RIWAYAT =====
     function renderHistory() {
         const container = document.getElementById('alertHistory');
 
@@ -388,7 +482,7 @@
         `).join('');
     }
 
-    // ===== CLEAR HISTORY =====
+    // ===== 10. CLEAR HISTORY =====
     function clearHistory() {
         if (confirm('Yakin ingin menghapus semua riwayat alert?')) {
             alertHistoryData = [];
@@ -397,7 +491,7 @@
         }
     }
 
-    // ===== FETCH DATA =====
+    // ===== 11. FETCH DATA =====
     function fetchWasteData() {
         fetch('/api/waste')
             .then(r => r.json())
@@ -413,9 +507,7 @@
             });
     }
 
-    // Init
-    renderHistory();
+    // Refresh data setiap 25 detik
     setInterval(fetchWasteData, 25000);
-    fetchWasteData();
 </script>
 @endpush
