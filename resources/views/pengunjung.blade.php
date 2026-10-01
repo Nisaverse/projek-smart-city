@@ -1090,7 +1090,6 @@
         font-size: 0.84rem;
         line-height: 1.65;
       }
-
       /* ========================================================
          KONTAK
          ======================================================== */
@@ -1977,8 +1976,6 @@
         margin-top: 92px;
       }
     }
-
-
     /* ==========================================================
        FINAL LOGO NORMALIZATION
        Menyamakan ukuran kotak logo sekaligus menyesuaikan ukuran
@@ -2185,6 +2182,63 @@
       }
     }
 
+
+    /* FINAL LOGO NORMALIZATION - urutan dan ukuran mengikuti gambar referensi */
+    .welcome-logos-row {
+      display:flex !important;
+      flex-direction:row !important;
+      align-items:center !important;
+      justify-content:center !important;
+      gap:18px !important;
+      flex-wrap:nowrap !important;
+    }
+    .welcome-logos-row .logo-badge-item {
+      width:64px !important;
+      height:64px !important;
+      flex:0 0 64px !important;
+      padding:0 !important;
+      margin:0 !important;
+      display:flex !important;
+      align-items:center !important;
+      justify-content:center !important;
+      background:transparent !important;
+      border:0 !important;
+      border-radius:0 !important;
+      overflow:visible !important;
+    }
+    .welcome-logos-row .logo-badge-item img {
+      display:block !important;
+      max-width:none !important;
+      max-height:none !important;
+      object-fit:contain !important;
+      object-position:center !important;
+      margin:0 !important;
+      padding:0 !important;
+      filter:drop-shadow(0 2px 3px rgba(0,0,0,.25)) !important;
+    }
+    /* Semua area logo sama 64x64; rasio sumber dinormalisasi agar tinggi visual seragam. */
+    .welcome-logos-row .logo-badge-item:nth-child(1) img { width:62px !important; height:62px !important; }
+    .welcome-logos-row .logo-badge-item:nth-child(2) img { width:64px !important; height:54px !important; }
+    .welcome-logos-row .logo-badge-item:nth-child(3) img { width:60px !important; height:60px !important; }
+    .welcome-logos-row .logo-badge-item:nth-child(4) img { width:58px !important; height:64px !important; }
+
+    @media (max-width:767.98px) {
+      .welcome-logos-row { gap:9px !important; }
+      .welcome-logos-row .logo-badge-item { width:48px !important; height:48px !important; flex:0 0 48px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(1) img { width:46px !important; height:46px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(2) img { width:48px !important; height:40px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(3) img { width:45px !important; height:45px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(4) img { width:43px !important; height:48px !important; }
+    }
+    @media (max-width:380px) {
+      .welcome-logos-row { gap:6px !important; }
+      .welcome-logos-row .logo-badge-item { width:43px !important; height:43px !important; flex-basis:43px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(1) img { width:41px !important; height:41px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(2) img { width:43px !important; height:36px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(3) img { width:40px !important; height:40px !important; }
+      .welcome-logos-row .logo-badge-item:nth-child(4) img { width:39px !important; height:43px !important; }
+    }
+
 </style>
 </head>
 <body>
@@ -2196,17 +2250,17 @@
     <!-- Bagian Atas Tengah: 4 Logo (Menyamping Tanpa Kotak) & Aksara Jawa Putih -->
     <div class="welcome-top-center">
       <div class="welcome-logos-row">
-        <div class="logo-badge-item" title="Smart City">
-          <img src="image/logo_smartcity_rm.png" alt="Smart City">
-        </div>
         <div class="logo-badge-item" title="Kota Tegal">
           <img src="image/Kota-Tegal-logo.png" alt="Kota Tegal">
         </div>
-        <div class="logo-badge-item" title="UHN">
-          <img src="image/uhn logo.png" alt="UHN">
-        </div>
         <div class="logo-badge-item" title="Doktor TJ">
           <img src="image/DDI.png" alt="Doktor TJ">
+        </div>
+        <div class="logo-badge-item" title="Smart City">
+          <img src="image/logo_smartcity_rm.png" alt="Smart City">
+        </div>
+        <div class="logo-badge-item" title="UHN">
+          <img src="image/uhn logo.png" alt="UHN">
         </div>
       </div>
       <div class="welcome-gov-title">Pemerintah Kota Tegal</div>
