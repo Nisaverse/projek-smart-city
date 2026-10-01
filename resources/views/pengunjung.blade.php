@@ -1375,8 +1375,6 @@
       }
     }
 
-  
-
     /* ==========================================================
        MOBILE FINAL POLISH
        Hanya berlaku pada layar HP (maks. 767.98px).
@@ -1977,6 +1975,213 @@
 
       #welcomeSection .welcome-center {
         margin-top: 92px;
+      }
+    }
+
+
+    /* ==========================================================
+       FINAL LOGO NORMALIZATION
+       Menyamakan ukuran kotak logo sekaligus menyesuaikan ukuran
+       visual masing-masing logo agar terlihat seimbang.
+       ========================================================== */
+    .welcome-logos-row {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 20px !important;
+      flex-wrap: nowrap !important;
+    }
+
+    .welcome-logos-row .logo-badge-item {
+      width: 60px !important;
+      height: 60px !important;
+      flex: 0 0 60px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    .welcome-logos-row .logo-badge-item img {
+      display: block !important;
+      object-fit: contain !important;
+      object-position: center !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      margin: auto !important;
+    }
+
+    /* Ukuran visual desktop disesuaikan berdasarkan bentuk logo */
+    .welcome-logos-row .logo-badge-item:nth-child(1) img {
+      width: 56px !important;
+      height: 56px !important;
+    }
+
+    .welcome-logos-row .logo-badge-item:nth-child(2) img {
+      width: 52px !important;
+      height: 56px !important;
+    }
+
+    .welcome-logos-row .logo-badge-item:nth-child(3) img {
+      width: 60px !important;
+      height: 42px !important;
+    }
+
+    .welcome-logos-row .logo-badge-item:nth-child(4) img {
+      width: 56px !important;
+      height: 56px !important;
+    }
+
+    /* ---------- MOBILE ---------- */
+    @media (max-width: 767.98px) {
+      #welcomeSection .welcome-logos-row {
+        width: 100% !important;
+        gap: clamp(8px, 3vw, 13px) !important;
+        margin-bottom: 8px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+        flex-wrap: nowrap !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item {
+        width: 44px !important;
+        height: 44px !important;
+        flex: 0 0 44px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(1) img {
+        width: 42px !important;
+        height: 42px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(2) img {
+        width: 39px !important;
+        height: 42px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(3) img {
+        width: 44px !important;
+        height: 31px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(4) img {
+        width: 42px !important;
+        height: 42px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      #welcomeSection .welcome-logos-row {
+        gap: 7px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item {
+        width: 38px !important;
+        height: 38px !important;
+        flex: 0 0 38px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(1) img {
+        width: 36px !important;
+        height: 36px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(2) img {
+        width: 34px !important;
+        height: 36px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(3) img {
+        width: 38px !important;
+        height: 27px !important;
+      }
+
+      #welcomeSection .welcome-logos-row .logo-badge-item:nth-child(4) img {
+        width: 36px !important;
+        height: 36px !important;
+      }
+    }
+
+
+    /* =========================================================
+       FINAL LOGO STYLE - BULATAN PUTIH SEPERTI REFERENSI
+       ========================================================= */
+    #welcomeSection .welcome-logos-row {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: nowrap !important;
+    }
+
+    #welcomeSection .logo-badge-item {
+      width: 58px !important;
+      height: 58px !important;
+      min-width: 58px !important;
+      min-height: 58px !important;
+      flex: 0 0 58px !important;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      padding: 6px !important;
+      margin: 0 !important;
+      background: #ffffff !important;
+      border: 2px solid rgba(255, 255, 255, 0.95) !important;
+      border-radius: 50% !important;
+      box-sizing: border-box;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
+    }
+
+    #welcomeSection .logo-badge-item img {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain !important;
+      filter: none !important;
+    }
+
+    #welcomeSection .logo-badge-item:nth-child(2) img {
+      width: 92% !important;
+      height: 92% !important;
+    }
+
+    @media (max-width: 767.98px) {
+      #welcomeSection .welcome-logos-row {
+        gap: 8px !important;
+      }
+
+      #welcomeSection .logo-badge-item {
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px !important;
+        min-height: 46px !important;
+        flex-basis: 46px !important;
+        padding: 5px !important;
+        border-width: 1.5px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      #welcomeSection .welcome-logos-row {
+        gap: 6px !important;
+      }
+
+      #welcomeSection .logo-badge-item {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+        flex-basis: 42px !important;
+        padding: 4px !important;
       }
     }
 
