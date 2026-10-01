@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'mqtt_broker' => env('MQTT_BROKER', 'wss://broker.hivemq.com:8884/mqtt'),
 ];

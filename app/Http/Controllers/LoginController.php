@@ -10,7 +10,7 @@ class LoginController extends Controller
     public function showLoginForm()
     {
         if (session('admin_logged_in')) {
-            return redirect('/smart-lamp');
+            return redirect('/dashboard');
         }
         return view('auth.login');
     }
@@ -27,7 +27,7 @@ class LoginController extends Controller
 
         if ($credentials['username'] === $adminUsername && $credentials['password'] === $adminPassword) {
             session(['admin_logged_in' => true, 'admin_username' => $credentials['username']]);
-            return redirect('/smart-lamp')->with('success', 'Login berhasil!');
+            return redirect('/dashboard')->with('success', 'Login berhasil!');
         }
 
         return back()->withErrors([

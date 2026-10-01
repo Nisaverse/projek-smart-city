@@ -6,30 +6,30 @@
 <!-- STAT CARDS -->
 <div class="row g-4 mb-4">
     <div class="col-md-4">
-        <div class="stat-card">
-            <div class="icon-box" style="background:rgba(59,130,246,0.15); color:#3b82f6;">
-                <i class="fas fa-th"></i>
+        <div class="stat-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
+            <div class="icon-box" style="background: rgba(59,130,246,0.2); color:#60a5fa; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                <i class="fas fa-th" style="font-size: 1.2rem;"></i>
             </div>
-            <div class="value" id="totalSlots">8</div>
-            <div class="label">Total Slots</div>
+            <div class="value fs-3 fw-bold text-white mb-1" id="totalSlots">8</div>
+            <div class="label" style="color: #94a3b8; font-size: 0.85rem;">Total Slots</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="stat-card">
-            <div class="icon-box" style="background:rgba(239,68,68,0.15); color:#ef4444;">
-                <i class="fas fa-car"></i>
+        <div class="stat-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
+            <div class="icon-box" style="background: rgba(239,68,68,0.2); color:#f87171; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                <i class="fas fa-car" style="font-size: 1.2rem;"></i>
             </div>
-            <div class="value" id="occupiedSlots">-</div>
-            <div class="label">Occupied</div>
+            <div class="value fs-3 fw-bold text-white mb-1" id="occupiedSlots">-</div>
+            <div class="label" style="color: #94a3b8; font-size: 0.85rem;">Occupied</div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="stat-card">
-            <div class="icon-box" style="background:rgba(16,185,129,0.15); color:#10b981;">
-                <i class="fas fa-check-circle"></i>
+        <div class="stat-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
+            <div class="icon-box" style="background: rgba(16,185,129,0.2); color:#34d399; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                <i class="fas fa-check-circle" style="font-size: 1.2rem;"></i>
             </div>
-            <div class="value" id="availableSlots">-</div>
-            <div class="label">Available</div>
+            <div class="value fs-3 fw-bold text-white mb-1" id="availableSlots">-</div>
+            <div class="label" style="color: #94a3b8; font-size: 0.85rem;">Available</div>
         </div>
     </div>
 </div>
@@ -40,19 +40,19 @@
 </div>
 
 <!-- PARKING VISUAL MAP -->
-<div class="data-card">
-    <h6><i class="fas fa-map"></i> PARKING LOT VISUAL MAP</h6>
+<div class="data-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
+    <h6 class="text-white mb-3" style="font-size: 0.95rem; font-weight: 600;"><i class="fas fa-map me-2 text-primary"></i> PARKING LOT VISUAL MAP</h6>
     <div style="display:flex; gap:20px; margin-bottom:20px;">
         <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem;">
             <div style="width:18px; height:18px; background:rgba(16,185,129,0.3); border:2px solid #10b981; border-radius:6px;"></div>
-            <span style="color:var(--text-secondary);">Available</span>
+            <span style="color:#94a3b8;">Available</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px; font-size:0.85rem;">
             <div style="width:18px; height:18px; background:rgba(239,68,68,0.3); border:2px solid #ef4444; border-radius:6px;"></div>
-            <span style="color:var(--text-secondary);">Occupied</span>
+            <span style="color:#94a3b8;">Occupied</span>
         </div>
     </div>
-    <div id="parkingMap" style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; padding:20px; background:rgba(15,23,42,0.5); border-radius:12px;">
+    <div id="parkingMap" style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; padding:20px; background:rgba(15, 23, 42, 0.6); border-radius:12px; border: 1px solid rgba(255, 255, 255, 0.05);">
         <!-- Slots akan di-render oleh JavaScript -->
     </div>
 </div>
@@ -66,8 +66,8 @@
     };
     
     const zoneColors = {
-        'zone_a': '#3b82f6',
-        'zone_b': '#f59e0b'
+        'zone_a': '#60a5fa',
+        'zone_b': '#fbbf24'
     };
 
     const zoneSlots = {
@@ -87,20 +87,20 @@
 
             grid.innerHTML += `
                 <div class="col-md-6">
-                    <div class="data-card">
+                    <div class="data-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                             <h6 style="margin:0; color:${color}; font-size:1rem; font-weight:700;">${zoneNames[key]}</h6>
-                            <span style="font-size:0.85rem; color:var(--text-secondary);">${zone.total} slots</span>
+                            <span style="font-size:0.85rem; color:#94a3b8;">${zone.total} slots</span>
                         </div>
-                        <div style="font-size:2.5rem; font-weight:700; margin-bottom:5px;">${available}</div>
-                        <div style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:15px;">Available spots</div>
+                        <div style="font-size:2.5rem; font-weight:700; margin-bottom:5px; color:#ffffff;">${available}</div>
+                        <div style="color:#94a3b8; font-size:0.9rem; margin-bottom:15px;">Available spots</div>
                         <div style="margin-bottom:8px;">
-                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-secondary); margin-bottom:5px;">
+                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#94a3b8; margin-bottom:5px;">
                                 <span>Occupancy</span>
                                 <span>${pct}%</span>
                             </div>
-                            <div class="waste-bar" style="height:10px;">
-                                <div class="waste-bar-fill" style="width:${pct}%; background:${color}"></div>
+                            <div class="waste-bar" style="height:10px; background: rgba(15, 23, 42, 0.6); border-radius: 5px; overflow: hidden;">
+                                <div class="waste-bar-fill" style="width:${pct}%; background:${color}; height: 100%;"></div>
                             </div>
                         </div>
                     </div>
@@ -113,7 +113,6 @@
         const map = document.getElementById('parkingMap');
         map.innerHTML = '';
         
-        // Generate random occupied slots
         const occupiedSet = new Set();
         while (occupiedSet.size < occupied) {
             occupiedSet.add(Math.floor(Math.random() * total) + 1);
@@ -133,8 +132,8 @@
                 font-size: 0.9rem; 
                 font-weight: 700;
                 border: 2px solid ${isOccupied ? '#ef4444' : '#10b981'};
-                background: ${isOccupied ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'};
-                color: ${isOccupied ? '#ef4444' : '#10b981'};
+                background: ${isOccupied ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'};
+                color: ${isOccupied ? '#f87171' : '#34d399'};
                 transition: all 0.3s;
                 cursor: pointer;
             `;

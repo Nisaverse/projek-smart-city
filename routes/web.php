@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 
+// ===== HALAMAN PENGUNJUNG (PUBLIC - TANPA MIDDLEWARE) =====
+Route::get('/pengunjung', function () {
+    return view('pengunjung');
+})->name('pengunjung');
+
 // ===== LOGIN ROUTES (PUBLIC - TANPA MIDDLEWARE) =====
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -14,13 +19,20 @@ Route::middleware('admin')->group(function () {
     
     // Redirect root ke dashboard
     Route::get('/', function () {
-        return redirect('/smart-lamp');
+        return redirect('/dashboard');
     });
 
     // Dashboard Pages
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/smart-lamp', [DashboardController::class, 'smartLamp'])->name('smart-lamp');
-    Route::get('/smart-waste', [DashboardController::class, 'smartWaste'])->name('smart-waste');
+    
+    // Route Suhu & Kelembapan (Menggantikan Smart Waste)
+    Route::get('/smart-temp', [DashboardController::class, 'smartTemp'])->name('smart-temp');
+    // Opsional: Redirect route lama /smart-waste ke /smart-temp jika ada tautan lama
+    Route::get('/smart-waste', function () {
+        return redirect()->route('smart-temp');
+    });
+
     Route::get('/smart-parking', [DashboardController::class, 'smartParking'])->name('smart-parking');
     
     // Control Center
@@ -29,7 +41,12 @@ Route::middleware('admin')->group(function () {
 
     // ===== API ENDPOINTS (DATA) =====
     Route::get('/api/lamp', [DashboardController::class, 'apiLampData']);
-    Route::get('/api/waste', [DashboardController::class, 'apiWasteData']);
+    
+    // API Suhu & Kelembapan (Menggantikan /api/waste)
+    Route::get('/api/environment', [DashboardController::class, 'apiEnvironmentData']);
+    // Fallback alias jika ada script lama yang masih memanggil /api/waste
+    Route::get('/api/waste', [DashboardController::class, 'apiEnvironmentData']);
+
     Route::get('/api/parking', [DashboardController::class, 'apiParkingData']);
     Route::get('/api/dashboard', [DashboardController::class, 'apiDashboardData']);
 
