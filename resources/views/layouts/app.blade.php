@@ -11,6 +11,10 @@
     <!-- LENIS SMOOTH SCROLL CSS CDN -->
     <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
 
+
+    <!-- ===== IMPORT MQTT.JS CDN ===== -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
     <style>
         :root {
             --sidebar-width: 260px;
@@ -481,8 +485,8 @@
 
         // ===== MQTT CLIENT =====
         let mqttClient = null;
-        const MQTT_BROKER = "{{ config('app.mqtt_broker', 'ws://broker.hivemq.com:8000/mqtt') }}";
-        const MQTT_TOPIC = "smartcity/#";
+        const MQTT_BROKER = "{{ config('app.mqtt_broker', 'wss://broker.hivemq.com:8884/mqtt') }}";
+        const MQTT_TOPIC = "aethersense/+/telemetry";
 
         function connectMQTT() {
             if (typeof mqtt === 'undefined') return;

@@ -124,4 +124,5 @@ return [
     ],
 
     'mqtt_broker' => env('MQTT_BROKER', 'wss://broker.hivemq.com:8884/mqtt'),
+    'mqtt_topic_prefix' => env('MQTT_TOPIC_PREFIX', 'aethersense/'),
 ];
