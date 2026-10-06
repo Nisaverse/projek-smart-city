@@ -2269,7 +2269,7 @@
 
     <!-- Bagian Tengah -->
     <div class="welcome-center">
-      <h1 class="welcome-title">TEGAL ECOSENSE</h1>
+      <h1 class="welcome-title">SMARTCITY KOTA TEGAL</h1>
       <p class="welcome-desc">Observatorium iklim mikro publik dan pemantauan kualitas udara real-time di kawasan Alun-Alun Kota Tegal berbasis sensor IoT ESP32 untuk mewujudkan kota cerdas yang berkelanjutan dan nyaman bagi warga.</p>
       
       <div class="d-flex align-items-center">
@@ -2290,7 +2290,7 @@
       <div class="preview-card" style="background-image: url('image/balaikota.jpeg');">
         <div class="preview-card-overlay">
           <span>Balaikota</span>
-          <span class="text-warning">33.5&deg;C</span>
+          <span class="text-warning">33.5&deg;C</span>,
         </div>
       </div>
       <div class="preview-card" style="background-image: url('image/masjid agung.jpeg');">
