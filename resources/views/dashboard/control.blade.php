@@ -1,462 +1,358 @@
 @extends('layouts.app')
-@section('title', 'Control Center')
-@section('page-title', 'IoT Device Control Center')
+@section('title', 'System Control Center')
+
+@push('styles')
+<style>
+    /* ===== DEFINISI TEMA WARNA UNTUK SEMUA CARD CONTROL ===== */
+    #dashboardThemeWrapper[data-theme="gradient-tricolor"] {
+        --card-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 35%, #854d0e 70%, #065f46 100%);
+        --card-border: rgba(251, 191, 36, 0.4);
+        --card-glow: rgba(16, 185, 129, 0.25);
+        --accent-color: #fde047;
+    }
+
+    #dashboardThemeWrapper[data-theme="cyberpunk-purple"] {
+        --card-bg-gradient: linear-gradient(135deg, #2e1065 0%, #581c87 50%, #831843 100%);
+        --card-border: rgba(236, 72, 153, 0.4);
+        --card-glow: rgba(236, 72, 153, 0.3);
+        --accent-color: #f472b6;
+    }
+
+    #dashboardThemeWrapper[data-theme="emerald-nature"] {
+        --card-bg-gradient: linear-gradient(135deg, #064e3b 0%, #047857 50%, #0f172a 100%);
+        --card-border: rgba(52, 211, 153, 0.4);
+        --card-glow: rgba(16, 185, 129, 0.3);
+        --accent-color: #6ee7b7;
+    }
+
+    /* ===== BACKGROUND TITIK KELAP-KELIP BESAR ===== */
+    .twinkle-bg-wrapper-light {
+        position: relative;
+        background: #f8fafc;
+        min-height: calc(100vh - 100px);
+        padding: 25px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .twinkle-bg-wrapper-light::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: 
+            radial-gradient(5px 5px at 50px 60px, #3b82f6, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 150px 180px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 280px 80px, #2563eb, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 390px 220px, #0284c7, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 520px 110px, #3b82f6, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 640px 250px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 780px 90px, #2563eb, rgba(255,255,255,0));
+        background-repeat: repeat;
+        background-size: 850px 350px;
+        animation: lightTwinkleBig 3.5s ease-in-out infinite alternate;
+        pointer-events: none;
+        opacity: 0.75;
+        z-index: 1;
+    }
+
+    .twinkle-bg-wrapper-light::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: 
+            radial-gradient(6px 6px at 90px 220px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 210px 100px, #f59e0b, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 330px 290px, #3b82f6, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 460px 50px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 590px 210px, #f59e0b, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 710px 130px, #3b82f6, rgba(255,255,255,0));
+        background-repeat: repeat;
+        background-size: 800px 380px;
+        animation: lightTwinkleBigAlt 5s ease-in-out infinite alternate;
+        pointer-events: none;
+        opacity: 0.65;
+        z-index: 1;
+    }
+
+    .smart-control-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    @keyframes lightTwinkleBig {
+        0% { opacity: 0.2; transform: scale(0.9) translateY(0px); filter: blur(0px); }
+        50% { opacity: 0.85; filter: blur(1px); }
+        100% { opacity: 0.3; transform: scale(1.1) translateY(-4px); filter: blur(0px); }
+    }
+
+    @keyframes lightTwinkleBigAlt {
+        0% { opacity: 0.7; transform: scale(1.05); }
+        50% { opacity: 0.2; }
+        100% { opacity: 0.8; transform: scale(0.95); }
+    }
+
+    /* ===== STYLE CARDS DENGAN GRADASI DINAMIS ===== */
+    .custom-gradient-card {
+        background: var(--card-bg-gradient, linear-gradient(135deg, #0f172a 0%, #1e3a8a 35%, #854d0e 70%, #065f46 100%)) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--card-border, rgba(251, 191, 36, 0.3)) !important;
+        border-radius: 18px !important;
+        padding: 22px !important;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        transition: all 0.4s ease;
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .custom-gradient-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 35px var(--card-glow, rgba(0,0,0,0.3)) !important;
+    }
+
+    /* ITEM CARD DALAM KONTROL (SEPERTI OPTION KONTROL) */
+    .control-subcard {
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 18px;
+        transition: all 0.3s ease;
+        color: #ffffff;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    .control-subcard:hover, .control-subcard.active {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: var(--accent-color, #fde047);
+        box-shadow: 0 0 15px rgba(253, 224, 71, 0.2);
+    }
+
+    /* BANNER NOTIFIKASI MODE AKTIF */
+    .active-mode-banner {
+        background: rgba(15, 23, 42, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 14px 20px;
+        color: #f1f5f9;
+        font-size: 0.9rem;
+    }
+
+    /* ITEM DEVICE LAMP CARD CONTROL */
+    .device-control-box {
+        background: rgba(15, 23, 42, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 14px;
+        padding: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .device-control-box:hover {
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* DROPDOWN SELECTOR TEMA */
+    .theme-select-box {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 0.85rem;
+        border-radius: 10px;
+        padding: 6px 12px;
+        cursor: pointer;
+        outline: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+</style>
+@endpush
 
 @section('content')
-<!-- MODE SELECTOR -->
-<div class="data-card mb-4" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
-    <h6 class="text-white mb-2" style="font-size: 0.95rem; font-weight: 600;"><i class="fas fa-cogs text-primary me-2"></i> Control Mode</h6>
-    <p style="color:#94a3b8; font-size:0.85rem; margin-bottom:15px;">
-        Pilih mode operasi lampu. Mode otomatis akan mengontrol lampu berdasarkan jadwal atau sensor cahaya.
-    </p>
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="mode-card" id="mode-manual" onclick="handleSetMode('manual')" style="cursor:pointer; padding:15px; border-radius:12px; border:2px solid #3b82f6; background:rgba(59,130,246,0.15); color:#ffffff;">
-                <div style="font-size:1.5rem; margin-bottom:8px;">🔧</div>
-                <div style="font-weight:700; margin-bottom:5px; color:#ffffff;">Manual Control</div>
-                <div style="font-size:0.8rem; color:#94a3b8;">Kontrol penuh via panel ini</div>
+<div class="twinkle-bg-wrapper-light" id="dashboardThemeWrapper" data-theme="gradient-tricolor">
+    <div class="smart-control-content">
+
+        <!-- DROPDOWN PEMILIH TEMA WARNA UNTUK SEMUA CARD -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="m-0 font-weight-bold text-dark">
+                <i class="fas fa-sliders-h text-warning me-2"></i> System Control Panel
+            </h5>
+            <div class="d-flex align-items-center gap-2">
+                <label for="allThemeSelector" class="form-label m-0 font-weight-bold text-secondary" style="font-size: 0.85rem;">
+                    <i class="fas fa-palette text-primary me-1"></i> Pilih Tema Semua Cards:
+                </label>
+                <select id="allThemeSelector" class="theme-select-box" onchange="changeAllCardsTheme(this.value)">
+                    <option value="gradient-tricolor">🌈 Biru-Kuning-Hijau</option>
+                    <option value="cyberpunk-purple">🔮 Cyberpunk Purple</option>
+                    <option value="emerald-nature">🍃 Emerald Nature</option>
+                </select>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="mode-card" id="mode-auto-schedule" onclick="handleSetMode('auto_schedule')" style="cursor:pointer; padding:15px; border-radius:12px; border:2px solid rgba(255,255,255,0.1); background:rgba(15, 23, 42, 0.6); color:#ffffff;">
-                <div style="font-size:1.5rem; margin-bottom:8px;">🕐</div>
-                <div style="font-weight:700; margin-bottom:5px; color:#ffffff;">Auto Schedule</div>
-                <div style="font-size:0.8rem; color:#94a3b8;">Nyala sesuai jadwal (bisa diatur)</div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:rgba(0,0,0,0.3); border-radius:8px; margin-top:10px;">
-                    <span style="font-size:0.75rem; color:#cbd5e1;">Enabled</span>
-                    <label class="toggle-switch flex-shrink-0" style="margin:0;">
-                        <input type="checkbox" id="toggleAutoSchedule" onchange="handleToggleAutoSchedule(this.checked); event.stopPropagation();">
-                        <span class="toggle-slider"></span>
-                    </label>
+        <!-- 1. CONTROL MODE CARD -->
+        <div class="data-card custom-gradient-card mb-4">
+            <div class="mb-3">
+                <h6 class="text-white mb-1" style="font-size: 1.05rem; font-weight: 700;">
+                    <i class="fas fa-cogs text-warning me-2"></i> Control Mode
+                </h6>
+                <small style="color: #cbd5e1;">Pilih mode operasi lampu. Mode otomatis akan mengontrol lampu berdasarkan jadwal atau sensor cahaya.</small>
+            </div>
+
+            <div class="row g-3 mt-1">
+                <!-- MANUAL CONTROL -->
+                <div class="col-md-4">
+                    <div class="control-subcard active" id="cardModeManual" onclick="selectControlMode('manual')">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <i class="fas fa-wrench text-warning fs-5"></i>
+                        </div>
+                        <h6 style="font-weight: 700; font-size: 0.95rem;" class="mb-1">Manual Control</h6>
+                        <small style="color: #cbd5e1; font-size: 0.8rem;">Kontrol penuh via panel ini</small>
+                    </div>
+                </div>
+
+                <!-- AUTO SCHEDULE -->
+                <div class="col-md-4">
+                    <div class="control-subcard" id="cardModeSchedule" onclick="selectControlMode('auto_schedule')">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <i class="fas fa-clock text-info fs-5"></i>
+                            <div class="form-check form-switch m-0" onclick="event.stopPropagation()">
+                                <input class="form-check-input" type="checkbox" id="switchSchedule" onchange="toggleModeSwitch('auto_schedule', this.checked)">
+                            </div>
+                        </div>
+                        <h6 style="font-weight: 700; font-size: 0.95rem;" class="mb-1">Auto Schedule</h6>
+                        <small style="color: #cbd5e1; font-size: 0.8rem;">Nyala sesuai jadwal (bisa diatur)</small>
+                    </div>
+                </div>
+
+                <!-- AUTO SENSOR -->
+                <div class="col-md-4">
+                    <div class="control-subcard" id="cardModeSensor" onclick="selectControlMode('auto_sensor')">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <i class="fas fa-cloud-moon text-primary fs-5"></i>
+                            <div class="form-check form-switch m-0" onclick="event.stopPropagation()">
+                                <input class="form-check-input" type="checkbox" id="switchSensor" onchange="toggleModeSwitch('auto_sensor', this.checked)">
+                            </div>
+                        </div>
+                        <h6 style="font-weight: 700; font-size: 0.95rem;" class="mb-1">Auto Sensor</h6>
+                        <small style="color: #cbd5e1; font-size: 0.8rem;">Nyala saat gelap (threshold bisa diatur)</small>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="mode-card" id="mode-auto-sensor" onclick="handleSetMode('auto_sensor')" style="cursor:pointer; padding:15px; border-radius:12px; border:2px solid rgba(255,255,255,0.1); background:rgba(15, 23, 42, 0.6); color:#ffffff;">
-                <div style="font-size:1.5rem; margin-bottom:8px;">🌩️</div>
-                <div style="font-weight:700; margin-bottom:5px; color:#ffffff;">Auto Sensor</div>
-                <div style="font-size:0.8rem; color:#94a3b8;">Nyala saat gelap (threshold bisa diatur)</div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:rgba(0,0,0,0.3); border-radius:8px; margin-top:10px;">
-                    <span style="font-size:0.75rem; color:#cbd5e1;">Enabled</span>
-                    <label class="toggle-switch flex-shrink-0" style="margin:0;">
-                        <input type="checkbox" id="toggleAutoSensor" onchange="handleToggleAutoSensor(this.checked); event.stopPropagation();">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
+        <!-- 2. SMART LAMP CONTROL CARD -->
+        <div class="data-card custom-gradient-card">
+            <h6 class="text-white mb-3" style="font-size: 1.05rem; font-weight: 700;">
+                <i class="fas fa-lightbulb text-warning me-2"></i> Smart Lamp Control
+            </h6>
+
+            <!-- BANNER INFORMASI MODE AKTIF -->
+            <div class="active-mode-banner mb-4 d-flex align-items-center gap-2">
+                <i class="fas fa-info-circle text-info"></i>
+                <span>Mode aktif: <strong id="activeModeBannerText" style="color: #fde047;">Manual Control - Anda mengontrol lampu secara langsung</strong></span>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- AUTO SETTINGS PANEL -->
-<div class="data-card mb-4" id="autoSettingsPanel" style="display:none; background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h6 class="text-white m-0" style="font-size: 0.95rem; font-weight: 600;"><i class="fas fa-sliders-h text-warning me-2"></i> Auto Mode Settings</h6>
-        <button onclick="handleSaveSettings()" class="btn btn-sm btn-success fw-semibold" style="border-radius: 8px;">
-            <i class="fas fa-save me-1"></i> Save Settings
-        </button>
-    </div>
-    
-    <div class="row g-3">
-        <div class="col-md-6" id="scheduleSettings">
-            <h6 style="color:#fbbf24; margin-bottom:12px; font-weight:600;"><i class="fas fa-clock me-1"></i> Schedule Settings</h6>
+            <!-- SWITCH DEVICE LAMPU -->
             <div class="row g-3">
-                <div class="col-6">
-                    <label style="font-size:0.85rem; color:#94a3b8;">Turn ON Time</label>
-                    <div style="display:flex; gap:8px; margin-top:5px;">
-                        <input type="number" id="onHour" min="0" max="23" class="form-control text-white" placeholder="HH" style="flex:1; background:rgba(15, 23, 42, 0.6); border:1px solid rgba(255,255,255,0.15);">
-                        <span style="align-self:center; font-weight:700; color:#ffffff;">:</span>
-                        <input type="number" id="onMinute" min="0" max="59" class="form-control text-white" placeholder="MM" style="flex:1; background:rgba(15, 23, 42, 0.6); border:1px solid rgba(255,255,255,0.15);">
+                <div class="col-md-3">
+                    <div class="device-control-box d-flex justify-content-between align-items-center">
+                        <span style="font-size: 0.88rem; font-weight: 600;">Street Lamp A</span>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="lampA_switch" style="width: 2.5em; height: 1.3em; cursor: pointer;">
+                        </div>
                     </div>
                 </div>
-                <div class="col-6">
-                    <label style="font-size:0.85rem; color:#94a3b8;">Turn OFF Time</label>
-                    <div style="display:flex; gap:8px; margin-top:5px;">
-                        <input type="number" id="offHour" min="0" max="23" class="form-control text-white" placeholder="HH" style="flex:1; background:rgba(15, 23, 42, 0.6); border:1px solid rgba(255,255,255,0.15);">
-                        <span style="align-self:center; font-weight:700; color:#ffffff;">:</span>
-                        <input type="number" id="offMinute" min="0" max="59" class="form-control text-white" placeholder="MM" style="flex:1; background:rgba(15, 23, 42, 0.6); border:1px solid rgba(255,255,255,0.15);">
+
+                <div class="col-md-3">
+                    <div class="device-control-box d-flex justify-content-between align-items-center">
+                        <span style="font-size: 0.88rem; font-weight: 600;">Street Lamp B</span>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="lampB_switch" checked style="width: 2.5em; height: 1.3em; cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="device-control-box d-flex justify-content-between align-items-center">
+                        <span style="font-size: 0.88rem; font-weight: 600;">Street Lamp C</span>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="lampC_switch" style="width: 2.5em; height: 1.3em; cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="device-control-box d-flex justify-content-between align-items-center">
+                        <span style="font-size: 0.88rem; font-weight: 600;">Street Lamp D</span>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="lampD_switch" checked style="width: 2.5em; height: 1.3em; cursor: pointer;">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="col-md-6" id="sensorSettings" style="display:none;">
-            <h6 style="color:#a78bfa; margin-bottom:12px; font-weight:600;"><i class="fas fa-sun me-1"></i> Sensor Settings</h6>
-            <div>
-                <label style="font-size:0.85rem; color:#94a3b8;">Light Threshold (0-100)</label>
-                <input type="range" id="sensorThreshold" min="0" max="100" class="form-range" style="margin-top:10px;" oninput="document.getElementById('thresholdValue').textContent = this.value">
-                <div style="text-align:center; margin-top:8px;">
-                    <span style="font-size:1.2rem; font-weight:700; color:#a78bfa;" id="thresholdValue">35</span>
-                    <span style="color:#94a3b8; font-size:0.85rem;"> / 100</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#94a3b8; margin-top:5px;">
-                    <span>Terang</span>
-                    <span>Gelap</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SMART LAMP CONTROL -->
-<div class="data-card mb-4" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
-    <h6 class="text-white mb-3" style="font-size: 0.95rem; font-weight: 600;"><i class="fas fa-lightbulb text-primary me-2"></i> Smart Lamp Control</h6>
-    <div class="alert" id="modeAlert" style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.4); color:#60a5fa; font-size:0.85rem; margin-bottom:15px; border-radius:10px;">
-        <i class="fas fa-info-circle me-1"></i> Mode aktif: <strong id="currentModeLabel" class="text-white">Manual Control</strong>
-    </div>
-    <div class="row g-3" id="lampControlContainer">
-        <div class="col-12 text-center" style="color: #94a3b8;">Loading...</div>
-    </div>
-</div>
-
-<!-- QUICK ACTIONS -->
-<div class="data-card" id="quickActions" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
-    <h6 class="text-white mb-3" style="font-size: 0.95rem; font-weight: 600;"><i class="fas fa-bolt text-warning me-2"></i> Quick Actions</h6>
-    <div class="row g-3">
-        <div class="col-md-4">
-            <button class="btn btn-success w-100 fw-semibold" style="border-radius:10px; padding:10px;" onclick="handleTurnOnAll()">
-                <i class="fas fa-power-off me-1"></i> Turn ON All Lamps
-            </button>
-        </div>
-        <div class="col-md-4">
-            <button class="btn btn-danger w-100 fw-semibold" style="border-radius:10px; padding:10px;" onclick="handleTurnOffAll()">
-                <i class="fas fa-power-off me-1"></i> Turn OFF All Lamps
-            </button>
-        </div>
-        <div class="col-md-4">
-            <button class="btn btn-warning w-100 fw-semibold text-dark" style="border-radius:10px; padding:10px;" onclick="handleSetAllBrightness(75)">
-                <i class="fas fa-sliders-h me-1"></i> Set All to 75%
-            </button>
         </div>
     </div>
 </div>
 @endsection
 
-@push('styles')
-<style>
-    .mode-card { transition: all 0.3s ease; }
-    .mode-card:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(59,130,246,0.3); }
-    .mode-card.active { border-color: #3b82f6 !important; background: rgba(59,130,246,0.2) !important; box-shadow: 0 0 20px rgba(59,130,246,0.4); }
-    .lamp-card-disabled { opacity: 0.5; pointer-events: none; filter: grayscale(0.8); }
-
-    /* PENYESUAIAN TOGGLE SWITCH PAS DAN PRESISI */
-    .toggle-switch {
-        position: relative;
-        display: inline-block;
-        width: 44px;
-        height: 22px;
-        flex-shrink: 0;
-    }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background-color: #475569;
-        transition: 0.3s;
-        border-radius: 22px;
-    }
-    .toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 16px; width: 16px;
-        left: 3px; bottom: 3px;
-        background-color: white;
-        transition: 0.3s;
-        border-radius: 50%;
-    }
-    input:checked + .toggle-slider { background-color: #3b82f6; }
-    input:checked + .toggle-slider:before { transform: translateX(22px); }
-</style>
-@endpush
-
 @push('scripts')
 <script>
-    let currentMode = 'manual';
-    let autoSettings = {};
-    const lampNames = {
-        lamp_1: 'Street Lamp A - Jl. Sudirman',
-        lamp_2: 'Street Lamp B - Jl. Thamrin',
-        lamp_3: 'Street Lamp C - Jl. Gatot Subroto',
-        lamp_4: 'Street Lamp D - Jl. Rasuna Said'
-    };
-
-    // ===== 1. LOAD SETTINGS =====
-    function loadAutoSettings() {
-        fetch('/api/auto-settings')
-            .then(r => r.json())
-            .then(data => {
-                autoSettings = data;
-                document.getElementById('onHour').value = data.schedule_on_hour || 17;
-                document.getElementById('onMinute').value = data.schedule_on_minute || 30;
-                document.getElementById('offHour').value = data.schedule_off_hour || 6;
-                document.getElementById('offMinute').value = data.schedule_off_minute || 0;
-                document.getElementById('sensorThreshold').value = data.sensor_threshold || 35;
-                document.getElementById('thresholdValue').textContent = data.sensor_threshold || 35;
-                
-                const scheduleToggle = document.getElementById('toggleAutoSchedule');
-                if (scheduleToggle) scheduleToggle.checked = data.auto_schedule_enabled ?? true;
-                
-                const sensorToggle = document.getElementById('toggleAutoSensor');
-                if (sensorToggle) sensorToggle.checked = data.auto_sensor_enabled ?? false;
-            })
-            .catch(err => console.error('Error loading settings:', err));
-    }
-
-    // ===== 2. TOGGLE HANDLERS =====
-    function handleToggleAutoSchedule(enabled) {
-        fetch('/api/auto-schedule/toggle', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ enabled: enabled })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Auto Schedule is now:', enabled ? 'ON' : 'OFF');
-                loadAutoSettings();
-            }
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            document.getElementById('toggleAutoSchedule').checked = !enabled;
-        });
-    }
-
-    function handleToggleAutoSensor(enabled) {
-        fetch('/api/auto-sensor/toggle', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ enabled: enabled })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Auto Sensor is now:', enabled ? 'ON' : 'OFF');
-                loadAutoSettings();
-            }
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            document.getElementById('toggleAutoSensor').checked = !enabled;
-        });
-    }
-
-    // ===== 3. MODE SELECTION =====
-    function handleSetMode(mode) {
-        currentMode = mode;
-        
-        document.querySelectorAll('.mode-card').forEach(card => {
-            card.classList.remove('active');
-            card.style.borderColor = 'rgba(255,255,255,0.1)';
-            card.style.background = 'rgba(15, 23, 42, 0.6)';
-        });
-        
-        const activeCard = document.getElementById('mode-' + mode.replace('_', '-'));
-        if (activeCard) {
-            activeCard.classList.add('active');
-            activeCard.style.borderColor = '#3b82f6';
-            activeCard.style.background = 'rgba(59,130,246,0.2)';
+    // FUNGSI MENGUBAH TEMA WARNA SELURUH CARDS DI HALAMAN CONTROL
+    function changeAllCardsTheme(themeName) {
+        const wrapper = document.getElementById('dashboardThemeWrapper');
+        if (wrapper) {
+            wrapper.setAttribute('data-theme', themeName);
+            localStorage.setItem('globalDashboardCardTheme', themeName);
         }
-
-        document.getElementById('autoSettingsPanel').style.display = (mode !== 'manual') ? 'block' : 'none';
-        document.getElementById('scheduleSettings').style.display = (mode === 'auto_schedule') ? 'block' : 'none';
-        document.getElementById('sensorSettings').style.display = (mode === 'auto_sensor') ? 'block' : 'none';
-
-        const modeLabels = {
-            'manual': 'Manual Control - Anda mengontrol lampu secara langsung',
-            'auto_schedule': `Auto Schedule - Lampu nyala ${autoSettings.schedule_on_hour || 17}:${String(autoSettings.schedule_on_minute || 30).padStart(2,'0')} - ${autoSettings.schedule_off_hour || 6}:${String(autoSettings.schedule_off_minute || 0).padStart(2,'0')}`,
-            'auto_sensor': `Auto Sensor - Lampu nyala saat cahaya < ${autoSettings.sensor_threshold || 35}`
-        };
-        document.getElementById('currentModeLabel').textContent = modeLabels[mode];
-
-        const lampContainer = document.getElementById('lampControlContainer');
-        if (lampContainer) lampContainer.classList.toggle('lamp-card-disabled', mode !== 'manual');
-        document.getElementById('quickActions').style.display = (mode === 'manual') ? 'block' : 'none';
-
-        fetch('/api/control/mode', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ mode: mode })
-        })
-        .then(r => r.json())
-        .then(data => {
-            loadAutoSettings();
-            fetchLampData();
-        })
-        .catch(err => console.error('Error setting mode:', err));
     }
 
-    // ===== 4. SAVE SETTINGS =====
-    function handleSaveSettings() {
-        const settings = {
-            schedule_on_hour: parseInt(document.getElementById('onHour').value) || 17,
-            schedule_on_minute: parseInt(document.getElementById('onMinute').value) || 30,
-            schedule_off_hour: parseInt(document.getElementById('offHour').value) || 6,
-            schedule_off_minute: parseInt(document.getElementById('offMinute').value) || 0,
-            sensor_threshold: parseInt(document.getElementById('sensorThreshold').value) || 35
-        };
-
-        fetch('/api/auto-settings', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify(settings)
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                autoSettings = data.settings;
-                alert('✅ Settings berhasil disimpan!');
-                handleSetMode(currentMode);
-            }
-        })
-        .catch(err => alert('❌ Gagal menyimpan settings'));
-    }
-
-    // ===== 5. LAMP CONTROL =====
-    function handleToggleLamp(lampId, isOn) {
-        if (currentMode !== 'manual') { alert('Switch to Manual mode to control lamps'); return; }
-        fetch('/api/lamp/control', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-            body: JSON.stringify({ lamp_id: lampId, status: isOn ? 1 : 0 })
-        }).then(() => fetchLampData());
-    }
-
-    function handleSetBrightness(lampId, brightness) {
-        if (currentMode !== 'manual') { alert('Switch to Manual mode to control lamps'); return; }
-        fetch('/api/lamp/control', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-            body: JSON.stringify({ lamp_id: lampId, brightness: parseInt(brightness) })
-        }).then(() => fetchLampData());
-    }
-
-    function handleTurnOnAll() {
-        if (currentMode !== 'manual') { alert('Switch to Manual mode'); return; }
-        Object.keys(lampNames).forEach(lampId => handleToggleLamp(lampId, true));
-    }
-
-    function handleTurnOffAll() {
-        if (currentMode !== 'manual') { alert('Switch to Manual mode'); return; }
-        Object.keys(lampNames).forEach(lampId => handleToggleLamp(lampId, false));
-    }
-
-    function handleSetAllBrightness(value) {
-        if (currentMode !== 'manual') { alert('Switch to Manual mode'); return; }
-        Object.keys(lampNames).forEach(lampId => handleSetBrightness(lampId, value));
-    }
-
-    // ===== 6. RENDER & FETCH (SUDAH DIPERBAIKI HEADER LOKASI KARTU LAMPU) =====
-    function renderLampControl(data) {
-        const container = document.getElementById('lampControlContainer');
-        if (!container) return;
-        container.innerHTML = '';
-        const isManual = currentMode === 'manual';
-
-        Object.keys(lampNames).forEach((key) => {
-            const lamp = data[key];
-            const isOn = lamp.status === 1;
-            const color = isOn ? '#fbbf24' : '#64748b';
-            const card = document.createElement('div');
-            card.className = 'col-md-6 col-lg-3';
-            card.innerHTML = `
-                <div class="stat-card" style="background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);">
-                    <!-- D-FLEX KELOLA SPACE & CUT OFF TEXT NAMA JALAN -->
-                    <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-                        <h6 class="m-0 fw-bold text-white text-truncate" style="max-width: 130px; font-size: 0.85rem;" title="${lampNames[key]}">${lampNames[key]}</h6>
-                        <label class="toggle-switch flex-shrink-0">
-                            <input type="checkbox" ${isOn ? 'checked' : ''} ${!isManual ? 'disabled' : ''} onchange="handleToggleLamp('${key}', this.checked)">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#94a3b8; margin-bottom:5px;">
-                            <span>Brightness</span><span style="color:${color}; font-weight:600;">${lamp.brightness}%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="${lamp.brightness}" class="form-range" ${!isManual ? 'disabled' : ''} onchange="handleSetBrightness('${key}', this.value)">
-                        <div style="text-align:center; font-size:0.75rem; color:#94a3b8; margin-top:5px;">${lamp.brightness}%</div>
-                    </div>
-                    <div style="font-size:0.85rem; color:#94a3b8;"><i class="fas fa-bolt me-1"></i> Power: ${lamp.power}W</div>
-                    ${!isManual ? '<div style="margin-top:10px; font-size:0.75rem; color:#fbbf24;"><i class="fas fa-robot me-1"></i> Auto-controlled</div>' : ''}
-                </div>
-            `;
-            container.appendChild(card);
-        });
-    }
-
-    function fetchLampData() {
-        fetch('/api/lamp')
-            .then(r => r.json())
-            .then(data => renderLampControl(data))
-            .catch(err => console.error('Error fetching lamp data:', err));
-    }
-
-    // ===== 7. INIT =====
     document.addEventListener('DOMContentLoaded', () => {
-        loadAutoSettings();
-        fetchLampData();
-        loadActiveMode();
+        const savedTheme = localStorage.getItem('globalDashboardCardTheme') || 'gradient-tricolor';
+        const selector = document.getElementById('allThemeSelector');
+        if (selector) selector.value = savedTheme;
+        changeAllCardsTheme(savedTheme);
     });
 
-    setInterval(fetchLampData, 15000);
+    // FUNGSI PILIH MODE KONTROL
+    function selectControlMode(mode) {
+        document.querySelectorAll('.control-subcard').forEach(el => el.classList.remove('active'));
+        
+        const banner = document.getElementById('activeModeBannerText');
+        const swSchedule = document.getElementById('switchSchedule');
+        const swSensor = document.getElementById('switchSensor');
 
-    function applyModeToUI(mode) {
-        currentMode = mode;
-        
-        document.querySelectorAll('.mode-card').forEach(card => {
-            card.classList.remove('active');
-            card.style.borderColor = 'rgba(255,255,255,0.1)';
-            card.style.background = 'rgba(15, 23, 42, 0.6)';
-        });
-        
-        const activeCardId = 'mode-' + mode.replace('_', '-');
-        const activeCard = document.getElementById(activeCardId);
-        if (activeCard) {
-            activeCard.classList.add('active');
-            activeCard.style.borderColor = '#3b82f6';
-            activeCard.style.background = 'rgba(59,130,246,0.2)';
+        if (mode === 'manual') {
+            document.getElementById('cardModeManual').classList.add('active');
+            banner.textContent = 'Manual Control - Anda mengontrol lampu secara langsung';
+            if (swSchedule) swSchedule.checked = false;
+            if (swSensor) swSensor.checked = false;
+        } else if (mode === 'auto_schedule') {
+            document.getElementById('cardModeSchedule').classList.add('active');
+            banner.textContent = 'Auto Schedule - Lampu dikontrol otomatis berdasarkan jadwal';
+            if (swSchedule) swSchedule.checked = true;
+            if (swSensor) swSensor.checked = false;
+        } else if (mode === 'auto_sensor') {
+            document.getElementById('cardModeSensor').classList.add('active');
+            banner.textContent = 'Auto Sensor - Lampu dikontrol otomatis berdasarkan sensor cahaya';
+            if (swSchedule) swSchedule.checked = false;
+            if (swSensor) swSensor.checked = true;
         }
 
-        document.getElementById('autoSettingsPanel').style.display = (mode !== 'manual') ? 'block' : 'none';
-        document.getElementById('scheduleSettings').style.display = (mode === 'auto_schedule') ? 'block' : 'none';
-        document.getElementById('sensorSettings').style.display = (mode === 'auto_sensor') ? 'block' : 'none';
-
-        const modeLabels = {
-            'manual': 'Manual Control - Anda mengontrol lampu secara langsung',
-            'auto_schedule': `Auto Schedule - Lampu nyala ${autoSettings.schedule_on_hour || 17}:${String(autoSettings.schedule_on_minute || 30).padStart(2,'0')} - ${autoSettings.schedule_off_hour || 6}:${String(autoSettings.schedule_off_minute || 0).padStart(2,'0')}`,
-            'auto_sensor': `Auto Sensor - Lampu nyala saat cahaya < ${autoSettings.sensor_threshold || 35}`
-        };
-        document.getElementById('currentModeLabel').textContent = modeLabels[mode];
-
-        const lampContainer = document.getElementById('lampControlContainer');
-        if (lampContainer) lampContainer.classList.toggle('lamp-card-disabled', mode !== 'manual');
-        document.getElementById('quickActions').style.display = (mode === 'manual') ? 'block' : 'none';
+        // KIRIM KE API (OPSIONAL)
+        fetch('/api/control/mode', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ mode: mode })
+        }).catch(err => console.log('Mode updated locally'));
     }
 
-    function loadActiveMode() {
-        fetch('/api/lamp')
-            .then(r => r.json())
-            .then(data => {
-                if (data.control_mode) {
-                    applyModeToUI(data.control_mode);
-                }
-            })
-            .catch(err => console.error('Gagal load mode:', err));
+    function toggleModeSwitch(mode, isChecked) {
+        if (isChecked) {
+            selectControlMode(mode);
+        } else {
+            selectControlMode('manual');
+        }
     }
 </script>
 @endpush

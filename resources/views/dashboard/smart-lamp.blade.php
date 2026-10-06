@@ -42,13 +42,13 @@
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
         background-image: 
-            radial-gradient(5px 5px at 50px 60px, #3b82f6, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 150px 180px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 50px 60px, #e9f500, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 150px 180px, #a300fa, rgba(255,255,255,0)),
             radial-gradient(4px 4px at 280px 80px, #2563eb, rgba(255,255,255,0)),
             radial-gradient(5px 5px at 390px 220px, #0284c7, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 520px 110px, #3b82f6, rgba(255,255,255,0)),
-            radial-gradient(4px 4px at 640px 250px, #0dcaf0, rgba(255,255,255,0)),
-            radial-gradient(5px 5px at 780px 90px, #2563eb, rgba(255,255,255,0));
+            radial-gradient(6px 6px at 520px 110px, #00fbff, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 640px 250px, #fcb000, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 780px 90px, #aefd02, rgba(255,255,255,0));
         background-repeat: repeat;
         background-size: 850px 350px;
         animation: lightTwinkleBig 3.5s ease-in-out infinite alternate;
@@ -167,7 +167,7 @@
             </h5>
             <div class="d-flex align-items-center gap-2">
                 <label for="allThemeSelector" class="form-label m-0 font-weight-bold text-secondary" style="font-size: 0.85rem;">
-                    <i class="fas fa-palette text-primary me-1"></i> Pilih Tema Semua Cards:
+                    <i class="fas fa-palette text-primary me-1"></i> Tema Semua Cards:
                 </label>
                 <select id="allThemeSelector" class="theme-select-box" onchange="changeAllCardsTheme(this.value)">
                     <option value="gradient-tricolor">🌈 Biru-Kuning-Hijau</option>
@@ -292,10 +292,10 @@
 
     // LIST NAMA LAMPU
     const lampNames = {
-        lamp_1: 'Street Lamp A - Jl. Sudirman',
-        lamp_2: 'Street Lamp B - Jl. Thamrin',
-        lamp_3: 'Street Lamp C - Jl. Gatot Subroto',
-        lamp_4: 'Street Lamp D - Jl. Rasuna Said'
+        lamp_1: 'Sektor 1',
+        lamp_2: 'Sektor 2',
+        lamp_3: 'Sektor 3',
+        lamp_4: 'Sektor 4'
     };
 
     // CHART POWER CONSUMPTION
@@ -360,7 +360,7 @@
 
         const modeLabels = {
             'manual': ' Manual',
-            'auto_schedule': ' Auto Schedule (Maghrib-Subuh)',
+            'auto_schedule': ' Auto Schedule ',
             'auto_sensor': ' Auto Sensor (Cahaya)'
         };
         document.getElementById('monitorMode').textContent = modeLabels[data.control_mode] || data.control_mode;

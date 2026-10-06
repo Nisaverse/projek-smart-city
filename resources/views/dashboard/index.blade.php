@@ -1,183 +1,249 @@
 @extends('layouts.app')
-
-@section('title', 'Dashboard Overview')
-@section('page-title', 'Dashboard Overview')
+@section('title', 'Tegal EcoSense - Smart City Overview')
 
 @push('styles')
 <style>
-    /* ===== GLASSMORPHISM CARD STYLING ===== */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.04);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        padding: 22px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* ===== DEFINISI TEMA WARNA UNTUK SEMUA CARD OVERVIEW ===== */
+    #dashboardThemeWrapper[data-theme="gradient-tricolor"] {
+        --card-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 35%, #854d0e 70%, #065f46 100%);
+        --card-border: rgba(251, 191, 36, 0.4);
+        --card-glow: rgba(16, 185, 129, 0.25);
+        --accent-color: #fde047;
     }
 
-    .glass-card:hover {
-        border-color: rgba(59, 130, 246, 0.35);
-        transform: translateY(-3px);
-        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+    #dashboardThemeWrapper[data-theme="cyberpunk-purple"] {
+        --card-bg-gradient: linear-gradient(135deg, #2e1065 0%, #581c87 50%, #831843 100%);
+        --card-border: rgba(236, 72, 153, 0.4);
+        --card-glow: rgba(236, 72, 153, 0.3);
+        --accent-color: #f472b6;
     }
 
-    .stat-icon {
-        width: 48px;
-        height: 48px;
+    #dashboardThemeWrapper[data-theme="emerald-nature"] {
+        --card-bg-gradient: linear-gradient(135deg, #064e3b 0%, #047857 50%, #0f172a 100%);
+        --card-border: rgba(52, 211, 153, 0.4);
+        --card-glow: rgba(16, 185, 129, 0.3);
+        --accent-color: #6ee7b7;
+    }
+
+    /* ===== BACKGROUND TITIK KELAP-KELIP BESAR ===== */
+    .twinkle-bg-wrapper-light {
+        position: relative;
+        background: #f8fafc;
+        min-height: calc(100vh - 100px);
+        padding: 25px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .twinkle-bg-wrapper-light::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: 
+            radial-gradient(5px 5px at 50px 60px, #3b82f6, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 150px 180px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 280px 80px, #2563eb, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 390px 220px, #0284c7, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 520px 110px, #3b82f6, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 640px 250px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 780px 90px, #2563eb, rgba(255,255,255,0));
+        background-repeat: repeat;
+        background-size: 850px 350px;
+        animation: lightTwinkleBig 3.5s ease-in-out infinite alternate;
+        pointer-events: none;
+        opacity: 0.75;
+        z-index: 1;
+    }
+
+    .twinkle-bg-wrapper-light::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-image: 
+            radial-gradient(6px 6px at 90px 220px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 210px 100px, #f59e0b, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 330px 290px, #3b82f6, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 460px 50px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 590px 210px, #f59e0b, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 710px 130px, #3b82f6, rgba(255,255,255,0));
+        background-repeat: repeat;
+        background-size: 800px 380px;
+        animation: lightTwinkleBigAlt 5s ease-in-out infinite alternate;
+        pointer-events: none;
+        opacity: 0.65;
+        z-index: 1;
+    }
+
+    .smart-overview-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    @keyframes lightTwinkleBig {
+        0% { opacity: 0.2; transform: scale(0.9) translateY(0px); filter: blur(0px); }
+        50% { opacity: 0.85; filter: blur(1px); }
+        100% { opacity: 0.3; transform: scale(1.1) translateY(-4px); filter: blur(0px); }
+    }
+
+    @keyframes lightTwinkleBigAlt {
+        0% { opacity: 0.7; transform: scale(1.05); }
+        50% { opacity: 0.2; }
+        100% { opacity: 0.8; transform: scale(0.95); }
+    }
+
+    /* ===== STYLE CARDS GELAP SESUAI TEMA DINOVERWRITE DARI BACKGROUND PUTIH ===== */
+    .custom-gradient-card {
+        background: var(--card-bg-gradient, linear-gradient(135deg, #0f172a 0%, #1e3a8a 35%, #854d0e 70%, #065f46 100%)) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--card-border, rgba(251, 191, 36, 0.3)) !important;
+        border-radius: 18px !important;
+        padding: 22px !important;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        transition: all 0.4s ease;
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .custom-gradient-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 35px var(--card-glow, rgba(0,0,0,0.3)) !important;
+    }
+
+    /* ICON CONTAINER DI KARTU RINGKASAN ATAS */
+    .summary-icon-box {
+        width: 46px;
+        height: 46px;
         border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.25rem;
-        flex-shrink: 0;
-        transition: all 0.3s ease;
     }
 
-    /* Badge Tag Kota Tegal */
-    .badge-tegal {
-        background: rgba(16, 185, 129, 0.15);
-        color: #34d399;
-        border: 1px solid rgba(16, 185, 129, 0.3);
-        font-weight: 600;
-        font-size: 0.75rem;
-        border-radius: 20px;
-        padding: 6px 14px;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+    .value-stat-large {
+        font-size: 2.2rem;
+        font-weight: 800;
+        line-height: 1;
+        margin: 14px 0 6px 0;
     }
 
-    /* Custom Scrollbar untuk Riwayat Alert */
-    #globalTempHistory::-webkit-scrollbar {
-        width: 5px;
-    }
-    #globalTempHistory::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.2);
-        border-radius: 4px;
-    }
-    #globalTempHistory::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: 4px;
-    }
-    #globalTempHistory::-webkit-scrollbar-thumb:hover {
-        background: rgba(239, 68, 68, 0.5);
+    /* DROPDOWN SELECTOR TEMA */
+    .theme-select-box {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 0.85rem;
+        border-radius: 10px;
+        padding: 6px 12px;
+        cursor: pointer;
+        outline: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 </style>
 @endpush
 
 @section('content')
-<div class="container-fluid p-0">
-    <!-- Header Penanda Kota Tegal & Sambutan -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <div class="badge-tegal mb-2">
-                <i class="fas fa-map-marker-alt"></i> Kota Tegal
-            </div>
-            <h4 class="fw-bold m-0 text-light" style="letter-spacing: -0.3px;">Smart City Monitoring</h4>
-        </div>
-    </div>
+<div class="twinkle-bg-wrapper-light" id="dashboardThemeWrapper" data-theme="gradient-tricolor">
+    <div class="smart-overview-content">
 
-    <!-- KARTU STATISTIK (GLASSMORPHISM) -->
-    <div class="row g-4 mb-4">
-        <!-- Smart Lamp Active -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="glass-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                </div>
-                <div class="value fs-2 fw-bold text-light mb-1" id="activeLamps">-</div>
-                <div class="label text-secondary fs-7">Smart Lamps Active</div>
+        <!-- HEADER SELECTOR TEMA WARNA & PILL LOKASI -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2" style="border-radius: 20px; font-weight: 700;">
+                    <i class="fas fa-map-marker-alt me-1"></i> Kota Tegal
+                </span>
+                <h5 class="m-0 font-weight-bold text-dark ms-2">Smart City Monitoring</h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <label for="allThemeSelector" class="form-label m-0 font-weight-bold text-secondary" style="font-size: 0.85rem;">
+                    <i class="fas fa-palette text-primary me-1"></i> Tema Cards:
+                </label>
+                <select id="allThemeSelector" class="theme-select-box" onchange="changeAllCardsTheme(this.value)">
+                    <option value="gradient-tricolor">🌈 Biru-Kuning-Hijau</option>
+                    <option value="cyberpunk-purple">🔮 Cyberpunk Purple</option>
+                    <option value="emerald-nature">🍃 Emerald Nature</option>
+                </select>
             </div>
         </div>
 
-        <!-- Suhu & Kelembapan -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="glass-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);">
+        <!-- 1. BARIS 4 KARTU RINGKASAN UTAMA (IKUT BERUBAH TEMA) -->
+        <div class="row g-4 mb-4">
+          <!-- SMART LAMPS ACTIVE -->
+        <div class="col-md-6 col-lg-3">
+             <div class="data-card custom-gradient-card">
+                 <div class="summary-icon-box" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">
+                     <i class="fas fa-lightbulb"></i>
+                 </div>
+                 <div id="activeLampsCount" class="value-stat-large" style="color: #60a5fa;">-- / 4</div>
+                 <div style="font-size: 0.88rem; color: #cbd5e1; font-weight: 600;">Smart Lamps Active</div>
+            </div>
+        </div>
+
+            <!-- KELEMBAPAN & SUHU -->
+            <div class="col-md-6 col-lg-3">
+                <div class="data-card custom-gradient-card">
+                    <div class="summary-icon-box" style="background: rgba(239, 68, 68, 0.2); color: #fca5a5;">
                         <i class="fas fa-temperature-high"></i>
                     </div>
+                    <div class="value-stat-large" style="color: #f87171;">65%</div>
+                    <div style="font-size: 0.88rem; color: #cbd5e1; font-weight: 600;">Kelembapan: 65%</div>
                 </div>
-                <div class="value fs-2 fw-bold text-light mb-1" id="dashTemp">--°C</div>
-                <div class="label text-secondary fs-7" id="dashHum">Suhu & Kelembapan (--%)</div>
             </div>
-        </div>
 
-        <!-- Parking Available -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="glass-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);">
+            <!-- PARKING AVAILABLE -->
+            <div class="col-md-6 col-lg-3">
+                <div class="data-card custom-gradient-card">
+                    <div class="summary-icon-box" style="background: rgba(245, 158, 11, 0.2); color: #fde047;">
                         <i class="fas fa-car"></i>
                     </div>
+                    <div class="value-stat-large" style="color: #fde047;">5 / 10</div>
+                    <div style="font-size: 0.88rem; color: #cbd5e1; font-weight: 600;">Parking Available</div>
                 </div>
-                <div class="value fs-2 fw-bold text-light mb-1" id="parkingAvailable">-</div>
-                <div class="label text-secondary fs-7">Parking Available</div>
             </div>
-        </div>
 
-        <!-- Active Alerts -->
-        <div class="col-sm-6 col-xl-3">
-            <div class="glass-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);">
+            <!-- ACTIVE ALERTS -->
+            <div class="col-md-6 col-lg-3">
+                <div class="data-card custom-gradient-card">
+                    <div class="summary-icon-box" style="background: rgba(248, 113, 113, 0.2); color: #f87171;">
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
-                </div>
-                <div class="value fs-2 fw-bold text-light mb-1" id="alertsCount">-</div>
-                <div class="label text-secondary fs-7">Active Alerts</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- GRAFIK SENSOR & PARKIR -->
-    <div class="row g-4 mb-4">
-        <!-- Grafik Line Sensor -->
-        <div class="col-lg-8">
-            <div class="glass-card h-100">
-                <h6 class="text-light fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.95rem;">
-                    <i class="fas fa-chart-line text-primary"></i> REALTIME SENSOR DATA
-                </h6>
-                <div style="position: relative; height: 220px;">
-                    <canvas id="mainChart"></canvas>
+                    <div class="value-stat-large" style="color: #34d399;">0</div>
+                    <div style="font-size: 0.88rem; color: #cbd5e1; font-weight: 600;">Active Alerts</div>
                 </div>
             </div>
         </div>
 
-        <!-- Grafik Pie Parkir -->
-        <div class="col-lg-4">
-            <div class="glass-card h-100">
-                <h6 class="text-light fw-bold mb-3 d-flex align-items-center gap-2" style="font-size: 0.95rem;">
-                    <i class="fas fa-chart-pie text-success"></i> PARKING OCCUPANCY
-                </h6>
-                <div style="position: relative; height: 220px;" class="d-flex align-items-center justify-content-center">
-                    <canvas id="parkingChart"></canvas>
+        <!-- 2. BARIS GRAFIK SENSOR DATA & PARKING OCCUPANCY (IKUT BERUBAH TEMA) -->
+        <div class="row g-4">
+            <!-- REALTIME SENSOR DATA CHART -->
+            <div class="col-lg-8">
+                <div class="data-card custom-gradient-card">
+                    <h6 class="text-white mb-3" style="font-size: 1rem; font-weight: 700;">
+                        <i class="fas fa-chart-line text-info me-2"></i> REALTIME SENSOR DATA
+                    </h6>
+                    <div style="position: relative; height: 310px; width: 100%;">
+                        <canvas id="overviewSensorChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARKING OCCUPANCY CHART -->
+            <div class="col-lg-4">
+                <div class="data-card custom-gradient-card">
+                    <h6 class="text-white mb-3" style="font-size: 1rem; font-weight: 700;">
+                        <i class="fas fa-chart-pie text-warning me-2"></i> PARKING OCCUPANCY
+                    </h6>
+                    <div style="position: relative; height: 310px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                        <canvas id="parkingOccupancyChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- RIWAYAT PERINGATAN SUHU EKSTREM -->
-    <div class="glass-card">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-            <h6 class="m-0 text-light fw-bold d-flex align-items-center gap-2" style="font-size: 0.95rem;">
-                <i class="fas fa-bell text-warning"></i> RIWAYAT PERINGATAN SUHU EKSTREM
-            </h6>
-            <button onclick="clearGlobalTempHistory()" class="btn btn-sm btn-outline-danger rounded-3 fs-7 py-1 px-3">
-                <i class="fas fa-trash-alt me-1"></i> Clear History
-            </button>
-        </div>
-        
-        <div id="globalTempHistory" style="max-height: 250px; overflow-y: auto;">
-            <div class="text-center text-secondary py-4 fs-7">
-                <i class="fas fa-inbox fs-3 mb-2 d-block opacity-50"></i>
-                Belum ada riwayat peringatan suhu
-            </div>
-        </div>
     </div>
 </div>
 @endsection
@@ -185,174 +251,90 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // ===== MAIN CHART CONFIG =====
-    const mainCtx = document.getElementById('mainChart').getContext('2d');
-    const mainChart = new Chart(mainCtx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [
-                { 
-                    label: 'Lamp Brightness', 
-                    data: [], 
-                    borderColor: '#38bdf8', 
-                    backgroundColor: 'rgba(56, 189, 248, 0.1)', 
-                    fill: true, 
-                    tension: 0.4, 
-                    borderWidth: 2,
-                    pointBackgroundColor: '#38bdf8'
-                },
-                { 
-                    label: 'Suhu (°C)', 
-                    data: [], 
-                    borderColor: '#f87171', 
-                    backgroundColor: 'rgba(248, 113, 113, 0.1)', 
-                    fill: true, 
-                    tension: 0.4, 
-                    borderWidth: 2,
-                    pointBackgroundColor: '#f87171'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { 
-                legend: { 
-                    labels: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans', size: 11 } } 
-                } 
-            },
-            scales: {
-                x: { 
-                    ticks: { color: '#64748b', maxTicksLimit: 8, font: { size: 10 } }, 
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' } 
-                },
-                y: { 
-                    ticks: { color: '#64748b', font: { size: 10 } }, 
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
-                    min: 0, 
-                    max: 100 
-                }
-            }
-        }
-    });
-
-    // ===== PARKING CHART CONFIG =====
-    const parkCtx = document.getElementById('parkingChart').getContext('2d');
-    const parkingChart = new Chart(parkCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Occupied', 'Available'],
-            datasets: [{
-                data: [25, 25],
-                backgroundColor: ['#f87171', '#10b981'],
-                borderWidth: 0,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { 
-                legend: { 
-                    position: 'bottom', 
-                    labels: { color: '#94a3b8', padding: 15, font: { family: 'Plus Jakarta Sans', size: 11 } } 
-                } 
-            }
-        }
-    });
-
-    // ===== FETCH DASHBOARD DATA =====
-    function fetchDashboardData() {
-        fetch('/api/dashboard')
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('activeLamps').textContent = data.active_lamps || '-';
-                document.getElementById('parkingAvailable').textContent = data.parking_available || '-';
-                document.getElementById('alertsCount').textContent = data.alerts || '0';
-
-                // Update Suhu & Kelembapan
-                if (data.temperature !== undefined) {
-                    document.getElementById('dashTemp').textContent = data.temperature + '°C';
-                }
-                if (data.humidity !== undefined) {
-                    document.getElementById('dashHum').textContent = 'Kelembapan: ' + data.humidity + '%';
-                }
-
-                // Update Grafik Realtime
-                const now = new Date().toLocaleTimeString('id-ID');
-                mainChart.data.labels.push(now);
-                mainChart.data.datasets[0].data.push(data.avg_lamp_brightness || 0);
-                mainChart.data.datasets[1].data.push(data.temperature || 0);
-
-                if (mainChart.data.labels.length > 15) {
-                    mainChart.data.labels.shift();
-                    mainChart.data.datasets.forEach(ds => ds.data.shift());
-                }
-                mainChart.update('none');
-
-                fetch('/api/parking')
-                    .then(r => r.json())
-                    .then(parking => {
-                        parkingChart.data.datasets[0].data = [parking.occupied, parking.available];
-                        parkingChart.update();
-                    });
-            })
-            .catch(err => console.log('Fetch error:', err));
-    }
-
-    // ===== RENDER RIWAYAT SUHU =====
-    function renderGlobalTempHistory() {
-        const container = document.getElementById('globalTempHistory');
-        if (!container) return;
-
-        let history = JSON.parse(localStorage.getItem('globalTempAlertHistory') || '[]');
-
-        if (history.length === 0) {
-            container.innerHTML = `
-                <div class="text-center text-secondary py-4 fs-7">
-                    <i class="fas fa-inbox fs-3 mb-2 d-block opacity-50"></i>
-                    Belum ada riwayat peringatan suhu
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = history.map(entry => `
-            <div class="d-flex align-items-center gap-3 p-3 border-bottom border-secondary border-opacity-10">
-                <div class="stat-icon" style="width: 38px; height: 38px; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); font-size: 0.9rem;">
-                    <i class="fas fa-temperature-high"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <div class="fw-semibold text-light fs-7 mb-1">
-                        ${entry.title || 'Peringatan Suhu Ekstrem'}
-                    </div>
-                    <div class="text-secondary fs-8">
-                        ${entry.desc || 'Suhu lingkungan melebihi batas aman'}
-                    </div>
-                </div>
-                <div class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-25 px-2 py-1 fs-8 fw-bold">
-                    ${entry.temp}°C
-                </div>
-                <div class="text-secondary fs-8 text-nowrap">
-                    ${entry.time}
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function clearGlobalTempHistory() {
-        if (confirm('Yakin ingin menghapus semua riwayat peringatan suhu?')) {
-            localStorage.removeItem('globalTempAlertHistory');
-            renderGlobalTempHistory();
+    // FUNGSI MENGUBAH TEMA WARNA SELURUH CARDS OVERVIEW
+    function changeAllCardsTheme(themeName) {
+        const wrapper = document.getElementById('dashboardThemeWrapper');
+        if (wrapper) {
+            wrapper.setAttribute('data-theme', themeName);
+            localStorage.setItem('globalDashboardCardTheme', themeName);
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        renderGlobalTempHistory();
+        const savedTheme = localStorage.getItem('globalDashboardCardTheme') || 'gradient-tricolor';
+        const selector = document.getElementById('allThemeSelector');
+        if (selector) selector.value = savedTheme;
+        changeAllCardsTheme(savedTheme);
     });
 
-    setInterval(fetchDashboardData, 15000);
-    fetchDashboardData();
+    // 1. CHART REALTIME SENSOR DATA
+    const sensorCtx = document.getElementById('overviewSensorChart')?.getContext('2d');
+    let overviewSensorChart;
+
+    if (sensorCtx) {
+        overviewSensorChart = new Chart(sensorCtx, {
+            type: 'line',
+            data: {
+                labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30'],
+                datasets: [
+                    {
+                        label: 'Lamp Brightness (%)',
+                        data: [60, 60, 60, 60, 60, 60, 60],
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Suhu (°C)',
+                        data: [29, 29.5, 30, 29.8, 29.5, 29.2, 29.5],
+                        borderColor: '#f87171',
+                        backgroundColor: 'rgba(248, 113, 113, 0.15)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#f1f5f9' } } },
+                scales: {
+                    x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
+                    y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, min: 0, max: 100 }
+                }
+            }
+        });
+    }
+
+    // 2. CHART PARKING OCCUPANCY (DONUT CHART)
+    const parkingCtx = document.getElementById('parkingOccupancyChart')?.getContext('2d');
+    if (parkingCtx) {
+        new Chart(parkingCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Tersedia', 'Terisi'],
+                datasets: [{
+                    data: [3, 1],
+                    backgroundColor: ['#10b981', '#f87171'],
+                    borderColor: 'transparent',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#f1f5f9', padding: 20 }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    }
 </script>
 @endpush

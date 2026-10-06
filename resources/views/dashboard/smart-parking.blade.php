@@ -12,13 +12,6 @@
         --accent-color: #fde047;
     }
 
-    #dashboardThemeWrapper[data-theme="dark-glass"] {
-        --card-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        --card-border: rgba(56, 189, 248, 0.3);
-        --card-glow: rgba(14, 165, 233, 0.25);
-        --accent-color: #38bdf8;
-    }
-
     #dashboardThemeWrapper[data-theme="cyberpunk-purple"] {
         --card-bg-gradient: linear-gradient(135deg, #2e1065 0%, #581c87 50%, #831843 100%);
         --card-border: rgba(236, 72, 153, 0.4);
@@ -49,13 +42,13 @@
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
         background-image: 
-            radial-gradient(5px 5px at 50px 60px, #3b82f6, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 150px 180px, #0dcaf0, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 50px 60px, #e9f500, rgba(255,255,255,0)),
+            radial-gradient(6px 6px at 150px 180px, #a300fa, rgba(255,255,255,0)),
             radial-gradient(4px 4px at 280px 80px, #2563eb, rgba(255,255,255,0)),
             radial-gradient(5px 5px at 390px 220px, #0284c7, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 520px 110px, #3b82f6, rgba(255,255,255,0)),
-            radial-gradient(4px 4px at 640px 250px, #0dcaf0, rgba(255,255,255,0)),
-            radial-gradient(5px 5px at 780px 90px, #2563eb, rgba(255,255,255,0));
+            radial-gradient(6px 6px at 520px 110px, #00fbff, rgba(255,255,255,0)),
+            radial-gradient(4px 4px at 640px 250px, #fcb000, rgba(255,255,255,0)),
+            radial-gradient(5px 5px at 780px 90px, #aefd02, rgba(255,255,255,0));
         background-repeat: repeat;
         background-size: 850px 350px;
         animation: lightTwinkleBig 3.5s ease-in-out infinite alternate;
@@ -180,7 +173,6 @@
                 </label>
                 <select id="allThemeSelector" class="theme-select-box" onchange="changeAllCardsTheme(this.value)">
                     <option value="gradient-tricolor">🌈 Biru-Kuning-Hijau</option>
-                    <option value="dark-glass">💎 Dark Glassmorphism</option>
                     <option value="cyberpunk-purple">🔮 Cyberpunk Purple</option>
                     <option value="emerald-nature">🍃 Emerald Nature</option>
                 </select>
