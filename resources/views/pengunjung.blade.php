@@ -2323,7 +2323,7 @@
             <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
             <li class="nav-item"><a class="nav-link" href="#kawasan">Kawasan</a></li>
             <li class="nav-item"><a class="nav-link" href="#layanan">Layanan</a></li>
-            <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
+            <li class="nav-item"><a class="nav-link" href="#kontak">Lokasi</a></li>
             <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
               <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="returnToWelcome()">Keluar Situs</button>
             </li>
@@ -2493,40 +2493,19 @@
     <section class="py-5 bg-white" id="kontak" style="padding-top: 100px; padding-bottom: 100px;">
       <div class="container">
         <div class="text-center mx-auto mb-5" style="max-width: 700px;">
-          <h6 class="text-primary fw-bold text-uppercase">Hubungi Kami</h6>
-          <h2 class="fw-bold">Lokasi & Kontak Pengelola</h2>
-          <p class="text-muted">Silakan hubungi kami untuk informasi lebih lanjut seputar sistem pemantauan atau kunjungi lokasi perangkat.</p>
+          <h6 class="text-primary fw-bold text-uppercase">Lokasi Perangkat</h6>
+          <h2 class="fw-bold">Peta Lokasi Pemantauan</h2>
+          <p class="text-muted">Silakan kunjungi lokasi perangkat pemantauan kami pada peta di bawah ini.</p>
         </div>
-        <div class="row g-4 align-items-stretch">
-          <!-- Kolom Kiri: Formulir Kontak -->
-          <div class="col-lg-6">
-            <div class="p-4 bg-light rounded-4 border h-100 shadow-sm">
-              <h4 class="fw-bold mb-4">Kirim Pesan</h4>
-              <form>
-                <div class="mb-3">
-                  <label class="form-label small fw-semibold">Nama Lengkap</label>
-                  <input type="text" class="form-control" placeholder="Masukkan nama Anda">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label small fw-semibold">Email / Kontak</label>
-                  <input type="text" class="form-control" placeholder="email@domain.com">
-                </div>
-                <div class="mb-3">
-                  <label class="form-label small fw-semibold">Pesan / Masukan</label>
-                  <textarea class="form-control" rows="4" placeholder="Tuliskan pesan Anda..."></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Kirim Pesan</button>
-              </form>
-            </div>
-          </div>
-          <!-- Kolom Kanan: Google Maps Alun-Alun Tegal -->
-          <div class="col-lg-6">
-            <div class="h-100 rounded-4 overflow-hidden shadow-sm border" style="min-height: 400px;">
+        <div class="row justify-content-center">
+          <!-- Kolom Peta Google Maps -->
+          <div class="col-lg-10">
+            <div class="h-100 rounded-4 overflow-hidden shadow-sm border" style="min-height: 450px;">
               <iframe 
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.9169623192087!2d109.134267!3d-6.868175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6fb86b3e6e7371%3A0xf0523456789!2sAlun-Alun%20Kota%20Tegal!5e0!3m2!1sid!2sid!4v1650000000000!5m2!1sid!2sid" 
                 width="100%" 
                 height="100%" 
-                style="border:0;" 
+                style="border:0; min-height: 450px;" 
                 allowfullscreen="" 
                 loading="lazy" 
                 referrerpolicy="no-referrer-when-downgrade">
@@ -2536,7 +2515,7 @@
         </div>
       </div>
     </section>
-
+    
     <!-- FOOTER -->
     <footer class="text-white py-4" style="background-color: #0b1329;">
       <div class="container text-center">
