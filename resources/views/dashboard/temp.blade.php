@@ -1,52 +1,32 @@
 @extends('layouts.app')
-@section('title', 'Smart Temperature & Environment Center')
+
+@section('title', 'Smart Temperature Monitoring - Tegal EcoSense')
 
 @push('styles')
 <style>
-    /* ===== DEFINISI TEMA WARNA UNTUK SEMUA CARD ENVIRONMENT ===== */
-    #dashboardThemeWrapper[data-theme="gradient-tricolor"] {
-        --card-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 35%, #854d0e 70%, #065f46 100%);
-        --card-border: rgba(251, 191, 36, 0.4);
-        --card-glow: rgba(16, 185, 129, 0.25);
-        --accent-color: #fde047;
-    }
-
-    #dashboardThemeWrapper[data-theme="dark-glass"] {
-        --card-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        --card-border: rgba(56, 189, 248, 0.3);
-        --card-glow: rgba(14, 165, 233, 0.25);
-        --accent-color: #38bdf8;
-    }
-
-    #dashboardThemeWrapper[data-theme="cyberpunk-purple"] {
-        --card-bg-gradient: linear-gradient(135deg, #2e1065 0%, #581c87 50%, #831843 100%);
-        --card-border: rgba(236, 72, 153, 0.4);
-        --card-glow: rgba(236, 72, 153, 0.3);
-        --accent-color: #f472b6;
-    }
-
-    #dashboardThemeWrapper[data-theme="emerald-nature"] {
-        --card-bg-gradient: linear-gradient(135deg, #064e3b 0%, #047857 50%, #0f172a 100%);
-        --card-border: rgba(52, 211, 153, 0.4);
-        --card-glow: rgba(16, 185, 129, 0.3);
-        --accent-color: #6ee7b7;
-    }
-
-    /* ===== BACKGROUND TITIK KELAP-KELIP BESAR ===== */
+    /* ==========================================================================
+       1. BACKGROUND TITIK KELIP-KELIP BESAR DI SELURUH LAYAR (TWINKLE BG)
+       ========================================================================== */
     .twinkle-bg-wrapper-light {
         position: relative;
-        background: #f8fafc;
-        min-height: calc(100vh - 100px);
-        padding: 25px;
-        border-radius: 20px;
+        width: 100%;
+        min-height: 100vh;
         overflow: hidden;
-        border: 1px solid #e2e8f0;
+    }
+
+    .twinkle-bg-wrapper-light::before,
+    .twinkle-bg-wrapper-light::after {
+        content: "";
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        pointer-events: none;
+        z-index: 0;
     }
 
     .twinkle-bg-wrapper-light::before {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
         background-image: 
             radial-gradient(5px 5px at 50px 60px, #e9f500, rgba(255,255,255,0)),
             radial-gradient(6px 6px at 150px 180px, #a300fa, rgba(255,255,255,0)),
@@ -57,16 +37,13 @@
             radial-gradient(5px 5px at 780px 90px, #aefd02, rgba(255,255,255,0));
         background-repeat: repeat;
         background-size: 850px 350px;
-        animation: lightTwinkleBig 3.5s ease-in-out infinite alternate;
-        pointer-events: none;
+        /* Disesuaikan nama animasinya ke floatTwinkle1 */
+        animation: floatTwinkle1 3.5s ease-in-out infinite alternate;
         opacity: 0.75;
-        z-index: 1;
     }
 
+    /* Lapisan 2: Titik Kelip-Kelip Silang */
     .twinkle-bg-wrapper-light::after {
-        content: "";
-        position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
         background-image: 
             radial-gradient(6px 6px at 90px 220px, #0dcaf0, rgba(255,255,255,0)),
             radial-gradient(4px 4px at 210px 100px, #f59e0b, rgba(255,255,255,0)),
@@ -76,188 +53,161 @@
             radial-gradient(4px 4px at 710px 130px, #3b82f6, rgba(255,255,255,0));
         background-repeat: repeat;
         background-size: 800px 380px;
-        animation: lightTwinkleBigAlt 5s ease-in-out infinite alternate;
-        pointer-events: none;
+        /* Disesuaikan nama animasinya ke floatTwinkle2 */
+        animation: floatTwinkle2 5s ease-in-out infinite alternate;
         opacity: 0.65;
+    }
+
+
+    @keyframes floatTwinkle1 {
+        0% { opacity: 0.3; transform: scale(0.95) translateY(0px); }
+        50% { opacity: 0.9; transform: scale(1.15) translateY(-10px); }
+        100% { opacity: 0.4; transform: scale(1) translateY(5px); }
+    }
+
+    @keyframes floatTwinkle2 {
+        0% { opacity: 0.8; transform: scale(1.05) translateY(0px); }
+        50% { opacity: 0.3; transform: scale(0.9) translateY(12px); }
+        100% { opacity: 0.9; transform: scale(1.18) translateY(-8px); }
+    }
+
+    .dashboard-relative-content {
+        position: relative;
         z-index: 1;
     }
 
-    .smart-temp-content {
-        position: relative;
-        z-index: 2;
+    /* ==========================================================================
+       2. TAMPILAN ELEMENT FRAMELESS (TANPA BINGKAI/KOTAK)
+       ========================================================================== */
+    .frameless-item {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 10px;
     }
 
-    @keyframes lightTwinkleBig {
-        0% { opacity: 0.2; transform: scale(0.9) translateY(0px); filter: blur(0px); }
-        50% { opacity: 0.85; filter: blur(1px); }
-        100% { opacity: 0.3; transform: scale(1.1) translateY(-4px); filter: blur(0px); }
+    .glow-yellow-text {
+        color: #ca8a04;
+        text-shadow: 0 0 12px rgba(234, 179, 8, 0.35);
     }
 
-    @keyframes lightTwinkleBigAlt {
-        0% { opacity: 0.7; transform: scale(1.05); }
-        50% { opacity: 0.2; }
-        100% { opacity: 0.8; transform: scale(0.95); }
+    .glow-blue-text {
+        color: #0284c7;
+        text-shadow: 0 0 12px rgba(2, 132, 199, 0.35);
     }
 
-    /* ===== STYLE CARDS DENGAN GRADASAN SESUAI TEMA ===== */
-    .custom-gradient-card {
-        background: var(--card-bg-gradient, linear-gradient(135deg, #0f172a 0%, #1e3a8a 35%, #854d0e 70%, #065f46 100%)) !important;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--card-border, rgba(251, 191, 36, 0.3)) !important;
-        border-radius: 18px !important;
-        padding: 22px !important;
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-        transition: all 0.4s ease;
-        color: #ffffff;
-        position: relative;
-        overflow: hidden;
+    .glow-red-text {
+        color: #e11d48;
+        text-shadow: 0 0 12px rgba(225, 29, 72, 0.35);
     }
 
-    .custom-gradient-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 16px 35px var(--card-glow, rgba(0,0,0,0.3)) !important;
-    }
-
-    /* DROPDOWN SELECTOR TEMA */
-    .theme-select-box {
-        background: #ffffff;
-        border: 1px solid #cbd5e1;
-        color: #0f172a;
-        font-weight: 700;
-        font-size: 0.85rem;
-        border-radius: 10px;
-        padding: 6px 12px;
-        cursor: pointer;
-        outline: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-
-    .value-display-huge {
-        font-size: 2.8rem;
-        font-weight: 800;
-        line-height: 1;
-    }
-
-    /* ===== STYLE GRADASI KHUSUS PROGRESS BAR (SESUAI GAMBAR DUA) ===== */
-    .gradient-progress-bar-temp {
-        background: linear-gradient(90deg, #3b82f6 0%, #f59e0b 50%, #10b981 100%) !important;
-        height: 100%;
-        border-radius: 20px;
-        transition: width 0.5s ease;
-    }
-
-    .gradient-progress-bar-hum {
-        background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 50%, #10b981 100%) !important;
-        height: 100%;
-        border-radius: 20px;
-        transition: width 0.5s ease;
+    .summary-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
     }
 </style>
 @endpush
 
 @section('content')
-<div class="twinkle-bg-wrapper-light" id="dashboardThemeWrapper" data-theme="gradient-tricolor">
-    <div class="smart-temp-content">
-
-        <!-- DROPDOWN PEMILIH TEMA WARNA UNTUK SEMUA CARD -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="m-0 font-weight-bold text-dark">
-                <i class="fas fa-thermometer-half text-warning me-2"></i> Environment Monitoring
-            </h5>
+<div class="twinkle-bg-wrapper-light">
+    <div class="dashboard-relative-content">
+        
+        <!-- HEADER MODULE SMART TEMP -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div class="d-flex align-items-center gap-2">
-                <label for="allThemeSelector" class="form-label m-0 font-weight-bold text-secondary" style="font-size: 0.85rem;">
-                    <i class="fas fa-palette text-primary me-1"></i> Pilih Tema Semua Cards:
-                </label>
-                <select id="allThemeSelector" class="theme-select-box" onchange="changeAllCardsTheme(this.value)">
-                    <option value="gradient-tricolor">🌈 Biru-Kuning-Hijau</option>
-                    <option value="cyberpunk-purple">🔮 Cyberpunk Purple</option>
-                    <option value="emerald-nature">🍃 Emerald Nature</option>
-                </select>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2" style="border-radius: 20px; font-weight: 700;">
+                    <i class="fas fa-thermometer-half me-1"></i> Climate Sensors
+                </span>
+                <h4 class="m-0 font-weight-bold text-dark ms-2" style="font-weight: 800;">Temperature & Humidity Monitoring</h4>
             </div>
         </div>
 
-        <!-- 1. NOTIFIKASI SUHU PANAS CARD -->
-        <div class="data-card custom-gradient-card mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h6 class="text-white mb-1" style="font-size: 1rem; font-weight: 700;">
-                        <i class="fas fa-bell-slash me-2 text-warning"></i> Notifikasi Suhu Panas
-                    </h6>
-                    <small style="color: #cbd5e1;">Aktifkan/mute notifikasi peringatan jika suhu lingkungan melebihi batas aman (35°C)</small>
-                </div>
-                <div class="form-check form-switch m-0">
-                    <input class="form-check-input" type="checkbox" id="notifSwitch" checked style="width: 3em; height: 1.5em; cursor: pointer;">
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. CARD SUHU UDARA & KELEMBAPAN NISBI DENGAN PROGRESS BAR GRADASI -->
-        <div class="row g-4 mb-4">
-            <!-- SUHU UDARA -->
-            <div class="col-md-6">
-                <div class="data-card custom-gradient-card" id="tempMainCard">
+        <!-- 4 KARTU STATISTIK SUHU & KELEMBAPAN (FRAMELESS) -->
+        <div class="row g-4 mb-5">
+            <!-- SUHU SAAT INI -->
+            <div class="col-md-6 col-lg-3">
+                <div class="frameless-item">
                     <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div style="background: rgba(239, 68, 68, 0.2); color: #fca5a5; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;" class="mb-3">
-                                <i class="fas fa-temperature-high"></i>
-                            </div>
-                            <h6 style="font-size: 1rem; font-weight: 700;" class="mb-1">Suhu Udara (Temperature)</h6>
-                            <small style="color: #cbd5e1;"><i class="fas fa-map-marker-alt me-1"></i> Sensor Lingkungan Kota Tegal</small>
-                            
-                            <div style="margin: 20px 0 10px 0;">
-                                <span id="currentTemp" class="value-display-huge" style="color: #f87171;">29.5 °C</span>
-                            </div>
-                            <div style="font-size: 0.85rem; color: #cbd5e1;">Derajat Celsius</div>
+                        <div class="summary-icon-wrapper" style="background: rgba(225, 29, 72, 0.15); color: #e11d48;">
+                            <i class="fas fa-temperature-high"></i>
                         </div>
-                        <span class="badge bg-success px-3 py-2" style="border-radius: 20px; font-weight: 600;">
-                            <i class="fas fa-check-circle me-1"></i> Normal
-                        </span>
+                        <span class="badge bg-danger fw-bold" style="font-size:0.75rem; border-radius:10px;">DHT22</span>
                     </div>
-
-                    <!-- BAR SUHU DENGAN GRADASI SAMA SEPERTI GAMBAR DUA -->
-                    <div style="margin-top: 18px; height: 10px; background: rgba(0, 0, 0, 0.3); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-                        <div id="tempBarFill" class="gradient-progress-bar-temp" style="width: 60%;"></div>
+                    <div id="currentTemp" class="glow-red-text" style="font-size: 2.6rem; font-weight: 800; line-height: 1; margin: 16px 0 6px 0;">
+                        29.5 <span style="font-size: 1.4rem;">°C</span>
                     </div>
+                    <div class="text-dark fw-bold" style="font-size: 0.9rem;">Suhu Lingkungan</div>
                 </div>
             </div>
 
-            <!-- KELEMBAPAN NISBI -->
-            <div class="col-md-6">
-                <div class="data-card custom-gradient-card">
+            <!-- KELEMBAPAN SAAT INI -->
+            <div class="col-md-6 col-lg-3">
+                <div class="frameless-item">
                     <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div style="background: rgba(59, 130, 246, 0.2); color: #93c5fd; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;" class="mb-3">
-                                <i class="fas fa-tint"></i>
-                            </div>
-                            <h6 style="font-size: 1rem; font-weight: 700;" class="mb-1">Kelembapan Nisbi (Humidity)</h6>
-                            <small style="color: #cbd5e1;"><i class="fas fa-map-marker-alt me-1"></i> Sensor Lingkungan Kota Tegal</small>
-                            
-                            <div style="margin: 20px 0 10px 0;">
-                                <span id="currentHumidity" class="value-display-huge" style="color: #60a5fa;">65.0 %</span>
-                            </div>
-                            <div style="font-size: 0.85rem; color: #cbd5e1;">Persentase RH</div>
+                        <div class="summary-icon-wrapper" style="background: rgba(2, 132, 199, 0.15); color: #0284c7;">
+                            <i class="fas fa-water"></i>
                         </div>
-                        <span class="badge bg-info text-dark px-3 py-2" style="border-radius: 20px; font-weight: 600;">
-                            <i class="fas fa-tint me-1"></i> Ideal
-                        </span>
+                        <span class="badge bg-info text-dark fw-bold" style="font-size:0.75rem; border-radius:10px;">Humidity</span>
                     </div>
+                    <div id="currentHumidity" class="glow-blue-text" style="font-size: 2.6rem; font-weight: 800; line-height: 1; margin: 16px 0 6px 0;">
+                        65 <span style="font-size: 1.4rem;">%</span>
+                    </div>
+                    <div class="text-dark fw-bold" style="font-size: 0.9rem;">Kelembapan Udara</div>
+                </div>
+            </div>
 
-                    <!-- BAR KELEMBAPAN DENGAN GRADASI SAMA SEPERTI GAMBAR DUA -->
-                    <div style="margin-top: 18px; height: 10px; background: rgba(0, 0, 0, 0.3); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
-                        <div id="humidityBarFill" class="gradient-progress-bar-hum" style="width: 65%;"></div>
+            <!-- RATA-RATA SUHU -->
+            <div class="col-md-6 col-lg-3">
+                <div class="frameless-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="summary-icon-wrapper" style="background: rgba(234, 179, 8, 0.15); color: #ca8a04;">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <span class="badge bg-warning text-dark fw-bold" style="font-size:0.75rem; border-radius:10px;">Hari Ini</span>
                     </div>
+                    <div class="glow-yellow-text" style="font-size: 2.6rem; font-weight: 800; line-height: 1; margin: 16px 0 6px 0;">
+                        28.8 <span style="font-size: 1.4rem;">°C</span>
+                    </div>
+                    <div class="text-dark fw-bold" style="font-size: 0.9rem;">Rata-rata Suhu Harian</div>
+                </div>
+            </div>
+
+            <!-- STATUS IKLIM -->
+            <div class="col-md-6 col-lg-3">
+                <div class="frameless-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="summary-icon-wrapper" style="background: rgba(16, 185, 129, 0.15); color: #059669;">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <span class="badge bg-success fw-bold" style="font-size:0.75rem; border-radius:10px;">Kenyamanan</span>
+                    </div>
+                    <div style="font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin: 16px 0 6px 0; color: #10b981;">
+                        Normal
+                    </div>
+                    <div class="text-dark fw-bold" style="font-size: 0.9rem;">Status Kondisi Ruang</div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. REALTIME TEMPERATURE & HUMIDITY CHART CARD -->
-        <div class="data-card custom-gradient-card">
-            <h6 class="text-white mb-3" style="font-size: 1rem; font-weight: 700;">
-                <i class="fas fa-chart-line text-info me-2"></i> REALTIME TEMPERATURE & HUMIDITY CHART
-            </h6>
-            <div style="position: relative; height: 320px; width: 100%;">
-                <canvas id="tempHumidityChart"></canvas>
+        <!-- GRAFIK HISTORIS SUHU & KELEMBAPAN (FRAMELESS) -->
+        <div class="row g-4">
+            <div class="col-lg-12">
+                <div class="frameless-item">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-dark m-0" style="font-size: 1rem; font-weight: 800;">
+                            <i class="fas fa-chart-area text-danger me-2"></i> RIWAYAT SUHU & KELEMBAPAN (REALTIME)
+                        </h6>
+                        <small class="text-muted"><i class="fas fa-sync-alt fa-spin me-1"></i> Update tiap 5 detik</small>
+                    </div>
+                    <div style="position: relative; height: 360px; width: 100%;">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -267,81 +217,71 @@
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-    // FUNGSI MENGUBAH TEMA WARNA SELURUH CARDS
-    function changeAllCardsTheme(themeName) {
-        const wrapper = document.getElementById('dashboardThemeWrapper');
-        if (wrapper) {
-            wrapper.setAttribute('data-theme', themeName);
-            localStorage.setItem('globalDashboardCardTheme', themeName);
+    function fetchTempSensorData() {
+        fetch('/api/environment')
+            .then(res => res.json())
+            .then(data => {
+                if (data.temperature) {
+                    const tempElem = document.getElementById('currentTemp');
+                    if (tempElem) tempElem.innerHTML = `${data.temperature} <span style="font-size: 1.4rem;">°C</span>`;
+                }
+                if (data.humidity) {
+                    const humElem = document.getElementById('currentHumidity');
+                    if (humElem) humElem.innerHTML = `${data.humidity} <span style="font-size: 1.4rem;">%</span>`;
+                }
+            })
+            .catch(err => console.log('Error fetching temp env data:', err));
+    }
+
+    function renderTempChart() {
+        const tempCanvas = document.getElementById('temperatureChart');
+        if (tempCanvas) {
+            new Chart(tempCanvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00'],
+                    datasets: [
+                        { 
+                            label: 'Suhu (°C)', 
+                            data: [27.2, 28.0, 28.5, 29.5, 31.0, 30.5, 29.8], 
+                            borderColor: '#e11d48', 
+                            backgroundColor: 'rgba(225, 29, 72, 0.15)', 
+                            fill: true, 
+                            tension: 0.4,
+                            borderWidth: 3
+                        },
+                        { 
+                            label: 'Kelembapan (%)', 
+                            data: [72, 70, 68, 65, 60, 62, 65], 
+                            borderColor: '#0284c7', 
+                            backgroundColor: 'rgba(2, 132, 199, 0.15)', 
+                            fill: true, 
+                            tension: 0.4,
+                            borderWidth: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#1e293b', font: { weight: 'bold' } } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(0,0,0,0.05)' } }
+                    }
+                }
+            });
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('globalDashboardCardTheme') || 'gradient-tricolor';
-        const selector = document.getElementById('allThemeSelector');
-        if (selector) selector.value = savedTheme;
-        changeAllCardsTheme(savedTheme);
+        fetchTempSensorData();
+        setInterval(fetchTempSensorData, 5000);
+        renderTempChart();
     });
-
-    // CHART INITIALIZATION
-    const tempCtx = document.getElementById('tempHumidityChart')?.getContext('2d');
-    let tempHumidityChart;
-
-    if (tempCtx) {
-        tempHumidityChart = new Chart(tempCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [
-                    { label: 'Suhu (°C)', data: [], borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.15)', tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y' },
-                    { label: 'Kelembapan (%)', data: [], borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,0.15)', tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y1' }
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#f1f5f9' } } },
-                scales: {
-                    x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(255, 255, 255, 0.1)' } },
-                    y: { type: 'linear', position: 'left', ticks: { color: '#f87171' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, min: 0, max: 60 },
-                    y1: { type: 'linear', position: 'right', ticks: { color: '#60a5fa' }, grid: { drawOnChartArea: false }, min: 0, max: 100 }
-                }
-            }
-        });
-    }
-
-    function updateTempUI(temp, humidity) {
-        const tempVal = parseFloat(temp);
-        const humVal = parseFloat(humidity);
-        const now = new Date().toLocaleTimeString('id-ID');
-
-        if (document.getElementById('currentTemp')) document.getElementById('currentTemp').textContent = tempVal.toFixed(1) + ' °C';
-        if (document.getElementById('currentHumidity')) document.getElementById('currentHumidity').textContent = humVal.toFixed(1) + ' %';
-
-        if (document.getElementById('tempBarFill')) document.getElementById('tempBarFill').style.width = Math.min((tempVal / 50) * 100, 100) + '%';
-        if (document.getElementById('humidityBarFill')) document.getElementById('humidityBarFill').style.width = humVal + '%';
-
-        if (tempHumidityChart) {
-            if (tempHumidityChart.data.labels.length >= 25) {
-                tempHumidityChart.data.labels.shift();
-                tempHumidityChart.data.datasets[0].data.shift();
-                tempHumidityChart.data.datasets[1].data.shift();
-            }
-            tempHumidityChart.data.labels.push(now);
-            tempHumidityChart.data.datasets[0].data.push(tempVal);
-            tempHumidityChart.data.datasets[1].data.push(humVal);
-            tempHumidityChart.update('none');
-        }
-    }
-
-    function fetchTempData() {
-        fetch('/api/environment')
-            .then(r => r.json())
-            .then(data => updateTempUI(data.temperature ?? 29.5, data.humidity ?? 65.0))
-            .catch(() => updateTempUI((28 + Math.random() * 3).toFixed(1), (60 + Math.random() * 8).toFixed(1)));
-    }
-
-    setInterval(fetchTempData, 5000);
-    fetchTempData();
 </script>
 @endpush
