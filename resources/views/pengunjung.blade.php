@@ -121,6 +121,39 @@
       color: #e2e8f0;
       margin-bottom: 25px;
     }
+
+/* --- ANIMASI TEKS LANDING SCREEN --- */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Class animasi bertahap (Staggered Animation) */
+    .animate-top-info {
+      animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .animate-title {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+    }
+
+    .animate-desc {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+    }
+
+    .animate-btn {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards;
+    }
+
     .btn-masuk-situs {
       background-color: #dc3545;
       color: white;
@@ -2247,8 +2280,8 @@
   <section id="welcomeSection">
     <div class="bg-overlay"></div>
     
-    <!-- Bagian Atas Tengah: 4 Logo (Menyamping Tanpa Kotak) & Aksara Jawa Putih -->
-    <div class="welcome-top-center">
+    <!-- Bagian Atas Tengah (Ditambah class animate-top-info) -->
+    <div class="welcome-top-center animate-top-info">
       <div class="welcome-logos-row">
         <div class="logo-badge-item" title="Kota Tegal">
           <img src="image/Kota-Tegal-logo.png" alt="Kota Tegal">
@@ -2267,17 +2300,18 @@
       <div class="welcome-jawa-script">ꦱ꧀ꦩꦂꦠ꧀ꦱꦶꦠꦶꦏꦺꦴꦠꦠꦼꦒꦭ꧀</div>
     </div>
 
-    <!-- Bagian Tengah -->
+    <!-- Bagian Tengah (Judul, Deskripsi, Tombol ditambahi class animasi) -->
     <div class="welcome-center">
-      <h1 class="welcome-title">SMARTCITY KOTA TEGAL</h1>
-      <p class="welcome-desc">Observatorium iklim mikro publik dan pemantauan kualitas udara real-time di kawasan Alun-Alun Kota Tegal berbasis sensor IoT ESP32 untuk mewujudkan kota cerdas yang berkelanjutan dan nyaman bagi warga.</p>
+      <h1 class="welcome-title animate-title">SMARTCITY KOTA TEGAL</h1>
       
-      <div class="d-flex align-items-center">
+      <p class="welcome-desc animate-desc">Observatorium iklim mikro publik dan pemantauan kualitas udara real-time di kawasan Alun-Alun Kota Tegal berbasis sensor IoT ESP32 untuk mewujudkan kota cerdas yang berkelanjutan dan nyaman bagi warga.</p>
+      
+      <div class="d-flex align-items-center animate-btn">
         <button class="btn-masuk-situs" onclick="enterWebsite()">MASUK SITUS &rarr;</button>
       </div>
     </div>
 
-    <!-- Bagian Kanan Bawah: Preview Carousel Cards -->
+    <!-- Mini Preview Cards di kanan bawah -->
     <div class="welcome-preview-container d-none d-md-flex">
       <div class="preview-nav-arrow" onclick="prevPreview()"><i class="fa-solid fa-chevron-left"></i></div>
       
@@ -2303,7 +2337,6 @@
       <div class="preview-nav-arrow" onclick="nextPreview()"><i class="fa-solid fa-chevron-right"></i></div>
     </div>
   </section>
-
 
   <!-- ISI WEBSITE UTAMA (DASHBOARD) -->
   <div id="mainWebsiteContent">
