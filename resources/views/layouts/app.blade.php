@@ -16,299 +16,264 @@
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
     <style>
-        :root {
-            --sidebar-width: 260px;
-            --bg-dark: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-sidebar: #0d1321;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --accent-yellow: #f59e0b;
-            --accent-red: #ef4444;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
+    :root {
+        --sidebar-width: 260px;
+        --bg-dark: #f8fafc;
+        --bg-card: #ffffff;
+        --bg-sidebar: #0b132b; /* Warna Navy Gelap */
+        --accent-blue: #2563eb;
+        --accent-green: #10b981;
+        --accent-yellow: #f59e0b;
+        --accent-red: #ef4444;
+        --text-primary: #0f172a;
+        --text-secondary: #64748b;
+        --border-color: #1e293b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #ffffff !important; /* Diubah menjadi putih polos */
+        color: var(--text-primary);
+        min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR NAVY ===== */
+    .sidebar {
+        position: fixed;
+        top: 0; left: 0;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: var(--bg-sidebar) !important;
+        border-right: 1px solid #1e293b;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+        overflow: hidden;
+    }
+
+    .sidebar-header {
+        padding: 22px 20px;
+        border-bottom: 1px solid #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .sidebar-header h4 {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin: 0;
+    }
+
+    .sidebar-header span {
+        color: #94a3b8;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    /* KHUSUS NAVIGASI MENU YANG BISA DI-SCROLL */
+    .sidebar-nav {
+        padding: 15px 0;
+        flex: 1;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch; 
+    }
+
+    .nav-label {
+        padding: 12px 20px 6px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #94a3b8;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 20px;
+        color: #ffffff !important; /* Tulisan menu berwarna putih */
+        text-decoration: none;
+        transition: all 0.2s;
+        margin: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+
+    .nav-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff !important;
+    }
+
+    .nav-item.active {
+        background: var(--accent-blue);
+        color: #ffffff !important;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .nav-item i {
+        width: 24px;
+        margin-right: 12px;
+        font-size: 1rem;
+        text-align: center;
+        color: #ffffff !important; /* Ikon menu berwarna putih */
+    }
+
+    /* ===== ESP CONNECT DI SIDEBAR ===== */
+    .esp-connect {
+        padding: 15px 20px;
+        border-top: 1px solid #1e293b;
+        background: rgba(0,0,0,0.15);
+        flex-shrink: 0;
+        margin: 12px;
+        border-radius: 10px;
+    }
+
+    .esp-status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.85rem;
+    }
+
+    .esp-dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: var(--accent-green);
+        animation: pulse 2s infinite;
+    }
+
+    .esp-dot.offline { background: var(--accent-red); animation: none; }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    .esp-info { color: #94a3b8; font-size: 0.75rem; }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+        margin-left: var(--sidebar-width);
+        min-height: 100vh;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 30px;
+        background: #ffffff !important;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .top-bar h5 { font-weight: 600; }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 35px; height: 35px;
+        border-radius: 50%;
+        background: var(--accent-blue);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    .content-area { padding: 25px 30px; padding-bottom: 60px; }
+
+    /* ===== CARDS & TOGGLE ===== */
+    .stat-card, .data-card {
+        background: var(--bg-card);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    /* ===== MQTT STATUS BAR ===== */
+    .mqtt-bar {
+        position: fixed;
+        bottom: 0;
+        left: var(--sidebar-width);
+        right: 0;
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        padding: 8px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        z-index: 999;
+    }
+
+    .mqtt-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+    }
+
+    .mqtt-dot.connected { background: var(--accent-green); }
+    .mqtt-dot.disconnected { background: var(--accent-red); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .sidebar { 
+            transform: translateX(-100%); 
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        /* ===== SMOOTH SCROLL NATIVE CSS ===== */
-        html {
-            scroll-behavior: smooth;
+        .sidebar.show { transform: translateX(0); }
+        
+        .main-content { 
+            margin-left: 0; 
+            width: 100%;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 24px 24px;
-            color: var(--text-primary);
-            min-height: 100vh;
+        
+        .mqtt-bar { 
+            left: 0; 
+            padding: 8px 15px;
         }
+    }
 
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            position: fixed;
-            top: 0; left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: #ffffff !important;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            transition: transform 0.3s ease;
-            overflow: hidden; /* Dibuat fixed/diam agar tidak bentrok dengan nav */
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .sidebar-header h4 {
-            color: var(--accent-blue);
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .sidebar-header small {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-        }
-
-        /* KHUSUS NAVIGASI MENU YANG BISA DI-SCROLL */
-        .sidebar-nav {
-            padding: 15px 0;
-            flex: 1;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch; 
-        }
-
-        .nav-label {
-            padding: 10px 20px 5px;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            letter-spacing: 1px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-            margin: 2px 0;
-        }
-
-        .nav-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--text-primary);
-        }
-
-        .nav-item.active {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--accent-blue);
-            border-left-color: var(--accent-blue);
-        }
-
-        .nav-item i {
-            width: 24px;
-            margin-right: 12px;
-            font-size: 1rem;
-            text-align: center;
-        }
-
-        /* ===== ESP CONNECT ===== */
-        .esp-connect {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            background: rgba(0,0,0,0.02);
-            flex-shrink: 0;
-        }
-
-        .esp-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-        }
-
-        .esp-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: var(--accent-green);
-            animation: pulse 2s infinite;
-        }
-
-        .esp-dot.offline { background: var(--accent-red); animation: none; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        .esp-info { color: var(--text-secondary); font-size: 0.7rem; }
-
-        /* ===== MAIN CONTENT ===== */
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background: #ffffff !important;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .top-bar h5 { font-weight: 600; }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 35px; height: 35px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
-
-        .content-area { padding: 25px 30px; padding-bottom: 60px; }
-
-        /* ===== CARDS & TOGGLE ===== */
-        .stat-card, .data-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 50px; height: 26px;
-            cursor: pointer;
-        }
-
-        .toggle-switch input { display: none; }
-
-        .toggle-slider {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: #cbd5e1;
-            border-radius: 26px;
-            transition: 0.3s;
-        }
-
-        .toggle-slider:before {
-            content: "";
-            position: absolute;
-            height: 20px; width: 20px;
-            left: 3px; bottom: 3px;
-            background: white;
-            border-radius: 50%;
-            transition: 0.3s;
-        }
-
-        .toggle-switch input:checked + .toggle-slider {
-            background: var(--accent-blue);
-        }
-
-        .toggle-switch input:checked + .toggle-slider:before {
-            transform: translateX(24px);
-        }
-
-        /* ===== MQTT STATUS BAR ===== */
-        .mqtt-bar {
-            position: fixed;
-            bottom: 0;
-            left: var(--sidebar-width);
-            right: 0;
-            background: #ffffff;
-            border-top: 1px solid var(--border-color);
-            padding: 8px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            z-index: 999;
-        }
-
-        .mqtt-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 6px;
-        }
-
-        .mqtt-dot.connected { background: var(--accent-green); }
-        .mqtt-dot.disconnected { background: var(--accent-red); }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .sidebar { 
-                transform: translateX(-100%); 
-                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
-            }
-            .sidebar.show { transform: translateX(0); }
-            
-            .main-content { 
-                margin-left: 0; 
-                width: 100%;
-            }
-            
-            .mqtt-bar { 
-                left: 0; 
-                padding: 8px 15px;
-                font-size: 0.7rem;
-            }
-            
-            .content-area { 
-                padding: 15px; 
-                padding-bottom: 70px;
-            }
-            
-            .top-bar { padding: 15px; }
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(2px);
-        }
-        .sidebar-overlay.show {
-            display: block;
-            opacity: 1;
-        }
-    </style>
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+</style>
     @stack('styles')
 </head>
 
@@ -319,7 +284,7 @@
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h4><i class="fas fa-city"></i> SmartCity</h4>
+            <h4><i class="fas fa-city"></i> SiSity</h4>
             <small>Control & Monitoring</small>
         </div>
 
@@ -347,7 +312,7 @@
             <a href="{{ route('smart-parking') }}" 
                class="nav-item {{ request()->routeIs('smart-parking') ? 'active' : '' }}"
                @if(request()->routeIs('smart-parking')) onclick="event.preventDefault();" @endif>
-                <i class="fas fa-car"></i> Smart Parking (beta)
+                <i class="fas fa-car"></i> Smart Parking
             </a>
 
             <div class="nav-label">Control</div>
