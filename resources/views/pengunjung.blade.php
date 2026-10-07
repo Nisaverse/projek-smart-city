@@ -2345,7 +2345,7 @@
     <nav class="navbar navbar-expand-lg navbar-custom fixed-top bg-white shadow-sm" style="z-index: 1050;">
       <div class="container">
         <a class="navbar-brand fw-bold text-primary" href="#beranda">
-          <i class="fa-solid fa-city me-2"></i> TEGAL ECOSENSE
+          <i class="fa-solid fa-city me-2"></i> SMARTCITY KOTA TEGAL
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
