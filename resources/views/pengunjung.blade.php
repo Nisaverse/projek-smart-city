@@ -235,6 +235,7 @@
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Layer Utama */
   .hero-observatorium {
     min-height: 100vh;
     background-image: linear-gradient(rgba(11, 19, 41, 0.5), rgba(11, 19, 41, 0.85)), url('image/alun-alun-tegal.jpeg');
@@ -2272,6 +2273,77 @@
       .welcome-logos-row .logo-badge-item:nth-child(4) img { width:39px !important; height:43px !important; }
     }
 
+/* --- ANIMASI ELEGANT & RESPONSIVE BERANDA --- */
+    
+    /* Animation Keyframes Desktop */
+    @keyframes heroBadgeGrow {
+      from { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+      to { opacity: 1; transform: scale(1); filter: blur(0); }
+    }
+
+    @keyframes heroSlideLeft {
+      from { opacity: 0; transform: translateX(-35px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes heroSlideRight {
+      from { opacity: 0; transform: translateX(35px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Class Animasi */
+    .hero-pro-badge { animation: heroBadgeGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .hero-pro-title { opacity: 0; animation: heroSlideLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; }
+    .hero-pro-desc { opacity: 0; animation: heroSlideRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards; }
+    .hero-pro-btn { opacity: 0; animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+
+
+    /* --- FIX KHUSUS MOBILE (HP) AGAR TAMPILAN TIDAK GESER / RUSAK --- */
+    @media (max-width: 767.98px) {
+      /* Mencegah layar HP bisa digeser ke kanan-kiri */
+      html, body, #welcomeSection, #mainWebsiteContent, .hero-observatorium {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+      }
+
+      /* Di HP, ganti slide samping menjadi Fade-In lurus dari bawah agar tidak merusak layout */
+      @keyframes heroSlideLeft {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes heroSlideRight {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Memaksa area logo welcome screen tetap di tengah atas */
+      .welcome-top-center {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        left: 0 !important;
+        right: 0 !important;
+      }
+
+      .welcome-logos-row {
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 8px !important;
+      }
+
+      .logo-badge-item {
+        width: 36px !important;
+        height: 36px !important;
+        flex: 0 0 36px !important;
+      }
+    }
 </style>
 </head>
 <body>
@@ -2370,18 +2442,25 @@
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-8">
-            <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 rounded-pill mb-3 fw-semibold">
-              <i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i> Smart City Alun-Alun Kota Tegal
-            </span>
-            <h1 class="display-4 fw-bold mb-3">Membangun Kota Pintar untuk Masa Depan</h1>
-            <p class="lead text-light opacity-75 mb-4" style="max-width: 650px;">
-              Platform inovatif pemantauan iklim mikro publik, kualitas udara real-time, dan tata kelola kawasan berbasis sensor IoT di pusat Kota Tegal.
-            </p>
-            <div class="d-flex gap-3">
-              <a href="#layanan" class="btn btn-primary px-4 py-3 rounded-pill fw-semibold shadow-sm">Jelajahi Layanan <i class="fa-solid fa-arrow-right ms-2"></i></a>
-              <a href="#tentang" class="btn btn-outline-light px-4 py-3 rounded-pill fw-semibold">Pelajari Lebih Lanjut</a>
-            </div>
-          </div>
+  <!-- Badge status dengan animasi Soft Zoom -->
+  <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 rounded-pill mb-3 fw-semibold hero-pro-badge">
+    <i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i> Smart City Alun-Alun Kota Tegal
+  </span>
+  
+  <!-- Judul dengan animasi Slide-In dari Kiri -->
+  <h1 class="display-4 fw-bold mb-3 hero-pro-title">Membangun Kota Pintar untuk Masa Depan</h1>
+  
+  <!-- Deskripsi dengan animasi Slide-In dari Kanan -->
+  <p class="lead text-light opacity-75 mb-4 hero-pro-desc" style="max-width: 650px;">
+    Platform inovatif pemantauan iklim mikro publik, kualitas udara real-time, dan tata kelola kawasan berbasis sensor IoT di pusat Kota Tegal.
+  </p>
+
+  <!-- Tombol dengan animasi Fade-Up -->
+  <div class="d-flex gap-3 hero-pro-btn">
+    <a href="#layanan" class="btn btn-primary px-4 py-3 rounded-pill fw-semibold shadow-sm">Jelajahi Layanan <i class="fa-solid fa-arrow-right ms-2"></i></a>
+    <a href="#tentang" class="btn btn-outline-light px-4 py-3 rounded-pill fw-semibold">Pelajari Lebih Lanjut</a>
+  </div>
+</div>
         </div>
       </div>
     </section>
@@ -2560,6 +2639,28 @@
 
   <!-- SCRIPT KONTROL & AUTO-SLIDE BACKGROUND -->
   <script>
+
+    function triggerHeroAnimation() {
+  const badge = document.querySelector('.hero-pro-badge');
+  const title = document.querySelector('.hero-pro-title');
+  const desc = document.querySelector('.hero-pro-desc');
+  const btn = document.querySelector('.hero-pro-btn');
+
+  const elements = [badge, title, desc, btn];
+
+  // Hapus class animasi sejenak
+  elements.forEach(el => {
+    if (el) el.style.animation = 'none';
+  });
+
+  // Re-flow DOM (memaksa browser mereset animasi)
+  void document.body.offsetHeight;
+
+  // Kembalikan animasi seperti semula
+  elements.forEach(el => {
+    if (el) el.style.animation = '';
+  });
+}
     // =========================================================
     // NAVBAR ACTIVE MENU OTOMATIS
     // Menandai menu sesuai section yang sedang dilihat/dibuka.
@@ -2588,6 +2689,11 @@
 
           event.preventDefault();
           setActiveMenu(targetId);
+
+          // Jika menu yang diklik adalah beranda, jalankan ulang animasinya
+    if (targetId === 'beranda') {
+      triggerHeroAnimation();
+    }
 
           // Pada HP, navbar sedang terbuka ketika menu dipilih.
           // Jika tinggi navbar diukur sebelum dropdown ditutup, offset menjadi
@@ -2671,24 +2777,26 @@
       heroDashboard.style.backgroundImage = newBgUrl;
     }, 3000);
 
-
-
     // Fungsi Transisi Masuk ke Situs Utama
     function enterWebsite() {
-      const mainContent = document.getElementById('mainWebsiteContent');
-      
-      welcomeSec.style.opacity = '0';
-      welcomeSec.style.transform = 'scale(1.05)';
-      
-      setTimeout(() => {
-        welcomeSec.style.display = 'none';
-        mainContent.style.display = 'block';
-        setTimeout(() => {
-          mainContent.style.opacity = '1';
-          window.scrollTo(0, 0);
-        }, 50);
-      }, 500);
-    }
+  const mainContent = document.getElementById('mainWebsiteContent');
+  
+  welcomeSec.style.opacity = '0';
+  welcomeSec.style.transform = 'scale(1.04)';
+  
+  setTimeout(() => {
+    welcomeSec.style.display = 'none';
+    mainContent.style.display = 'block';
+    
+    // Jalankan animasi teks beranda
+    triggerHeroAnimation();
+
+    setTimeout(() => {
+      mainContent.style.opacity = '1';
+      window.scrollTo(0, 0);
+    }, 50);
+  }, 500);
+}
 
     // Fungsi Kembali ke Halaman Depan
     function returnToWelcome() {
@@ -2928,6 +3036,26 @@
         chatBody.scrollTop = chatBody.scrollHeight;
       }, 350);
     }
+
+    //ANIMASI MASUK SITUS DAN BERANDA
+    function triggerHeroAnimation() {
+  const badge = document.querySelector('.hero-pro-badge');
+  const title = document.querySelector('.hero-pro-title');
+  const desc = document.querySelector('.hero-pro-desc');
+  const btn = document.querySelector('.hero-pro-btn');
+
+  const elements = [badge, title, desc, btn];
+
+  elements.forEach(el => {
+    if (el) el.style.animation = 'none';
+  });
+
+  void document.body.offsetHeight; // Reset animasi browser
+
+  elements.forEach(el => {
+    if (el) el.style.animation = '';
+  });
+}
   </script>
 </body>
 </html>
