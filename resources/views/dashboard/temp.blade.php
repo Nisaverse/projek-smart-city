@@ -1,116 +1,5 @@
 @extends('layouts.app')
-<<<<<<< HEAD
 
-@section('title', 'Smart Temperature Monitoring - Tegal EcoSense')
-
-@push('styles')
-<style>
-    /* ==========================================================================
-       1. BACKGROUND TITIK KELIP-KELIP BESAR DI SELURUH LAYAR (TWINKLE BG)
-       ========================================================================== */
-    .twinkle-bg-wrapper-light {
-        position: relative;
-        width: 100%;
-        min-height: 100vh;
-        overflow: hidden;
-    }
-
-    .twinkle-bg-wrapper-light::before,
-    .twinkle-bg-wrapper-light::after {
-        content: "";
-        position: absolute;
-        top: -10%;
-        left: -10%;
-        width: 120%;
-        height: 120%;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .twinkle-bg-wrapper-light::before {
-        background-image: 
-            radial-gradient(5px 5px at 50px 60px, #e9f500, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 150px 180px, #a300fa, rgba(255,255,255,0)),
-            radial-gradient(4px 4px at 280px 80px, #2563eb, rgba(255,255,255,0)),
-            radial-gradient(5px 5px at 390px 220px, #0284c7, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 520px 110px, #00fbff, rgba(255,255,255,0)),
-            radial-gradient(4px 4px at 640px 250px, #fcb000, rgba(255,255,255,0)),
-            radial-gradient(5px 5px at 780px 90px, #aefd02, rgba(255,255,255,0));
-        background-repeat: repeat;
-        background-size: 850px 350px;
-        /* Disesuaikan nama animasinya ke floatTwinkle1 */
-        animation: floatTwinkle1 3.5s ease-in-out infinite alternate;
-        opacity: 0.75;
-    }
-
-    /* Lapisan 2: Titik Kelip-Kelip Silang */
-    .twinkle-bg-wrapper-light::after {
-        background-image: 
-            radial-gradient(6px 6px at 90px 220px, #0dcaf0, rgba(255,255,255,0)),
-            radial-gradient(4px 4px at 210px 100px, #f59e0b, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 330px 290px, #3b82f6, rgba(255,255,255,0)),
-            radial-gradient(5px 5px at 460px 50px, #0dcaf0, rgba(255,255,255,0)),
-            radial-gradient(6px 6px at 590px 210px, #f59e0b, rgba(255,255,255,0)),
-            radial-gradient(4px 4px at 710px 130px, #3b82f6, rgba(255,255,255,0));
-        background-repeat: repeat;
-        background-size: 800px 380px;
-        /* Disesuaikan nama animasinya ke floatTwinkle2 */
-        animation: floatTwinkle2 5s ease-in-out infinite alternate;
-        opacity: 0.65;
-    }
-
-
-    @keyframes floatTwinkle1 {
-        0% { opacity: 0.3; transform: scale(0.95) translateY(0px); }
-        50% { opacity: 0.9; transform: scale(1.15) translateY(-10px); }
-        100% { opacity: 0.4; transform: scale(1) translateY(5px); }
-    }
-
-    @keyframes floatTwinkle2 {
-        0% { opacity: 0.8; transform: scale(1.05) translateY(0px); }
-        50% { opacity: 0.3; transform: scale(0.9) translateY(12px); }
-        100% { opacity: 0.9; transform: scale(1.18) translateY(-8px); }
-    }
-
-    .dashboard-relative-content {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* ==========================================================================
-       2. TAMPILAN ELEMENT FRAMELESS (TANPA BINGKAI/KOTAK)
-       ========================================================================== */
-    .frameless-item {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 10px;
-    }
-
-    .glow-yellow-text {
-        color: #ca8a04;
-        text-shadow: 0 0 12px rgba(234, 179, 8, 0.35);
-    }
-
-    .glow-blue-text {
-        color: #0284c7;
-        text-shadow: 0 0 12px rgba(2, 132, 199, 0.35);
-    }
-
-    .glow-red-text {
-        color: #e11d48;
-        text-shadow: 0 0 12px rgba(225, 29, 72, 0.35);
-    }
-
-    .summary-icon-wrapper {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.3rem;
-=======
 @section('title', 'Smart Temperature')
 @section('page-title', 'Smart Temperature Monitoring')
 
@@ -178,13 +67,12 @@
         justify-content: space-between;
         align-items: center;
         font-size: 0.85rem;
->>>>>>> 931034a0237139a8dd18b2daebfce7c14b442c46
+
     }
 </style>
 @endpush
 
 @section('content')
-<<<<<<< HEAD
 <div class="twinkle-bg-wrapper-light">
     <div class="dashboard-relative-content">
         
@@ -211,7 +99,6 @@
                     </div>
                     <div id="currentTemp" class="glow-red-text" style="font-size: 2.6rem; font-weight: 800; line-height: 1; margin: 16px 0 6px 0;">
                         29.5 <span style="font-size: 1.4rem;">°C</span>
-=======
 <div class="container-fluid px-0">
 
     <!-- BARIS 1: KARTU RINGKASAN STATISTIK -->
@@ -244,11 +131,9 @@
                     </div>
                     <div style="width: 45px; height: 45px; background: rgba(37, 99, 235, 0.1); color: #2563eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
                         <i class="fas fa-tint"></i>
->>>>>>> 931034a0237139a8dd18b2daebfce7c14b442c46
                     </div>
                     <div class="text-dark fw-bold" style="font-size: 0.9rem;">Suhu Lingkungan</div>
                 </div>
-<<<<<<< HEAD
             </div>
 
             <!-- KELEMBAPAN SAAT INI -->
@@ -296,15 +181,12 @@
                         Normal
                     </div>
                     <div class="text-dark fw-bold" style="font-size: 0.9rem;">Status Kondisi Ruang</div>
-=======
                 <div class="mt-3">
                     <span class="badge bg-secondary text-white px-3 py-1 rounded-pill" style="font-size: 0.75rem;" id="humStatusBadge">Belum Ada Data</span>
->>>>>>> 931034a0237139a8dd18b2daebfce7c14b442c46
                 </div>
             </div>
         </div>
 
-<<<<<<< HEAD
         <!-- GRAFIK HISTORIS SUHU & KELEMBAPAN (FRAMELESS) -->
         <div class="row g-4">
             <div class="col-lg-12">
@@ -319,7 +201,7 @@
                         <canvas id="temperatureChart"></canvas>
                     </div>
                 </div>
-=======
+
         <!-- Status Kondisi & IoT -->
         <div class="col-md-4">
             <div class="stat-top-card">
@@ -336,7 +218,6 @@
                     <span class="spinner-grow spinner-grow-sm text-warning me-1" id="iotDot"></span>
                     <span class="text-warning fw-semibold">Belum ada data masuk dari database</span>
                 </div>
->>>>>>> 931034a0237139a8dd18b2daebfce7c14b442c46
             </div>
         </div>
     </div>
@@ -400,7 +281,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-<<<<<<< HEAD
     function fetchTempSensorData() {
         fetch('/api/environment')
             .then(res => res.json())
@@ -464,7 +344,6 @@
         fetchTempSensorData();
         setInterval(fetchTempSensorData, 5000);
         renderTempChart();
-=======
     // INISIALISASI CHART.JS
     const tempCtx = document.getElementById('tempChart')?.getContext('2d');
     let tempChart;
@@ -562,7 +441,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         checkDatabaseTempData();
         setInterval(checkDatabaseTempData, 5000); // Mengecek pembaruan data setiap 5 detik
->>>>>>> 931034a0237139a8dd18b2daebfce7c14b442c46
     });
-</script>
+    </script>
 @endpush
