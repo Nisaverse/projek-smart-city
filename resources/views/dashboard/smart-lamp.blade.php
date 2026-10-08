@@ -4,41 +4,27 @@
 
 @push('styles')
 <style>
-    /* ===== KARTU UTAMA & STATISTIK: WARNA ABU-ABU SILVER INDUSTRIAL ===== */
+    /* ===== KARTU UTAMA & STATISTIK: SILVER METALIK POLOS TANPA BERCAK CAHAYA ===== */
     .lamp-white-card,
     .stat-top-card {
-        background: linear-gradient(135deg, #c5c9d0 0%, #b8bcc2 50%, #d0d4dc 100%) !important;
-        background-color: #b8bcc2 !important;
-        border: 1px solid #8e949d !important;
+        background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #e2e8f0 100%) !important;
+        background-color: #94a3b8 !important;
+        border: 1px solid #64748b !important;
         border-radius: 16px !important;
         padding: 24px !important;
-        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -2px 5px rgba(100, 116, 139, 0.3) !important;
+        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -2px 5px rgba(71, 85, 105, 0.3) !important;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
 
-    /* Khusus kartu atas disamakan tingginya */
+    /* Khusus kartu atas disamakan tingginya & rata */
     .stat-top-card {
         padding: 20px !important;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-    }
-
-    /* Efek Kilau Cahaya Logam di sudut kartu */
-    .lamp-white-card::after,
-    .stat-top-card::after {
-        content: '';
-        position: absolute;
-        top: -50px;
-        right: -50px;
-        width: 160px;
-        height: 160px;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(184, 188, 194, 0.5) 40%, rgba(255, 255, 255, 0) 70%);
-        border-radius: 50%;
-        pointer-events: none;
     }
 
     .lamp-white-card:hover,
@@ -50,7 +36,7 @@
     /* ===== KONTAINER LAYOUT SEKTOR LAMPU ===== */
     .lamp-layout-container {
         background: #ffffff !important;
-        border: 1px solid #94a3b8;
+        border: 1px solid #cbd5e1;
         border-radius: 12px;
         padding: 20px;
     }
@@ -68,7 +54,7 @@
     }
 
     .sector-box:hover {
-        border-color: #64748b;
+        border-color: #94a3b8;
         box-shadow: 0 6px 18px rgba(11, 19, 43, 0.08);
     }
 
@@ -91,7 +77,7 @@
     .custom-progress {
         height: 6px;
         border-radius: 10px;
-        background: #8e949d;
+        background: #64748b;
         overflow: hidden;
     }
 </style>
@@ -100,7 +86,7 @@
 @section('content')
 <div class="container-fluid px-0">
 
-    <!-- BARIS 1: KARTU RINGKASAN STATISTIK (SILVER INDUSTRIAL) -->
+    <!-- BARIS 1: KARTU RINGKASAN STATISTIK -->
     <div class="row g-4 mb-4 align-items-stretch">
         <div class="col-md-3">
             <div class="stat-top-card">
@@ -127,7 +113,7 @@
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Mati (Off)</div>
-                    <h3 class="fw-bold mb-2 text-dark" id="cardInactiveCount">0</h3>
+                    <h3 class="fw-bold mb-2 text-secondary" id="cardInactiveCount">0</h3>
                     <div class="custom-progress mb-2">
                         <div id="barInactive" class="progress-bar bg-secondary" style="width: 0%;"></div>
                     </div>
