@@ -10,6 +10,48 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
+
+    <style>
+  /* Efek Glassmorphism & Modern Shadow untuk Seluruh Kartu */
+  .card, .zone-card, .hero-observatorium {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1rem !important;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Efek Melayang & Glow saat kursor menyentuh kartu */
+  .card:hover, .zone-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(13, 110, 253, 0.25) !important;
+    border-color: rgba(13, 110, 253, 0.5) !important;
+  }
+
+  /* Tombol Utama Lebih Elegan */
+  .btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.6);
+  }
+
+  /* Tombol Chat Mengambang (Floating Chat Button) */
+  .chat-float-btn {
+    box-shadow: 0 10px 25px rgba(0, 136, 204, 0.5) !important;
+    animation: bounce-slow 3s infinite;
+  }
+
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+
     body {
       background-color: #0b1329;
       color: #1a1a1a;
@@ -33,7 +75,7 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 30px 60px;
-      background-image: linear-gradient(rgba(11, 19, 41, 0.45), rgba(11, 19, 41, 0.88)), url('image/alun-alun-tegal.jpeg');
+      background-image: linear-gradient(rgba(11, 19, 41, 0.15), rgba(11, 19, 41, 0.40)), url('image/alun-alun-tegal.jpeg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -2291,9 +2333,6 @@
         </div>
         <div class="logo-badge-item" title="Smart City">
           <img src="image/logo_smartcity_rm.png" alt="Smart City">
-        </div>
-        <div class="logo-badge-item" title="UHN">
-          <img src="image/uhn logo.png" alt="UHN">
         </div>
       </div>
       <div class="welcome-gov-title">Pemerintah Kota Tegal</div>
