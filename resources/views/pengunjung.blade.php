@@ -2841,7 +2841,6 @@
             const collapse = bootstrap.Collapse.getInstance(navbarCollapse) ||
                              new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
-            // Tutup dropdown terlebih dahulu, baru hitung posisi section.
             collapse.hide();
 
             navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
@@ -2849,23 +2848,37 @@
             scrollToTarget();
           }
 
-          // Tetap ubah hash tanpa memicu scroll bawaan browser.
           history.pushState(null, '', '#' + targetId);
         });
       });
 
-      // Saat pengguna scroll, menu mengikuti section yang sedang terlihat & aktifkan animasi Tentang.
+      // Flag penanda status animasi Beranda
+      let isBerandaAnimated = true;
+
+      // Saat pengguna scroll, menu mengikuti section & animasi Beranda/Tentang aktif otomatis.
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const targetId = entry.target.id;
           if (entry.isIntersecting) {
             setActiveMenu(targetId);
+
             if (targetId === 'tentang') {
               entry.target.classList.add('tentang-active');
+            }
+
+            if (targetId === 'beranda') {
+              if (!isBerandaAnimated) {
+                triggerHeroAnimation();
+                isBerandaAnimated = true;
+              }
             }
           } else {
             if (targetId === 'tentang') {
               entry.target.classList.remove('tentang-active');
+            }
+
+            if (targetId === 'beranda') {
+              isBerandaAnimated = false;
             }
           }
         });
@@ -2876,6 +2889,16 @@
       });
 
       sections.forEach(section => observer.observe(section));
+
+      // Pengaman jika pengguna scroll penuh ke paling atas layar
+      window.addEventListener('scroll', function() {
+        if (window.pageYOffset < 50) {
+          if (!isBerandaAnimated) {
+            triggerHeroAnimation();
+            isBerandaAnimated = true;
+          }
+        }
+      });
 
       // Jika halaman dibuka langsung dengan URL #tentang, #kawasan, dst.
       if (window.location.hash) {
@@ -2904,8 +2927,8 @@
       currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
       let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.45), rgba(11, 19, 41, 0.88)), url('${backgroundImages[currentBgIndex]}')`;
       
-      welcomeSec.style.backgroundImage = newBgUrl;
-      heroDashboard.style.backgroundImage = newBgUrl;
+      if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
+      if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
     }, 3000);
 
     // Fungsi Transisi Masuk ke Situs Utama
@@ -2974,7 +2997,7 @@
       switchZone(currentZoneIndex);
     }
 
-  </script>
+</script>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
