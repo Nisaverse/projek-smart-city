@@ -141,12 +141,13 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 30px 60px;
-      background-image: linear-gradient(rgba(11, 19, 41, 0.15), rgba(11, 19, 41, 0.40)), url('image/alun-alun-tegal.jpeg');
+      padding: 15px 40px 25px 40px; /* Padding atas dikurangi jadi 15px, bawah 25px */
+      background-image: linear-gradient(rgba(11, 19, 41, 0.45), rgba(11, 19, 41, 0.88)), url('image/alun-alun-tegal.jpeg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       transition: opacity 0.6s ease, transform 0.6s ease, background-image 1s ease-in-out;
+      box-sizing: border-box;
     }
 
     .bg-overlay {
@@ -213,22 +214,25 @@
     }
 
     /* Bagian Tengah */
+    /* 2. Rapatkan jarak judul & deskripsi di bagian tengah */
     .welcome-center {
-      max-width: 650px;
-      margin-top: 40px;
+      max-width: 600px;
+      margin-top: 5px; /* Margin dipangkas dari 15px/40px jadi 5px saja */
     }
+
     .welcome-title {
-      font-size: 3.5rem;
+      font-size: 3rem; /* Dikurangi sedikit dari 3.5rem agar memakan ruang lebih sedikit */
       font-weight: 800;
       letter-spacing: 2px;
-      margin-bottom: 15px;
+      margin-bottom: 10px; /* Margin bawah dikurangi */
       line-height: 1.1;
     }
+
     .welcome-desc {
-      font-size: 0.95rem;
-      line-height: 1.6;
+      font-size: 0.88rem;
+      line-height: 1.5;
       color: #e2e8f0;
-      margin-bottom: 25px;
+      margin-bottom: 18px; /* Margin bawah dikurangi */
     }
 
 /* --- ANIMASI TEKS LANDING SCREEN --- */
@@ -285,13 +289,15 @@
     /* Mini Preview Cards di kanan bawah */
     .welcome-preview-container {
       display: flex;
-      gap: 15px;
+      gap: 12px;
       align-items: center;
       justify-content: flex-end;
+      margin-bottom: 10px; /* Mengangkat seluruh kontainer kartu ke atas */
     }
+
     .preview-card {
-      width: 140px;
-      height: 180px;
+      width: 105px;  /* Disesuaikan jadi 105px */
+      height: 110px; /* Dipangkas dari 125px/180px jadi 110px agar terangkat penuh */
       border-radius: 12px;
       overflow: hidden;
       position: relative;
@@ -311,17 +317,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 10px;
-      font-size: 0.75rem;
+      padding: 8px;
+      font-size: 0.70rem;
       font-weight: 600;
     }
     .preview-nav-arrow {
-      width: 40px;
-      height: 40px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,0.4);
       background: rgba(0,0,0,0.3);
@@ -2502,7 +2508,7 @@
       <div class="preview-card" style="background-image: url('image/balaikota.jpeg');">
         <div class="preview-card-overlay">
           <span>Balaikota</span>
-          <span class="text-warning">33.5&deg;C</span>,
+          <span class="text-warning">33.5&deg;C</span>
         </div>
       </div>
       <div class="preview-card" style="background-image: url('image/masjid agung.jpeg');">
