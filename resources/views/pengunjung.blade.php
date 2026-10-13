@@ -10,8 +10,75 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
+/* ==========================================================
+      /* --- ANIMASI SECTION TENTANG (SLIDE DARI KIRI & KANAN) --- */
+    @keyframes tentangSlideLeft {
+      0% {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
 
-    <style>
+    @keyframes tentangSlideRight {
+      0% {
+        opacity: 0;
+        transform: translateX(60px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Kondisi awal sebelum animasi aktif (tersembunyi) */
+    .tentang-pro-left, .tentang-pro-right {
+      opacity: 0;
+    }
+
+    /* Kelas saat animasi dijalankan dengan durasi pas (1.1 detik) */
+    .tentang-active .tentang-pro-left {
+      animation: tentangSlideLeft 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .tentang-active .tentang-pro-right {
+      animation: tentangSlideRight 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+
+    /* Efek Interaktif Hover pada Kartu Visi-Misi di Sebelah Kanan */
+    #tentang .p-5 {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+      border: 1px solid rgba(13, 110, 253, 0.15) !important;
+      box-shadow: 0 10px 30px rgba(11, 19, 41, 0.05);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #tentang .p-5:hover {
+      transform: translateY(-6px);
+      border-color: rgba(13, 110, 253, 0.4) !important;
+      box-shadow: 0 20px 40px rgba(13, 110, 253, 0.12) !important;
+    }
+
+    /* Efek Interaktif Item *Checklist* di Bawah */
+    #tentang .col-sm-6 > div {
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    #tentang .col-sm-6 > div:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      transform: translateX(4px);
+    }
+
   /* Efek Glassmorphism & Modern Shadow untuk Seluruh Kartu */
   .card, .zone-card, .hero-observatorium {
     backdrop-filter: blur(10px);
@@ -2504,11 +2571,12 @@
       </div>
     </section>
 
-    <!-- 2. TENTANG SMART CITY -->
+  <!-- 2. TENTANG SMART CITY -->
     <section class="py-5 bg-white" id="tentang" style="padding-top: 100px; padding-bottom: 100px;">
       <div class="container">
         <div class="row align-items-center g-5">
-          <div class="col-lg-6">
+          <!-- Kolom Kiri -->
+          <div class="col-lg-6 tentang-pro-left">
             <h6 class="text-primary fw-bold text-uppercase tracking-wide">Tentang Inisiatif</h6>
             <h2 class="fw-bold mb-4">Apa itu Smart City & Tegal Ecosense?</h2>
             <p class="text-muted mb-3">Smart City adalah kerangka kerja penataan kota yang menggunakan teknologi informasi dan perangkat Internet of Things (IoT) untuk meningkatkan efisiensi pelayanan publik, mendukung kelestarian lingkungan, dan meningkatkan kenyamanan warga.</p>
@@ -2526,7 +2594,9 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-6">
+          
+          <!-- Kolom Kanan (Kotak Visi Misi yang Dipercantik) -->
+          <div class="col-lg-6 tentang-pro-right">
             <div class="p-5 bg-light rounded-4 border">
               <h4 class="fw-bold mb-3"><i class="fa-solid fa-bullseye text-primary me-2"></i> Visi Utama</h4>
               <p class="text-muted mb-4">Mewujudkan Kota Tegal sebagai kota bahari yang cerdas, hijau, ramah lingkungan, serta berbasis data digital terpadu.</p>
@@ -2680,26 +2750,37 @@
   <script>
 
     function triggerHeroAnimation() {
-  const badge = document.querySelector('.hero-pro-badge');
-  const title = document.querySelector('.hero-pro-title');
-  const desc = document.querySelector('.hero-pro-desc');
-  const btn = document.querySelector('.hero-pro-btn');
+      const badge = document.querySelector('.hero-pro-badge');
+      const title = document.querySelector('.hero-pro-title');
+      const desc = document.querySelector('.hero-pro-desc');
+      const btn = document.querySelector('.hero-pro-btn');
 
-  const elements = [badge, title, desc, btn];
+      const elements = [badge, title, desc, btn];
 
-  // Hapus class animasi sejenak
-  elements.forEach(el => {
-    if (el) el.style.animation = 'none';
-  });
+      // Hapus class animasi sejenak
+      elements.forEach(el => {
+        if (el) el.style.animation = 'none';
+      });
 
-  // Re-flow DOM (memaksa browser mereset animasi)
-  void document.body.offsetHeight;
+      // Re-flow DOM (memaksa browser mereset animasi)
+      void document.body.offsetHeight;
 
-  // Kembalikan animasi seperti semula
-  elements.forEach(el => {
-    if (el) el.style.animation = '';
-  });
-}
+      // Kembalikan animasi seperti semula
+      elements.forEach(el => {
+        if (el) el.style.animation = '';
+      });
+    }
+
+    // --- FUNGSI ANIMASI SECTION TENTANG ---
+    function triggerTentangAnimation() {
+      const tentangSection = document.getElementById('tentang');
+      if (!tentangSection) return;
+
+      tentangSection.classList.remove('tentang-active');
+      void tentangSection.offsetWidth; // Force Reflow untuk reset animasi
+      tentangSection.classList.add('tentang-active');
+    }
+
     // =========================================================
     // NAVBAR ACTIVE MENU OTOMATIS
     // Menandai menu sesuai section yang sedang dilihat/dibuka.
@@ -2715,8 +2796,6 @@
       }
 
       // Saat menu diklik, arahkan section tepat di bawah navbar.
-      // Tidak memakai anchor scroll bawaan browser karena posisi navbar
-      // fixed dapat membuat section berhenti terlalu jauh dari atas.
       navLinks.forEach(link => {
         link.addEventListener('click', function (event) {
           const targetId = this.getAttribute('href').substring(1);
@@ -2730,13 +2809,16 @@
           setActiveMenu(targetId);
 
           // Jika menu yang diklik adalah beranda, jalankan ulang animasinya
-    if (targetId === 'beranda') {
-      triggerHeroAnimation();
-    }
+          if (targetId === 'beranda') {
+            triggerHeroAnimation();
+          }
+
+          // Jika menu yang diklik adalah tentang, jalankan animasi tentang
+          if (targetId === 'tentang') {
+            triggerTentangAnimation();
+          }
 
           // Pada HP, navbar sedang terbuka ketika menu dipilih.
-          // Jika tinggi navbar diukur sebelum dropdown ditutup, offset menjadi
-          // terlalu besar sehingga section berhenti tidak tepat di bawah navbar.
           const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
           const scrollToTarget = () => {
             const navbarHeight = navbar.getBoundingClientRect().height;
@@ -2756,8 +2838,6 @@
             // Tutup dropdown terlebih dahulu, baru hitung posisi section.
             collapse.hide();
 
-            // Tunggu transisi Bootstrap selesai agar tinggi navbar sudah kembali
-            // ke tinggi normal (hanya header), lalu scroll tepat ke section.
             navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
           } else {
             scrollToTarget();
@@ -2768,19 +2848,25 @@
         });
       });
 
-      // Saat pengguna scroll, menu mengikuti section yang sedang terlihat.
+      // Saat pengguna scroll, menu mengikuti section yang sedang terlihat & aktifkan animasi Tentang.
       const observer = new IntersectionObserver((entries) => {
-        const visibleSections = entries
-          .filter(entry => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        if (visibleSections.length > 0) {
-          setActiveMenu(visibleSections[0].target.id);
-        }
+        entries.forEach(entry => {
+          const targetId = entry.target.id;
+          if (entry.isIntersecting) {
+            setActiveMenu(targetId);
+            if (targetId === 'tentang') {
+              entry.target.classList.add('tentang-active');
+            }
+          } else {
+            if (targetId === 'tentang') {
+              entry.target.classList.remove('tentang-active');
+            }
+          }
+        });
       }, {
         root: null,
-        rootMargin: '-90px 0px -45% 0px',
-        threshold: [0.1, 0.25, 0.5, 0.75]
+        rootMargin: '-90px 0px -30% 0px',
+        threshold: 0.15
       });
 
       sections.forEach(section => observer.observe(section));
@@ -2818,24 +2904,24 @@
 
     // Fungsi Transisi Masuk ke Situs Utama
     function enterWebsite() {
-  const mainContent = document.getElementById('mainWebsiteContent');
-  
-  welcomeSec.style.opacity = '0';
-  welcomeSec.style.transform = 'scale(1.04)';
-  
-  setTimeout(() => {
-    welcomeSec.style.display = 'none';
-    mainContent.style.display = 'block';
-    
-    // Jalankan animasi teks beranda
-    triggerHeroAnimation();
+      const mainContent = document.getElementById('mainWebsiteContent');
+      
+      welcomeSec.style.opacity = '0';
+      welcomeSec.style.transform = 'scale(1.04)';
+      
+      setTimeout(() => {
+        welcomeSec.style.display = 'none';
+        mainContent.style.display = 'block';
+        
+        // Jalankan animasi teks beranda
+        triggerHeroAnimation();
 
-    setTimeout(() => {
-      mainContent.style.opacity = '1';
-      window.scrollTo(0, 0);
-    }, 50);
-  }, 500);
-}
+        setTimeout(() => {
+          mainContent.style.opacity = '1';
+          window.scrollTo(0, 0);
+        }, 50);
+      }, 500);
+    }
 
     // Fungsi Kembali ke Halaman Depan
     function returnToWelcome() {
@@ -3078,23 +3164,23 @@
 
     //ANIMASI MASUK SITUS DAN BERANDA
     function triggerHeroAnimation() {
-  const badge = document.querySelector('.hero-pro-badge');
-  const title = document.querySelector('.hero-pro-title');
-  const desc = document.querySelector('.hero-pro-desc');
-  const btn = document.querySelector('.hero-pro-btn');
+      const badge = document.querySelector('.hero-pro-badge');
+      const title = document.querySelector('.hero-pro-title');
+      const desc = document.querySelector('.hero-pro-desc');
+      const btn = document.querySelector('.hero-pro-btn');
 
-  const elements = [badge, title, desc, btn];
+      const elements = [badge, title, desc, btn];
 
-  elements.forEach(el => {
-    if (el) el.style.animation = 'none';
-  });
+      elements.forEach(el => {
+        if (el) el.style.animation = 'none';
+      });
 
-  void document.body.offsetHeight; // Reset animasi browser
+      void document.body.offsetHeight; // Reset animasi browser
 
-  elements.forEach(el => {
-    if (el) el.style.animation = '';
-  });
-}
+      elements.forEach(el => {
+        if (el) el.style.animation = '';
+      });
+    }
   </script>
 </body>
 </html>
