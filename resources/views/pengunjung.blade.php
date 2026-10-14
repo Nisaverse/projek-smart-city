@@ -2459,24 +2459,27 @@
       }
     }
 
-    /* =========================================================
-   ANIMASI ZOOM-FADE + STAGGER UNTUK ELEMEN & TEKS KAWASAN
+ /* =========================================================
+   ANIMASI ULTRA-SMOOTH, HALUS & SLOW SCALE-IN (TETAP DI TEMPAT)
    ========================================================= */
-@keyframes kawasanZoomFade {
-  from {
+@keyframes kawasanZoomSmooth {
+  0% {
     opacity: 0;
-    transform: scale(0.93) translateY(18px);
-    filter: blur(4px);
+    transform: scale(0.92); /* Mulai dari 92% agar peralihan ukuran sangat lembut */
+    filter: blur(10px);     /* Blur halus yang memudar perlahan */
   }
-  to {
+  100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1);    /* Tepat di ukuran normal 100% tanpa geser posisi */
     filter: blur(0);
   }
 }
 
 .animate-kawasan-zoom {
-  animation: kawasanZoomFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  transform-origin: center center !important;
+  /* Durasi diperlambat jadi 1.3 detik dengan kurva sangat lembut */
+  animation: kawasanZoomSmooth 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  will-change: opacity, transform, filter;
 }
 </style>
 </head>
@@ -2811,26 +2814,24 @@
       tentangSection.classList.add('tentang-active');
     }
 
-    function triggerKawasanAnimation() {
+ function triggerKawasanAnimation() {
   const kawasanSection = document.getElementById('kawasan');
   if (!kawasanSection) return;
 
-  // Seleksi seluruh teks, judul, tab, dan kartu di section kawasan
+  // Seleksi elemen teks, judul, tab, dan kartu di kawasan
   const targetElements = kawasanSection.querySelectorAll(
     'h1, h2, h3, h4, p, .lead, .section-title, .section-subtitle, .zone-tab-item, .zone-card, .card, .btn'
   );
 
   targetElements.forEach((el, index) => {
-    // Reset animasi
     el.classList.remove('animate-kawasan-zoom');
     el.style.animationDelay = '0s';
-    void el.offsetWidth; // Force Reflow
+    void el.offsetWidth; // Force Reflow reset animasi
 
-    // Berikan delay bertahap (stagger) berdasarkan urutan elemen
-    const delay = (index * 0.08).toFixed(2); // Jeda 0.08 detik per elemen
+    // Jeda 0.08 detik per elemen agar urutan mekarnya terasa santai & mengalir
+    const delay = (index * 0.08).toFixed(2);
     el.style.animationDelay = `${delay}s`;
-    
-    // Pasang kembali class animasi
+
     el.classList.add('animate-kawasan-zoom');
   });
 }
