@@ -4,18 +4,33 @@
 
 @push('styles')
 <style>
-    /* ===== KARTU UTAMA & STATISTIK: SILVER METALIK POLOS TANPA BERCAK CAHAYA ===== */
+    /* ===== KARTU UTAMA & STATISTIK: SILVER METALLIC  ===== */
     .parking-white-card,
     .stat-top-card {
-        background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #e2e8f0 100%) !important;
-        background-color: #94a3b8 !important;
-        border: 1px solid #64748b !important;
+       background: linear-gradient(135deg, #c5c9d0 0%, #b8bcc2 50%, #d0d4dc 100%) !important;
+        background-color: #b8bcc2 !important;
+        border: 1px solid #8e949d !important;
         border-radius: 16px !important;
         padding: 24px !important;
-        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -2px 5px rgba(71, 85, 105, 0.3) !important;
+        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -2px 5px rgba(100, 116, 139, 0.3) !important;
         transition: all 0.3s ease;
         position: relative;
-        overflow: hidden;
+        overflow: hidden; Menjaga bulatan gelembung tetap rapi di dalam kartu */
+    }
+
+    /* ===== EFEK GELEMBUNG KILAP PUTIH (GLOSS BULB) DI POJOK KANAN ATAS ===== */
+    .parking-white-card::before,
+    .stat-top-card::before {
+        content: "";
+        position: absolute;
+        top: -30px;
+        right: -30px;
+        width: 130px;
+        height: 130px;
+        /* Pantulan bola cahaya putih radial */
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(184, 188, 194, 0.5) 40%, rgba(255, 255, 255, 0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
     }
 
     /* Khusus kartu atas disamakan tingginya & rata */
@@ -29,14 +44,15 @@
 
     .parking-white-card:hover,
     .stat-top-card:hover {
-        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.22), inset 0 1px 3px rgba(255, 255, 255, 1) !important;
+        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18), 
+                    inset 0 2px 5px rgba(255, 255, 255, 1) !important;
         transform: translateY(-2px);
     }
 
     /* ===== KONTAINER LAYOUT SLOT PARKIR ===== */
     .parking-layout-container {
         background: #ffffff !important;
-        border: 1px solid #cbd5e1;
+        border: 1px solid #94a3b8;
         border-radius: 12px;
         padding: 20px;
     }
@@ -54,7 +70,7 @@
     }
 
     .slot-box:hover {
-        border-color: #94a3b8;
+        border-color: #64748b;
         box-shadow: 0 6px 18px rgba(11, 19, 43, 0.08);
     }
 
@@ -70,14 +86,14 @@
         display: inline-block;
     }
 
-    .status-available { background: rgba(16, 185, 129, 0.1); color: #059669; }
-    .status-occupied { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
-    .status-nodata { background: rgba(203, 213, 225, 0.3); color: #64748b; }
+    .status-available { background: rgba(245, 158, 11, 0.15); color: #059669; }
+    .status-occupied { background: rgba(100, 116, 139, 0.15); color #dc2626; }
+    .status-nodata { background: rgba(203, 213, 225, 0.4); color: #64748b; }
 
     .custom-progress {
         height: 6px;
         border-radius: 10px;
-        background: #64748b;
+        background: #8e949d;
         overflow: hidden;
     }
 </style>
@@ -265,7 +281,7 @@
                             <span class="fw-bold text-primary" style="font-size: 0.85rem;">${slotId}</span>
                             <span class="slot-badge-status ${badgeClass}" style="font-size: 0.6rem; padding: 2px 6px;">${slotInfo.status === 'available' ? 'Kosong' : (slotInfo.status === 'occupied' ? 'Terisi' : '-')}</span>
                         </div>
-                        <div style="font-size: 0.75rem; color: #64748b;" class="text-truncate">
+                        <div style="font-size: 0.75rem; color:  #475569;" class="text-truncate">
                             <i class="fas fa-car me-1"></i> ${slotInfo.status === 'available' ? 'Tersedia' : (slotInfo.status === 'occupied' ? 'Terisi' : 'Offline')}
                         </div>
                     </div>
