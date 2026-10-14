@@ -2459,6 +2459,26 @@
         flex: 0 0 36px !important;
       }
     }
+
+    /* =========================================================
+   ANIMASI ZOOM-FADE + STAGGER UNTUK ELEMEN & TEKS KAWASAN
+   ========================================================= */
+@keyframes kawasanZoomFade {
+  from {
+    opacity: 0;
+    transform: scale(0.93) translateY(18px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.animate-kawasan-zoom {
+  animation: kawasanZoomFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
 </style>
 </head>
 <body>
@@ -2787,6 +2807,30 @@
       tentangSection.classList.add('tentang-active');
     }
 
+    function triggerKawasanAnimation() {
+  const kawasanSection = document.getElementById('kawasan');
+  if (!kawasanSection) return;
+
+  // Seleksi seluruh teks, judul, tab, dan kartu di section kawasan
+  const targetElements = kawasanSection.querySelectorAll(
+    'h1, h2, h3, h4, p, .lead, .section-title, .section-subtitle, .zone-tab-item, .zone-card, .card, .btn'
+  );
+
+  targetElements.forEach((el, index) => {
+    // Reset animasi
+    el.classList.remove('animate-kawasan-zoom');
+    el.style.animationDelay = '0s';
+    void el.offsetWidth; // Force Reflow
+
+    // Berikan delay bertahap (stagger) berdasarkan urutan elemen
+    const delay = (index * 0.08).toFixed(2); // Jeda 0.08 detik per elemen
+    el.style.animationDelay = `${delay}s`;
+    
+    // Pasang kembali class animasi
+    el.classList.add('animate-kawasan-zoom');
+  });
+}
+
     // =========================================================
     // NAVBAR ACTIVE MENU OTOMATIS
     // Menandai menu sesuai section yang sedang dilihat/dibuka.
@@ -2822,6 +2866,10 @@
           // Jika menu yang diklik adalah tentang, jalankan animasi tentang
           if (targetId === 'tentang') {
             triggerTentangAnimation();
+          }
+
+          if (targetId === 'kawasan') {
+            triggerKawasanAnimation();
           }
 
           // Pada HP, navbar sedang terbuka ketika menu dipilih.
@@ -2864,6 +2912,11 @@
 
             if (targetId === 'tentang') {
               entry.target.classList.add('tentang-active');
+            }
+
+            // TAMBAHKAN INI: Pemicu saat scroll masuk ke kawasan
+            if (targetId === 'kawasan') {
+              triggerKawasanAnimation();
             }
 
             if (targetId === 'beranda') {
