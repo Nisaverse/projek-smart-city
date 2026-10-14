@@ -11,7 +11,6 @@
     <!-- LENIS SMOOTH SCROLL CSS CDN -->
     <link rel="stylesheet" href="https://unpkg.com/lenis@1.1.18/dist/lenis.css">
 
-
     <!-- ===== IMPORT MQTT.JS CDN ===== -->
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
@@ -37,45 +36,44 @@
             scroll-behavior: smooth;
         }
 
-        body {
+       body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 24px 24px;
+            background-color: #cbd5e1 !important; /* Warna abu-abu pilihan Anda */
+            background-image: none !important;
             color: var(--text-primary);
             min-height: 100vh;
         }
 
-        /* ===== SIDEBAR ===== */
+        /* ===== SIDEBAR (NAVY DARK & TEKS PUTIH) ===== */
         .sidebar {
             position: fixed;
             top: 0; left: 0;
             width: var(--sidebar-width);
             height: 100vh;
-            background: #ffffff !important;
-            border-right: 1px solid var(--border-color);
+            background: #0b132b !important; /* Navy Dark */
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
             z-index: 1000;
             transition: transform 0.3s ease;
-            overflow: hidden; /* Dibuat fixed/diam agar tidak bentrok dengan nav */
+            overflow: hidden;
         }
 
         .sidebar-header {
             padding: 20px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
             flex-shrink: 0;
         }
 
         .sidebar-header h4 {
-            color: var(--accent-blue);
+            color: #ffffff !important;
             font-weight: 700;
             font-size: 1.2rem;
         }
 
         .sidebar-header small {
-            color: var(--text-secondary);
+            color: #94a3b8 !important;
             font-size: 0.75rem;
         }
 
@@ -91,7 +89,7 @@
             padding: 10px 20px 5px;
             font-size: 0.7rem;
             text-transform: uppercase;
-            color: var(--text-secondary);
+            color: #94a3b8 !important;
             letter-spacing: 1px;
         }
 
@@ -99,7 +97,7 @@
             display: flex;
             align-items: center;
             padding: 12px 20px;
-            color: var(--text-secondary);
+            color: #cbd5e1 !important; /* Warna teks putih/abu terang */
             text-decoration: none;
             transition: all 0.2s;
             border-left: 3px solid transparent;
@@ -107,13 +105,13 @@
         }
 
         .nav-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.2);
+            color: #ffffff !important;
         }
 
         .nav-item.active {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.3);
+            color: #ffffff !important;
             border-left-color: var(--accent-blue);
         }
 
@@ -122,13 +120,18 @@
             margin-right: 12px;
             font-size: 1rem;
             text-align: center;
+            color: #94a3b8;
+        }
+
+        .nav-item:hover i, .nav-item.active i {
+            color: var(--accent-blue);
         }
 
         /* ===== ESP CONNECT ===== */
         .esp-connect {
             padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            background: rgba(0,0,0,0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.15);
             flex-shrink: 0;
         }
 
@@ -153,7 +156,7 @@
             50% { opacity: 0.4; }
         }
 
-        .esp-info { color: var(--text-secondary); font-size: 0.7rem; }
+        .esp-info { color: #94a3b8 !important; font-size: 0.7rem; }
 
         /* ===== MAIN CONTENT ===== */
         .main-content {
@@ -319,7 +322,7 @@
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h4><i class="fas fa-city"></i> SmartCity</h4>
+            <h4><i class="fas fa-city text-primary"></i> SiSity</h4>
             <small>Control & Monitoring</small>
         </div>
 
@@ -347,7 +350,7 @@
             <a href="{{ route('smart-parking') }}" 
                class="nav-item {{ request()->routeIs('smart-parking') ? 'active' : '' }}"
                @if(request()->routeIs('smart-parking')) onclick="event.preventDefault();" @endif>
-                <i class="fas fa-car"></i> Smart Parking (beta)
+                <i class="fas fa-car"></i> Smart Parking 
             </a>
 
             <div class="nav-label">Control</div>
@@ -364,11 +367,11 @@
         </nav>
 
         <!-- Logout Button -->
-        <div style="margin-top: auto; padding: 15px; border-top: 1px solid var(--border-color); flex-shrink: 0;">
+        <div style="margin-top: auto; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;">
             <button type="button" class="btn btn-danger w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#logoutModal">
                 <i class="fas fa-sign-out-alt me-1"></i> Logout
             </button>
-            <div class="text-center mt-2" style="font-size: 0.75rem; color: var(--text-secondary);">
+            <div class="text-center mt-2" style="font-size: 0.75rem; color: #94a3b8;">
                 <i class="fas fa-user-shield"></i> {{ session('admin_username', 'Admin') }}
             </div>
         </div>
@@ -378,12 +381,12 @@
             <div class="esp-status">
                 <div class="esp-dot" id="espDot"></div>
                 <div>
-                    <div style="font-weight:600; font-size:0.85rem; color:var(--text-primary);">ESP32 Connected</div>
+                    <div style="font-weight:600; font-size:0.85rem; color:#ffffff;">ESP32 Connected</div>
                     <div class="esp-info" id="espInfo">Node: ESP-SMARTCITY-01</div>
                 </div>
             </div>
             <div style="margin-top:8px;">
-                <small style="color:var(--text-secondary); font-size:0.7rem;">
+                <small style="color:#94a3b8; font-size:0.7rem;">
                     IP: 192.168.1.100 | RSSI: -45dBm
                 </small>
             </div>
@@ -449,13 +452,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             const sidebarNav = document.querySelector('.sidebar-nav');
             if (sidebarNav) {
-                // Restore posisi scroll saat halaman selesai dimuat
                 const savedScroll = sessionStorage.getItem('sidebarScrollPos');
                 if (savedScroll !== null) {
                     sidebarNav.scrollTop = parseInt(savedScroll, 10);
                 }
 
-                // Simpan posisi scroll saat elemen menu di-scroll
                 sidebarNav.addEventListener('scroll', () => {
                     sessionStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
                 });
@@ -571,7 +572,7 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="this.closest('div[style*=\"background\"]').remove()" 
+                    <button onclick="this.closest('div[style*=\'background\']').remove()" 
                             style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:1.2rem; padding:0; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:4px; transition:all 0.2s;">
                         ×
                     </button>

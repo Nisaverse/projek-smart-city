@@ -4,21 +4,23 @@
 
 @push('styles')
 <style>
-    /* ===== KARTU UTAMA & STATISTIK: SILVER METALIK POLOS TANPA BERCAK CAHAYA ===== */
+    /* ===== KARTU UTAMA & STATISTIK (PUTIH BERSIH) ===== */
+    .dashboard-white-card,
+    .stat-top-card,
+    .parking-white-card,
     .lamp-white-card,
-    .stat-top-card {
-        background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #e2e8f0 100%) !important;
-        background-color: #94a3b8 !important;
-        border: 1px solid #64748b !important;
+    .temp-white-card {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
         border-radius: 16px !important;
         padding: 24px !important;
-        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -2px 5px rgba(71, 85, 105, 0.3) !important;
+        box-shadow: 0 10px 30px rgba(11, 19, 43, 0.08) !important;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
 
-    /* Khusus kartu atas disamakan tingginya & rata */
     .stat-top-card {
         padding: 20px !important;
         height: 100%;
@@ -41,26 +43,25 @@
         padding: 20px;
     }
 
-    /* ===== KARTU SEKTOR LAMPU KECIL ===== */
+    /* ===== KARTU SEKTOR LAMPU KECIL (DENGAN EFEK GLOW DARK NAVY PERMANEN) ===== */
     .sector-box {
-        background: #ffffff;
-        border: 1px solid #cbd5e1;
-        border-radius: 14px;
-        padding: 18px;
-        box-shadow: 0 4px 12px rgba(11, 19, 43, 0.03);
-        transition: all 0.3s ease;
+        background: #ffffff !important;
+        border: 1.5px solid #64748b !important;
+        border-radius: 14px !important;
+        padding: 18px !important;
+        box-shadow: 0 8px 25px rgba(11, 19, 43, 0.4), 0 0 20px rgba(30, 58, 138, 0.3) !important;
+        transition: transform 0.3s ease;
         position: relative;
         height: 100%;
     }
 
     .sector-box:hover {
-        border-color: #94a3b8;
-        box-shadow: 0 6px 18px rgba(11, 19, 43, 0.08);
+        transform: translateY(-2px);
     }
 
-    .sector-box.is-active { border-left: 4px solid #f59e0b; }
-    .sector-box.is-inactive { border-left: 4px solid #64748b; }
-    .sector-box.is-nodata { border-left: 4px solid #cbd5e1; }
+    .sector-box.is-active { border-left: 4px solid #f59e0b !important; }
+    .sector-box.is-inactive { border-left: 4px solid #64748b !important; }
+    .sector-box.is-nodata { border-left: 4px solid #cbd5e1 !important; }
 
     .sector-badge-status {
         font-size: 0.7rem;
@@ -77,7 +78,7 @@
     .custom-progress {
         height: 6px;
         border-radius: 10px;
-        background: #64748b;
+        background: #cbd5e1;
         overflow: hidden;
     }
 </style>
@@ -101,7 +102,7 @@
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Aktif (On)</div>
-                    <h3 class="fw-bold mb-2 text-warning" id="cardActiveCount">0</h3>
+                    <h3 class="fw-bold mb-2 text-dark" id="cardActiveCount">0</h3>
                     <div class="custom-progress mb-2">
                         <div id="barActive" class="progress-bar bg-warning" style="width: 0%;"></div>
                     </div>
@@ -113,7 +114,7 @@
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Mati (Off)</div>
-                    <h3 class="fw-bold mb-2 text-secondary" id="cardInactiveCount">0</h3>
+                    <h3 class="fw-bold mb-2 text-dark" id="cardInactiveCount">0</h3>
                     <div class="custom-progress mb-2">
                         <div id="barInactive" class="progress-bar bg-secondary" style="width: 0%;"></div>
                     </div>
@@ -128,7 +129,6 @@
                     <h3 class="fw-bold mb-1 text-dark" id="iotMainStatus">-</h3>
                 </div>
                 <div style="font-size: 0.8rem;" class="text-dark fw-bold mt-2">
-                    <span id="iotDot" class="spinner-grow spinner-grow-sm text-warning me-1" role="status"></span>
                     <span id="iotStatusText">Menunggu data perangkat</span>
                 </div>
             </div>
@@ -145,9 +145,6 @@
                         <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Layout Sektor Lampu</h5>
                         <small class="text-dark opacity-75 fw-semibold">4 sektor utama penerangan wilayah Kota Tegal</small>
                     </div>
-                    <span class="badge bg-light text-success border border-success px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.75rem;">
-                        <i class="fas fa-circle text-success me-1" style="font-size: 0.5rem;"></i> Real-time
-                    </span>
                 </div>
 
                 <!-- Kontainer Sektor -->
@@ -257,7 +254,7 @@
                         </div>
                         <h6 class="fw-bold mb-1" style="font-size: 0.95rem; color: #0f172a;">${sectorDataInfo[sectorId].name}</h6>
                         <div style="font-size: 0.8rem; color: #475569;" class="mt-2">
-                            <i class="fas fa-lightbulb text-warning me-1"></i> Status: ${sectorInfo.status === 'active' ? 'Menyala' : (sectorInfo.status === 'inactive' ? 'Padam' : 'Belum terhubung')}
+                            Status: ${sectorInfo.status === 'active' ? 'Menyala' : (sectorInfo.status === 'inactive' ? 'Padam' : 'Belum terhubung')}
                         </div>
                     </div>
                 </div>
@@ -286,8 +283,10 @@
 
         if (activeCount > 0 || inactiveCount > 0) {
             document.getElementById('iotMainStatus').textContent = 'Online';
-            document.getElementById('iotStatusText').textContent = 'Perangkat terhubung';
-            document.getElementById('iotDot').className = 'spinner-grow spinner-grow-sm text-success me-1';
+            document.getElementById('iotStatusText').textContent = 'Terhubung';
+        } else {
+            document.getElementById('iotMainStatus').textContent = '-';
+            document.getElementById('iotStatusText').textContent = 'Menunggu data perangkat';
         }
     }
 

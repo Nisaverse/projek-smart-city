@@ -4,15 +4,18 @@
 
 @push('styles')
 <style>
-    /* ===== KARTU UTAMA & STATISTIK: SILVER METALIK POLOS TANPA BERCAK CAHAYA ===== */
-    .temp-white-card,
-    .stat-top-card {
-        background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 50%, #e2e8f0 100%) !important;
-        background-color: #94a3b8 !important;
-        border: 1px solid #64748b !important;
+    /* Mengubah semua card utama & statistik menjadi putih bersih */
+    .dashboard-white-card,
+    .stat-top-card,
+    .parking-white-card,
+    .lamp-white-card,
+    .temp-white-card {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
         border-radius: 16px !important;
         padding: 24px !important;
-        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9), inset 0 -2px 5px rgba(71, 85, 105, 0.3) !important;
+        box-shadow: 0 10px 30px rgba(11, 19, 43, 0.08) !important;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
