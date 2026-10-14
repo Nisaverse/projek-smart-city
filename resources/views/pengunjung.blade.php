@@ -2481,6 +2481,48 @@
   animation: kawasanZoomSmooth 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   will-change: opacity, transform, filter;
 }
+
+/* =========================================================
+   ANIMASI ULTRA-SMOOTH, HALUS & SLOW SECTION LAYANAN
+   ========================================================= */
+@keyframes layananFadeUpSmooth {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96); /* Muncul pelan dari bawah dengan perbesaran halus */
+    filter: blur(8px);                       /* Blur lembut untuk kesan sinematik */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-layanan-smooth {
+  animation: layananFadeUpSmooth 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  will-change: opacity, transform, filter;
+}
+
+/* =========================================================
+   ANIMASI ULTRA-SMOOTH FADE-DOWN KHUSUS TEKS LOKASI
+   ========================================================= */
+@keyframes lokasiTeksFadeDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98); /* Meluncur pelan dari atas */
+    filter: blur(8px);                        /* Blur lembut sinematik */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-lokasi-text {
+  animation: lokasiTeksFadeDown 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  will-change: opacity, transform, filter;
+}
 </style>
 </head>
 <body>
@@ -2836,6 +2878,58 @@
   });
 }
 
+
+// --- FUNGSI ANIMASI SECTION LAYANAN ---
+function triggerLayananAnimation() {
+  const layananSection = document.getElementById('layanan');
+  if (!layananSection) return;
+
+  // Seleksi sub-judul, judul utama, deskripsi, dan kartu-kartu layanan
+  const targetElements = layananSection.querySelectorAll(
+    'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle, .card, .col-lg-4, .col-md-6'
+  );
+
+  targetElements.forEach((el, index) => {
+    // Reset animasi
+    el.classList.remove('animate-layanan-smooth');
+    el.style.animationDelay = '0s';
+    void el.offsetWidth; // Force Reflow untuk reset animasi browser
+
+    // Jeda 0.1 detik per elemen agar kartu & teks muncul berurutan secara pelan-pelan
+    const delay = (index * 0.1).toFixed(2);
+    el.style.animationDelay = `${delay}s`;
+
+    // Pasang class animasi
+    el.classList.add('animate-layanan-smooth');
+  });
+}
+
+// --- FUNGSI ANIMASI KHUSUS TEKS SECTION LOKASI ---
+function triggerLokasiAnimation() {
+  const lokasiSection = document.getElementById('lokasi');
+  if (!lokasiSection) return;
+
+  // Hanya menyeleksi elemen teks (h1-h4, p, badge, span) dan MENGECUALIKAN container peta/iframe
+  const textElements = lokasiSection.querySelectorAll(
+    'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle'
+  );
+
+  textElements.forEach((el, index) => {
+    // Pastikan tidak mengenai elemen peta atau iframe
+    if (el.tagName === 'IFRAME' || el.closest('.map-container') || el.closest('#map')) return;
+
+    el.classList.remove('animate-lokasi-text');
+    el.style.animationDelay = '0s';
+    void el.offsetWidth; // Force reflow browser
+
+    // Jeda bertahap (stagger) 0.1 detik per baris teks dari atas ke bawah
+    const delay = (index * 0.1).toFixed(2);
+    el.style.animationDelay = `${delay}s`;
+
+    el.classList.add('animate-lokasi-text');
+  });
+}
+
     // =========================================================
     // NAVBAR ACTIVE MENU OTOMATIS
     // Menandai menu sesuai section yang sedang dilihat/dibuka.
@@ -2875,6 +2969,14 @@
 
           if (targetId === 'kawasan') {
             triggerKawasanAnimation();
+          }
+
+          if (targetId === 'layanan') {
+            triggerLayananAnimation();
+          }
+
+          if (targetId === 'lokasi') {
+            triggerLokasiAnimation();
           }
 
           // Pada HP, navbar sedang terbuka ketika menu dipilih.
@@ -2922,6 +3024,14 @@
             // TAMBAHKAN INI: Pemicu saat scroll masuk ke kawasan
             if (targetId === 'kawasan') {
               triggerKawasanAnimation();
+            }
+
+            if (targetId === 'layanan') {
+              triggerLayananAnimation();
+            }
+
+            if (targetId === 'lokasi') {
+              triggerLokasiAnimation();
             }
 
             if (targetId === 'beranda') {
