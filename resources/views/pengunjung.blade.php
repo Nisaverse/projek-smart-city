@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-/* ==========================================================
       /* --- ANIMASI SECTION TENTANG (SLIDE DARI KIRI & KANAN) --- */
     @keyframes tentangSlideLeft {
       0% {
@@ -2743,15 +2742,20 @@
       </div>
     </section>
     
-    <!-- FOOTER -->
-    <footer class="text-white py-4" style="background-color: #0b1329;">
+    <!-- FOOTER DENGAN COPYRIGHT -->
+    <footer class="py-4 text-white" style="background-color: #0b1329; border-top: 1px solid rgba(255, 255, 255, 0.08);">
       <div class="container text-center">
-        <p class="mb-0 text-muted small">&copy; 2026 Tegal Ecosense &bull; Pemerintah Kota Tegal. All Rights Reserved.</p>
+        <p class="mb-1 text-light opacity-75 small">
+          &copy; 2026 <strong>Tegal EcoSense</strong> &bull; Pemerintah Kota Tegal. All Rights Reserved.
+        </p>
+        <p class="mb-0 text-muted" style="font-size: 0.72rem;">
+          Dikembangkan untuk Observatorium Iklim Mikro & Pemantauan Lingkungan Real-Time Kawasan Alun-Alun Kota Tegal.
+        </p>
       </div>
     </footer>
   </div>
 
-
+  
   <!-- SCRIPT KONTROL & AUTO-SLIDE BACKGROUND -->
   <script>
 
