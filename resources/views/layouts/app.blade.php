@@ -44,7 +44,7 @@
             min-height: 100vh;
         }
 
-        /* ===== SIDEBAR (NAVY DARK & TEKS PUTIH) ===== */
+       /* ===== SIDEBAR (NAVY DARK & TEKS PUTIH) ===== */
         .sidebar {
             position: fixed;
             top: 0; left: 0;
@@ -54,9 +54,13 @@
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
-            z-index: 1000;
+            z-index: 1050 !important; /* <-- Cukup ubah angka ini jadi 1050 */
             transition: transform 0.3s ease;
             overflow: hidden;
+        }
+
+        .sidebar-overlay {
+            z-index: 1040 !important; /* <-- Tambahkan baris ini jika belum ada */
         }
 
         .sidebar-header {
