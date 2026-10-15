@@ -4,7 +4,7 @@
 
 @push('styles')
 <style>
-    /* Mengubah semua card utama & statistik menjadi putih bersih */
+    /* ===== KARTU UTAMA & STATISTIK (PUTIH BERSIH) ===== */
     .dashboard-white-card,
     .stat-top-card,
     .parking-white-card,
@@ -21,7 +21,6 @@
         overflow: hidden;
     }
 
-    /* Khusus kartu atas disamakan tingginya & rata */
     .stat-top-card {
         padding: 20px !important;
         height: 100%;
@@ -59,54 +58,34 @@
         <!-- Suhu Saat Ini -->
         <div class="col-md-4">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Suhu Saat Ini</div>
-                        <h3 class="fw-bold mb-1 text-dark" id="cardCurrentTemp">-- °C</h3>
-                    </div>
-                    <div style="width: 45px; height: 45px; background: rgba(245, 158, 11, 0.2); color: #b45309; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                        <i class="fas fa-temperature-high"></i>
-                    </div>
+                <div>
+                    <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Suhu Saat Ini</div>
+                    <h3 class="fw-bold mb-1 text-dark" id="cardCurrentTemp">-- °C</h3>
                 </div>
-                <div class="mt-3">
-                    <span class="badge bg-secondary text-white px-3 py-1 rounded-pill" style="font-size: 0.75rem;" id="tempStatusBadge">Belum Ada Data</span>
-                </div>
+                <div class="text-dark opacity-75 mt-2" style="font-size: 0.75rem; font-weight: 600;">Suhu lingkungan wilayah</div>
             </div>
         </div>
 
-        <!-- Kelembapan -->
+        <!-- Kelembapan Udara -->
         <div class="col-md-4">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Kelembapan Udara</div>
-                        <h3 class="fw-bold mb-1 text-dark" id="cardCurrentHum">-- %</h3>
-                    </div>
-                    <div style="width: 45px; height: 45px; background: rgba(37, 99, 235, 0.2); color: #1d4ed8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                        <i class="fas fa-tint"></i>
-                    </div>
+                <div>
+                    <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Kelembapan Udara</div>
+                    <h3 class="fw-bold mb-1 text-dark" id="cardCurrentHum">-- %</h3>
                 </div>
-                <div class="mt-3">
-                    <span class="badge bg-secondary text-white px-3 py-1 rounded-pill" style="font-size: 0.75rem;" id="humStatusBadge">Belum Ada Data</span>
-                </div>
+                <div class="text-dark opacity-75 mt-2" style="font-size: 0.75rem; font-weight: 600;">Kelembapan relatif wilayah</div>
             </div>
         </div>
 
-        <!-- Status Kondisi & IoT -->
+        <!-- Status IoT -->
         <div class="col-md-4">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Status Kondisi & IoT</div>
-                        <h3 class="fw-bold mb-1 text-danger" id="cardConditionStatus">Offline</h3>
-                    </div>
-                    <div style="width: 45px; height: 45px; background: rgba(239, 68, 68, 0.2); color: #b91c1c; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
-                        <i class="fas fa-database"></i>
-                    </div>
+                <div>
+                    <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Status IoT</div>
+                    <h3 class="fw-bold mb-1 text-dark" id="iotMainStatus">-</h3>
                 </div>
-                <div class="mt-3" style="font-size: 0.78rem;" id="iotConnectionStatusText">
-                    <span class="spinner-grow spinner-grow-sm text-danger me-1" id="iotDot"></span>
-                    <span class="text-danger fw-semibold">Belum ada data masuk dari database</span>
+                <div style="font-size: 0.8rem;" class="text-dark fw-bold mt-2">
+                    <span id="iotStatusText">Menunggu data perangkat</span>
                 </div>
             </div>
         </div>
@@ -114,22 +93,15 @@
 
     <!-- BARIS 2: GRAFIK SUHU & LOG TERAKHIR -->
     <div class="row g-4">
-        <!-- Kolom Kiri: Grafik Suhu Real-time -->
+        <!-- Kolom Kiri: Grafik Suhu & Kelembapan (Tombol Hari/Minggu Dihapus, Grafik Mengalir dari Kiri) -->
         <div class="col-lg-8">
             <div class="temp-white-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Grafik Suhu dan Kelembapan (°C / %)</h5>
-                        <small class="text-dark opacity-75 fw-semibold">Grafik siap merekam data setelah masuk dari database</small>
-                    </div>
-                    <!-- Tombol Periode: Hari & Minggu Saja -->
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-dark active">Hari</button>
-                        <button type="button" class="btn btn-outline-dark">Minggu</button>
-                    </div>
+                <div class="mb-3">
+                    <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Grafik Suhu dan Kelembapan (°C / %)</h5>
+                    <small class="text-dark opacity-75 fw-semibold">Grafik otomatis memperbarui data pemantauan berkala</small>
                 </div>
 
-                <!-- Canvas Grafik Chart.js (Kerangka tampil, garis diam menunggu data) -->
+                <!-- Canvas Grafik Chart.js dengan Navy Gelap -->
                 <div style="position: relative; height: 280px; width: 100%;" class="mt-3">
                     <canvas id="tempChart"></canvas>
                 </div>
@@ -170,33 +142,34 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // INISIALISASI KERANGKA CHART.JS (TAMPIL KOTAK & SUMBU, NAMUN GARIS DIAM)
+    // INISIALISASI CHART.JS DENGAN MENGATUR BATAS MAKSIMAL TITIK DATA (SLIDING WINDOW)
     const tempCtx = document.getElementById('tempChart')?.getContext('2d');
     let tempChart;
+    const maxDataPoints = 10; // Batas jumlah titik di grafik agar mengalir rapi dari kiri ke kanan
 
     if (tempCtx) {
         tempChart = new Chart(tempCtx, {
             type: 'line',
             data: {
-                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'], // Kerangka jam tampil
+                labels: [],
                 datasets: [
                     {
                         label: 'Suhu (°C)',
-                        data: [null, null, null, null, null, null], // Kosong agar garis tidak jalan
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        data: [],
+                        borderColor: '#0b132b',
+                        backgroundColor: 'rgba(11, 19, 43, 0.12)',
                         tension: 0.4,
                         fill: true,
-                        borderWidth: 2
+                        borderWidth: 2.5
                     },
                     {
                         label: 'Kelembapan (%)',
-                        data: [null, null, null, null, null, null], // Kosong agar garis tidak jalan
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        data: [],
+                        borderColor: '#1e3a8a',
+                        backgroundColor: 'rgba(30, 58, 138, 0.1)',
                         tension: 0.4,
                         fill: true,
-                        borderWidth: 2
+                        borderWidth: 2.5
                     }
                 ]
             },
@@ -230,36 +203,33 @@
                     document.getElementById('logTempVal').textContent = temp + ' °C';
                     document.getElementById('logHumVal').textContent = hum + ' %';
 
-                    document.getElementById('cardConditionStatus').textContent = 'Optimal (Online)';
-                    document.getElementById('cardConditionStatus').className = 'fw-bold mb-1 text-success';
-                    document.getElementById('tempStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
-                    document.getElementById('tempStatusBadge').textContent = 'Normal';
-                    document.getElementById('humStatusBadge').className = 'badge bg-primary text-white px-3 py-1 rounded-pill';
-                    document.getElementById('humStatusBadge').textContent = 'Normal';
+                    document.getElementById('iotMainStatus').textContent = 'Online';
+                    document.getElementById('iotStatusText').textContent = 'Terhubung';
 
-                    document.getElementById('iotConnectionStatusText').innerHTML = '<span class="spinner-grow spinner-grow-sm text-success me-1"></span><span class="text-success fw-semibold">Terhubung ke Database (Live)</span>';
-
-                    // Update grafik saat data riil masuk
+                    // Update grafik secara dinamis mengalir dari kiri ke kanan
                     if (tempChart) {
                         const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        
                         tempChart.data.labels.push(now);
                         tempChart.data.datasets[0].data.push(temp);
                         tempChart.data.datasets[1].data.push(hum);
+
+                        // Jika data melebihi batas max, hapus data terlama di sebelah kiri
+                        if (tempChart.data.labels.length > maxDataPoints) {
+                            tempChart.data.labels.shift();
+                            tempChart.data.datasets[0].data.shift();
+                            tempChart.data.datasets[1].data.shift();
+                        }
+
                         tempChart.update();
                     }
                 }
             })
             .catch(() => {
-                // Tetap berada pada status OFFLINE & grafik diam jika database belum merespons
                 document.getElementById('cardCurrentTemp').textContent = '-- °C';
                 document.getElementById('cardCurrentHum').textContent = '-- %';
-                document.getElementById('cardConditionStatus').textContent = 'Offline';
-                document.getElementById('cardConditionStatus').className = 'fw-bold mb-1 text-danger';
-                document.getElementById('tempStatusBadge').className = 'badge bg-secondary text-white px-3 py-1 rounded-pill';
-                document.getElementById('tempStatusBadge').textContent = 'Belum Ada Data';
-                document.getElementById('humStatusBadge').className = 'badge bg-secondary text-white px-3 py-1 rounded-pill';
-                document.getElementById('humStatusBadge').textContent = 'Belum Ada Data';
-                document.getElementById('iotConnectionStatusText').innerHTML = '<span class="spinner-grow spinner-grow-sm text-danger me-1"></span><span class="text-danger fw-semibold">Belum ada data masuk dari database</span>';
+                document.getElementById('iotMainStatus').textContent = '-';
+                document.getElementById('iotStatusText').textContent = 'Menunggu data perangkat';
             });
     }
 
