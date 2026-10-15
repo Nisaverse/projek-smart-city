@@ -72,7 +72,7 @@
         color: #ffffff !important;
     }
 
-    /* ===== INTERACTIVE SUB-CARDS (RELAY & PARKING) ===== */
+    /* ===== INTERACTIVE SUB-CARDS ===== */
     .interactive-item-card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
@@ -228,7 +228,6 @@
                 </div>
 
                 <div class="control-inner-box mt-3">
-                    <!-- GRID 5 KOLOM X 2 BARIS (LANDSCAPE) -->
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
                         @for ($i = 1; $i <= 10; $i++)
                         @php $slotId = 'P' . str_pad($i, 2, '0', STR_PAD_LEFT); @endphp
@@ -262,7 +261,6 @@
 
 @push('scripts')
 <script>
-    // 1. LOGIKA MODE OPERASI SISTEM
     function setControlMode(mode) {
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active-mode'));
         
@@ -290,7 +288,6 @@
                 badge.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
             }
 
-            // Kunci sakelar di Mode Otomatis
             relaySwitches.forEach(sw => sw.disabled = true);
             parkingSwitches.forEach(sw => sw.disabled = true);
             relaySection.classList.add('disabled-control');
@@ -305,14 +302,12 @@
                 badge.innerHTML = '<i class="fas fa-lock-open me-1"></i> Aktif';
             }
 
-            // Buka kunci sakelar di Mode Manual
             relaySwitches.forEach(sw => sw.disabled = false);
             parkingSwitches.forEach(sw => sw.disabled = false);
             relaySection.classList.remove('disabled-control');
             parkingSection.classList.remove('disabled-control');
         }
 
-        // Simpan mode ke LocalStorage untuk Dashboard
         localStorage.setItem('iot_system_mode', mode);
 
         fetch('/api/control/mode', {
@@ -322,7 +317,6 @@
         }).catch(() => {});
     }
 
-    // 2. KONTROL RELAY SAKELAR LAMPU
     function toggleRelay(relayId) {
         const sw = document.getElementById(`relay${relayId}Switch`);
         const statusText = document.getElementById(`relay${relayId}StatusText`);
@@ -339,7 +333,6 @@
             if (box) box.classList.remove('is-active');
         }
 
-        // Sinkronkan ke LocalStorage untuk Dashboard
         let relayStates = JSON.parse(localStorage.getItem('iot_relay_states')) || {};
         relayStates[relayId] = isChecked ? 1 : 0;
         localStorage.setItem('iot_relay_states', JSON.stringify(relayStates));
@@ -351,7 +344,6 @@
         }).catch(() => {});
     }
 
-    // 3. KONTROL SLOT PARKIR MANUAL
     function toggleParkingSlot(slotId) {
         const sw = document.getElementById(`parkingSwitch${slotId}`);
         const statusText = document.getElementById(`parkingStatusText${slotId}`);
@@ -371,7 +363,6 @@
             if (box) box.classList.remove('is-occupied');
         }
 
-        // Sinkronkan ke LocalStorage untuk Dashboard
         let parkingStates = JSON.parse(localStorage.getItem('iot_parking_states')) || {};
         parkingStates[slotId] = isChecked ? 'occupied' : 'available';
         localStorage.setItem('iot_parking_states', JSON.stringify(parkingStates));
@@ -383,10 +374,32 @@
         }).catch(() => {});
     }
 
-    // INITIAL LOAD
     document.addEventListener('DOMContentLoaded', () => {
         const currentMode = localStorage.getItem('iot_system_mode') || 'auto';
         setControlMode(currentMode);
+
+        const savedRelays = JSON.parse(localStorage.getItem('iot_relay_states')) || {};
+        for (let i = 1; i <= 4; i++) {
+            if (savedRelays[i] !== undefined) {
+                const sw = document.getElementById(`relay${i}Switch`);
+                if (sw) {
+                    sw.checked = savedRelays[i] === 1;
+                    toggleRelay(i);
+                }
+            }
+        }
+
+        const savedParking = JSON.parse(localStorage.getItem('iot_parking_states')) || {};
+        for (let i = 1; i <= 10; i++) {
+            const slotId = 'P' + String(i).padStart(2, '0');
+            if (savedParking[slotId] !== undefined) {
+                const sw = document.getElementById(`parkingSwitch${slotId}`);
+                if (sw) {
+                    sw.checked = savedParking[slotId] === 'occupied';
+                    toggleParkingSlot(slotId);
+                }
+            }
+        }
     });
 </script>
 @endpush

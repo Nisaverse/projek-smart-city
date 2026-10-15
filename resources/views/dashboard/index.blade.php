@@ -17,7 +17,7 @@
         border-bottom: 1px solid var(--border-color);
     }
 
-    /* ===== KARTU UTAMA & STATISTIK (PUTIH BERSIH DENGAN GLOW) ===== */
+    /* ===== KARTU UTAMA & STATISTIK ===== */
     .dashboard-white-card,
     .stat-top-card,
     .parking-white-card,
@@ -48,7 +48,7 @@
         transform: translateY(-2px);
     }
 
-    /* ===== TOMBOL LIHAT DETAIL (NAVY DARK) ===== */
+    /* ===== TOMBOL LIHAT DETAIL ===== */
     .btn-navy-detail {
         background-color: #0b132b !important;
         border-color: #0b132b !important;
@@ -64,7 +64,7 @@
         box-shadow: 0 4px 12px rgba(11, 19, 43, 0.25);
     }
 
-    /* ===== INNER CONTAINER PUTIH ===== */
+    /* ===== INNER CONTAINER ===== */
     .dashboard-inner-box {
         background: #ffffff !important;
         border: 1px solid #cbd5e1;
@@ -72,7 +72,7 @@
         padding: 20px;
     }
 
-    /* ===== BANNER KOTA TEGAL DENGAN ANIMASI POP-UP EXTRA SLOW & MEWAH ===== */
+    /* ===== BANNER KOTA TEGAL ===== */
     .city-banner-card {
         background: linear-gradient(rgba(11, 19, 43, 0.65), rgba(11, 19, 43, 0.82)), url('{{ asset("image/alun-alun.jpeg") }}') center/cover no-repeat !important;
         border: 1px solid #64748b !important;
@@ -104,7 +104,7 @@
         }
     }
 
-    /* ===== KARTU SLOT PARKIR & SEKTOR LAMPU KECIL (EFEK GLOW DARK NAVY PERMANEN) ===== */
+    /* ===== KARTU SLOT PARKIR & SEKTOR LAMPU ===== */
     .slot-box, 
     .sector-box {
         background: #ffffff !important;
@@ -138,10 +138,9 @@
 
     .status-available { background: rgba(16, 185, 129, 0.15); color: #059669; }
     .status-occupied { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
-    .status-active { background: #e2e8f0 !important; color: #0f172a !important; }
+    .status-active { background: #dbeafe !important; color: #1d4ed8 !important; }
     .status-inactive { background: #e2e8f0 !important; color: #334155 !important; }
 
-    /* Pengaturan Grid Responsif Mobile & Desktop */
     @media (min-width: 992px) {
         .col-custom-5 {
             flex: 0 0 20% !important;
@@ -165,7 +164,7 @@
         </div>
     </div>
 
-    <!-- BANNER KOTA TEGAL / SMART CITY DENGAN ANIMASI POP-UP -->
+    <!-- BANNER KOTA TEGAL -->
     <div class="city-banner-card mb-4">
         <div class="row align-items-center g-4 w-100 m-0">
             <div class="col-lg-12 animate-banner-content px-0">
@@ -235,7 +234,7 @@
         </div>
     </div>
 
-    <!-- ===== SECTION 1: SMART PARKING LAYOUT ===== -->
+    <!-- SECTION 1: SMART PARKING LAYOUT -->
     <div class="dashboard-white-card mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
@@ -261,7 +260,7 @@
         </div>
     </div>
 
-    <!-- ===== SECTION 2: SMART LAMP LAYOUT ===== -->
+    <!-- SECTION 2: SMART LAMP LAYOUT -->
     <div class="dashboard-white-card mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
@@ -278,7 +277,7 @@
 
         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
             <div class="d-flex align-items-center gap-3" style="font-size: 0.78rem; color: #334155;">
-                <div><span class="badge rounded-pill bg-warning me-1">&nbsp;</span> Active (Menyala)</div>
+                <div><span class="badge rounded-pill bg-primary me-1">&nbsp;</span> Active (Menyala)</div>
                 <div><span class="badge rounded-pill bg-secondary me-1">&nbsp;</span> Inactive (Padam)</div>
             </div>
             <a href="{{ url('/smart-lamp') }}" class="btn btn-navy-detail btn-sm px-4 rounded-pill">
@@ -287,7 +286,7 @@
         </div>
     </div>
 
-    <!-- ===== SECTION 3: SMART TEMPERATURE & HUMIDITY CHART ===== -->
+    <!-- SECTION 3: SMART TEMPERATURE & HUMIDITY CHART -->
     <div class="dashboard-white-card mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
@@ -322,7 +321,6 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Chart.js dengan Tema Navy Gelap & Sliding Window
     const dashTempCtx = document.getElementById('dashTempChart')?.getContext('2d');
     let dashTempChart;
     const maxDataPoints = 10;
@@ -363,13 +361,24 @@
         grid.innerHTML = '';
         let activeCount = 0;
 
-        Object.keys(sectorDetails).forEach(secId => {
+        const localRelays = JSON.parse(localStorage.getItem('iot_relay_states')) || {};
+
+        Object.keys(sectorDetails).forEach((secId, index) => {
+            const sectorNum = index + 1;
             const sectorInfo = data[secId] || { status: 'inactive' };
+            
+            let isLightingActive = false;
+            if (localRelays[sectorNum] !== undefined) {
+                isLightingActive = localRelays[sectorNum] === 1;
+            } else {
+                isLightingActive = sectorInfo.status === 'active';
+            }
+
             let badgeClass = 'status-inactive';
             let statusText = 'Inactive';
             let statusDesc = 'Status: Padam / Menunggu database';
 
-            if (sectorInfo.status === 'active') {
+            if (isLightingActive) {
                 badgeClass = 'status-active';
                 statusText = 'Active';
                 statusDesc = 'Status: Menyala / Terhubung';
@@ -396,6 +405,9 @@
         if (activeCount > 0) {
             document.getElementById('dashLampStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
             document.getElementById('dashLampStatusBadge').textContent = 'Online';
+        } else {
+            document.getElementById('dashLampStatusBadge').className = 'badge bg-secondary text-white px-3 py-1 rounded-pill';
+            document.getElementById('dashLampStatusBadge').textContent = 'Offline';
         }
     }
 
@@ -407,12 +419,22 @@
         let available = 0;
         const slots = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
 
+        const localParking = JSON.parse(localStorage.getItem('iot_parking_states')) || {};
+
         slots.forEach(slotId => {
             const slotInfo = data[slotId] || { status: 'available' };
+            
+            let isOccupied = false;
+            if (localParking[slotId] !== undefined) {
+                isOccupied = localParking[slotId] === 'occupied';
+            } else {
+                isOccupied = slotInfo.status === 'occupied';
+            }
+
             let badgeClass = 'status-available';
             let statusText = 'Available';
 
-            if (slotInfo.status === 'occupied') {
+            if (isOccupied) {
                 badgeClass = 'status-occupied';
                 statusText = 'Occupied';
             } else {
@@ -480,6 +502,12 @@
                 }
             }).catch(() => {});
     }
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'iot_relay_states' || e.key === 'iot_parking_states') {
+            fetchDashboardData();
+        }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         renderParkingGrid({});
