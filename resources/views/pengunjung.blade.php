@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-/* ==========================================================
       /* --- ANIMASI SECTION TENTANG (SLIDE DARI KIRI & KANAN) --- */
     @keyframes tentangSlideLeft {
       0% {
@@ -2459,6 +2458,71 @@
         flex: 0 0 36px !important;
       }
     }
+
+ /* =========================================================
+   ANIMASI ULTRA-SMOOTH, HALUS & SLOW SCALE-IN (TETAP DI TEMPAT)
+   ========================================================= */
+@keyframes kawasanZoomSmooth {
+  0% {
+    opacity: 0;
+    transform: scale(0.92); /* Mulai dari 92% agar peralihan ukuran sangat lembut */
+    filter: blur(10px);     /* Blur halus yang memudar perlahan */
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);    /* Tepat di ukuran normal 100% tanpa geser posisi */
+    filter: blur(0);
+  }
+}
+
+.animate-kawasan-zoom {
+  transform-origin: center center !important;
+  /* Durasi diperlambat jadi 1.3 detik dengan kurva sangat lembut */
+  animation: kawasanZoomSmooth 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  will-change: opacity, transform, filter;
+}
+
+/* =========================================================
+   ANIMASI ULTRA-SMOOTH, HALUS & SLOW SECTION LAYANAN
+   ========================================================= */
+@keyframes layananFadeUpSmooth {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96); /* Muncul pelan dari bawah dengan perbesaran halus */
+    filter: blur(8px);                       /* Blur lembut untuk kesan sinematik */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-layanan-smooth {
+  animation: layananFadeUpSmooth 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  will-change: opacity, transform, filter;
+}
+
+/* =========================================================
+   ANIMASI ULTRA-SMOOTH FADE-DOWN KHUSUS TEKS LOKASI
+   ========================================================= */
+@keyframes lokasiTeksFadeDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98); /* Meluncur pelan dari atas */
+    filter: blur(8px);                        /* Blur lembut sinematik */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-lokasi-text {
+  animation: lokasiTeksFadeDown 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  will-change: opacity, transform, filter;
+}
 </style>
 </head>
 <body>
@@ -2743,15 +2807,20 @@
       </div>
     </section>
     
-    <!-- FOOTER -->
-    <footer class="text-white py-4" style="background-color: #0b1329;">
+    <!-- FOOTER DENGAN COPYRIGHT -->
+    <footer class="py-4 text-white" style="background-color: #0b1329; border-top: 1px solid rgba(255, 255, 255, 0.08);">
       <div class="container text-center">
-        <p class="mb-0 text-muted small">&copy; 2026 Tegal Ecosense &bull; Pemerintah Kota Tegal. All Rights Reserved.</p>
+        <p class="mb-1 text-light opacity-75 small">
+          &copy; 2026 <strong>Tegal EcoSense</strong> &bull; Pemerintah Kota Tegal. All Rights Reserved.
+        </p>
+        <p class="mb-0 text-muted" style="font-size: 0.72rem;">
+          Dikembangkan untuk Observatorium Iklim Mikro & Pemantauan Lingkungan Real-Time Kawasan Alun-Alun Kota Tegal.
+        </p>
       </div>
     </footer>
   </div>
 
-
+  
   <!-- SCRIPT KONTROL & AUTO-SLIDE BACKGROUND -->
   <script>
 
@@ -2786,6 +2855,80 @@
       void tentangSection.offsetWidth; // Force Reflow untuk reset animasi
       tentangSection.classList.add('tentang-active');
     }
+
+ function triggerKawasanAnimation() {
+  const kawasanSection = document.getElementById('kawasan');
+  if (!kawasanSection) return;
+
+  // Seleksi elemen teks, judul, tab, dan kartu di kawasan
+  const targetElements = kawasanSection.querySelectorAll(
+    'h1, h2, h3, h4, p, .lead, .section-title, .section-subtitle, .zone-tab-item, .zone-card, .card, .btn'
+  );
+
+  targetElements.forEach((el, index) => {
+    el.classList.remove('animate-kawasan-zoom');
+    el.style.animationDelay = '0s';
+    void el.offsetWidth; // Force Reflow reset animasi
+
+    // Jeda 0.08 detik per elemen agar urutan mekarnya terasa santai & mengalir
+    const delay = (index * 0.08).toFixed(2);
+    el.style.animationDelay = `${delay}s`;
+
+    el.classList.add('animate-kawasan-zoom');
+  });
+}
+
+
+// --- FUNGSI ANIMASI SECTION LAYANAN ---
+function triggerLayananAnimation() {
+  const layananSection = document.getElementById('layanan');
+  if (!layananSection) return;
+
+  // Seleksi sub-judul, judul utama, deskripsi, dan kartu-kartu layanan
+  const targetElements = layananSection.querySelectorAll(
+    'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle, .card, .col-lg-4, .col-md-6'
+  );
+
+  targetElements.forEach((el, index) => {
+    // Reset animasi
+    el.classList.remove('animate-layanan-smooth');
+    el.style.animationDelay = '0s';
+    void el.offsetWidth; // Force Reflow untuk reset animasi browser
+
+    // Jeda 0.1 detik per elemen agar kartu & teks muncul berurutan secara pelan-pelan
+    const delay = (index * 0.1).toFixed(2);
+    el.style.animationDelay = `${delay}s`;
+
+    // Pasang class animasi
+    el.classList.add('animate-layanan-smooth');
+  });
+}
+
+// --- FUNGSI ANIMASI KHUSUS TEKS SECTION LOKASI ---
+function triggerLokasiAnimation() {
+  const lokasiSection = document.getElementById('lokasi');
+  if (!lokasiSection) return;
+
+  // Hanya menyeleksi elemen teks (h1-h4, p, badge, span) dan MENGECUALIKAN container peta/iframe
+  const textElements = lokasiSection.querySelectorAll(
+    'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle'
+  );
+
+  textElements.forEach((el, index) => {
+    // Pastikan tidak mengenai elemen peta atau iframe
+    if (el.tagName === 'IFRAME' || el.closest('.map-container') || el.closest('#map')) return;
+
+    el.classList.remove('animate-lokasi-text');
+    el.style.animationDelay = '0s';
+    void el.offsetWidth; // Force reflow browser
+
+    // Jeda bertahap (stagger) 0.1 detik per baris teks dari atas ke bawah
+    const delay = (index * 0.1).toFixed(2);
+    el.style.animationDelay = `${delay}s`;
+
+    el.classList.add('animate-lokasi-text');
+  });
+}
 
     // =========================================================
     // NAVBAR ACTIVE MENU OTOMATIS
@@ -2824,6 +2967,18 @@
             triggerTentangAnimation();
           }
 
+          if (targetId === 'kawasan') {
+            triggerKawasanAnimation();
+          }
+
+          if (targetId === 'layanan') {
+            triggerLayananAnimation();
+          }
+
+          if (targetId === 'lokasi') {
+            triggerLokasiAnimation();
+          }
+
           // Pada HP, navbar sedang terbuka ketika menu dipilih.
           const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
           const scrollToTarget = () => {
@@ -2841,7 +2996,6 @@
             const collapse = bootstrap.Collapse.getInstance(navbarCollapse) ||
                              new bootstrap.Collapse(navbarCollapse, { toggle: false });
 
-            // Tutup dropdown terlebih dahulu, baru hitung posisi section.
             collapse.hide();
 
             navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
@@ -2849,23 +3003,50 @@
             scrollToTarget();
           }
 
-          // Tetap ubah hash tanpa memicu scroll bawaan browser.
           history.pushState(null, '', '#' + targetId);
         });
       });
 
-      // Saat pengguna scroll, menu mengikuti section yang sedang terlihat & aktifkan animasi Tentang.
+      // Flag penanda status animasi Beranda
+      let isBerandaAnimated = true;
+
+      // Saat pengguna scroll, menu mengikuti section & animasi Beranda/Tentang aktif otomatis.
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const targetId = entry.target.id;
           if (entry.isIntersecting) {
             setActiveMenu(targetId);
+
             if (targetId === 'tentang') {
               entry.target.classList.add('tentang-active');
+            }
+
+            // TAMBAHKAN INI: Pemicu saat scroll masuk ke kawasan
+            if (targetId === 'kawasan') {
+              triggerKawasanAnimation();
+            }
+
+            if (targetId === 'layanan') {
+              triggerLayananAnimation();
+            }
+
+            if (targetId === 'lokasi') {
+              triggerLokasiAnimation();
+            }
+
+            if (targetId === 'beranda') {
+              if (!isBerandaAnimated) {
+                triggerHeroAnimation();
+                isBerandaAnimated = true;
+              }
             }
           } else {
             if (targetId === 'tentang') {
               entry.target.classList.remove('tentang-active');
+            }
+
+            if (targetId === 'beranda') {
+              isBerandaAnimated = false;
             }
           }
         });
@@ -2876,6 +3057,16 @@
       });
 
       sections.forEach(section => observer.observe(section));
+
+      // Pengaman jika pengguna scroll penuh ke paling atas layar
+      window.addEventListener('scroll', function() {
+        if (window.pageYOffset < 50) {
+          if (!isBerandaAnimated) {
+            triggerHeroAnimation();
+            isBerandaAnimated = true;
+          }
+        }
+      });
 
       // Jika halaman dibuka langsung dengan URL #tentang, #kawasan, dst.
       if (window.location.hash) {
@@ -2904,8 +3095,8 @@
       currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
       let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.45), rgba(11, 19, 41, 0.88)), url('${backgroundImages[currentBgIndex]}')`;
       
-      welcomeSec.style.backgroundImage = newBgUrl;
-      heroDashboard.style.backgroundImage = newBgUrl;
+      if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
+      if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
     }, 3000);
 
     // Fungsi Transisi Masuk ke Situs Utama
@@ -2974,7 +3165,7 @@
       switchZone(currentZoneIndex);
     }
 
-  </script>
+</script>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
