@@ -4,61 +4,42 @@
 
 @push('styles')
 <style>
-    /* ===== KARTU UTAMA DENGAN LATAR PUTIH & EFEK GLOW NAVY ===== */
+    /* Mengubah semua card utama & statistik menjadi putih bersih */
+    .dashboard-white-card,
+    .stat-top-card,
+    .parking-white-card,
+    .lamp-white-card,
     .temp-white-card {
         background: #ffffff !important;
+        background-color: #ffffff !important;
         border: 1px solid #cbd5e1 !important;
         border-radius: 16px !important;
         padding: 24px !important;
-        box-shadow: 0 10px 30px rgba(11, 19, 43, 0.08), 0 0 20px rgba(37, 99, 235, 0.12);
+        box-shadow: 0 10px 30px rgba(11, 19, 43, 0.08) !important;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
 
-    .temp-white-card::after {
-        content: '';
-        position: absolute;
-        top: -40px;
-        right: -40px;
-        width: 140px;
-        height: 140px;
-        background: radial-gradient(circle, rgba(11, 19, 43, 0.18) 0%, rgba(37, 99, 235, 0.05) 50%, rgba(255, 255, 255, 0) 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-
-    /* ===== KARTU STATISTIK ATAS (RATA 1 UKURAN) ===== */
+    /* Khusus kartu atas disamakan tingginya & rata */
     .stat-top-card {
-        background: #ffffff !important;
-        border: 1px solid #cbd5e1 !important;
-        border-radius: 16px !important;
         padding: 20px !important;
-        box-shadow: 0 10px 30px rgba(11, 19, 43, 0.08), 0 0 20px rgba(37, 99, 235, 0.12);
-        position: relative;
-        overflow: hidden;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
 
-    .stat-top-card::after {
-        content: '';
-        position: absolute;
-        top: -40px;
-        right: -40px;
-        width: 120px;
-        height: 120px;
-        background: radial-gradient(circle, rgba(11, 19, 43, 0.18) 0%, rgba(37, 99, 235, 0.05) 50%, rgba(255, 255, 255, 0) 70%);
-        border-radius: 50%;
-        pointer-events: none;
+    .temp-white-card:hover,
+    .stat-top-card:hover {
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.22), inset 0 1px 3px rgba(255, 255, 255, 1) !important;
+        transform: translateY(-2px);
     }
 
     /* Log Terakhir Item */
     .log-item-row {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
         border-radius: 10px;
         padding: 10px 14px;
         margin-bottom: 10px;
@@ -80,10 +61,10 @@
             <div class="stat-top-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <div class="text-secondary mb-1" style="font-size: 0.85rem; font-weight: 600;">Suhu Saat Ini</div>
+                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Suhu Saat Ini</div>
                         <h3 class="fw-bold mb-1 text-dark" id="cardCurrentTemp">-- °C</h3>
                     </div>
-                    <div style="width: 45px; height: 45px; background: rgba(245, 158, 11, 0.1); color: #d97706; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                    <div style="width: 45px; height: 45px; background: rgba(245, 158, 11, 0.2); color: #b45309; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
                         <i class="fas fa-temperature-high"></i>
                     </div>
                 </div>
@@ -98,10 +79,10 @@
             <div class="stat-top-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <div class="text-secondary mb-1" style="font-size: 0.85rem; font-weight: 600;">Kelembapan Udara</div>
-                        <h3 class="fw-bold mb-1 text-primary" id="cardCurrentHum">-- %</h3>
+                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Kelembapan Udara</div>
+                        <h3 class="fw-bold mb-1 text-dark" id="cardCurrentHum">-- %</h3>
                     </div>
-                    <div style="width: 45px; height: 45px; background: rgba(37, 99, 235, 0.1); color: #2563eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                    <div style="width: 45px; height: 45px; background: rgba(37, 99, 235, 0.2); color: #1d4ed8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
                         <i class="fas fa-tint"></i>
                     </div>
                 </div>
@@ -116,16 +97,16 @@
             <div class="stat-top-card">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <div class="text-secondary mb-1" style="font-size: 0.85rem; font-weight: 600;">Status Kondisi & IoT</div>
-                        <h3 class="fw-bold mb-1 text-warning" id="cardConditionStatus">Menunggu DB</h3>
+                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Status Kondisi & IoT</div>
+                        <h3 class="fw-bold mb-1 text-danger" id="cardConditionStatus">Offline</h3>
                     </div>
-                    <div style="width: 45px; height: 45px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                    <div style="width: 45px; height: 45px; background: rgba(239, 68, 68, 0.2); color: #b91c1c; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
                         <i class="fas fa-database"></i>
                     </div>
                 </div>
                 <div class="mt-3" style="font-size: 0.78rem;" id="iotConnectionStatusText">
-                    <span class="spinner-grow spinner-grow-sm text-warning me-1" id="iotDot"></span>
-                    <span class="text-warning fw-semibold">Belum ada data masuk dari database</span>
+                    <span class="spinner-grow spinner-grow-sm text-danger me-1" id="iotDot"></span>
+                    <span class="text-danger fw-semibold">Belum ada data masuk dari database</span>
                 </div>
             </div>
         </div>
@@ -139,16 +120,16 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Grafik Suhu dan Kelembapan (°C / %)</h5>
-                        <small class="text-muted">Grafik akan aktif otomatis setelah telemetri masuk dari database</small>
+                        <small class="text-dark opacity-75 fw-semibold">Grafik siap merekam data setelah masuk dari database</small>
                     </div>
+                    <!-- Tombol Periode: Hari & Minggu Saja -->
                     <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-primary active">Hari</button>
-                        <button type="button" class="btn btn-outline-secondary">Minggu</button>
-                        <button type="button" class="btn btn-outline-secondary">Bulan</button>
+                        <button type="button" class="btn btn-dark active">Hari</button>
+                        <button type="button" class="btn btn-outline-dark">Minggu</button>
                     </div>
                 </div>
 
-                <!-- Canvas Grafik Chart.js -->
+                <!-- Canvas Grafik Chart.js (Kerangka tampil, garis diam menunggu data) -->
                 <div style="position: relative; height: 280px; width: 100%;" class="mt-3">
                     <canvas id="tempChart"></canvas>
                 </div>
@@ -176,7 +157,7 @@
                     </div>
                 </div>
 
-                <div class="text-center py-3 text-muted border-top mt-3">
+                <div class="text-center py-3 text-dark opacity-75 border-top mt-3">
                     <small style="font-size: 0.72rem;">Belum ada data masuk dari MQTT/Database.</small>
                 </div>
             </div>
@@ -189,7 +170,7 @@
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // INISIALISASI CHART.JS
+    // INISIALISASI KERANGKA CHART.JS (TAMPIL KOTAK & SUMBU, NAMUN GARIS DIAM)
     const tempCtx = document.getElementById('tempChart')?.getContext('2d');
     let tempChart;
 
@@ -197,22 +178,22 @@
         tempChart = new Chart(tempCtx, {
             type: 'line',
             data: {
-                labels: [],
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'], // Kerangka jam tampil
                 datasets: [
                     {
                         label: 'Suhu (°C)',
-                        data: [],
+                        data: [null, null, null, null, null, null], // Kosong agar garis tidak jalan
                         borderColor: '#f59e0b',
-                        backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
                         tension: 0.4,
                         fill: true,
                         borderWidth: 2
                     },
                     {
                         label: 'Kelembapan (%)',
-                        data: [],
+                        data: [null, null, null, null, null, null], // Kosong agar garis tidak jalan
                         borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.05)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
                         tension: 0.4,
                         fill: true,
                         borderWidth: 2
@@ -226,8 +207,8 @@
                     legend: { labels: { color: '#0f172a', font: { weight: 'bold' } } }
                 },
                 scales: {
-                    x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-                    y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(0, 0, 0, 0.05)' }, min: 0, max: 100 }
+                    x: { ticks: { color: '#475569' }, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                    y: { ticks: { color: '#475569' }, grid: { color: 'rgba(0, 0, 0, 0.05)' }, min: 0, max: 100 }
                 }
             }
         });
@@ -240,7 +221,6 @@
                 return res.json();
             })
             .then(data => {
-                // Jika data dari database valid dan ada isinya
                 if (data && (data.temperature !== undefined || data.temp !== undefined)) {
                     const temp = data.temperature !== undefined ? data.temperature : data.temp;
                     const hum = data.humidity !== undefined ? data.humidity : data.hum;
@@ -259,33 +239,33 @@
 
                     document.getElementById('iotConnectionStatusText').innerHTML = '<span class="spinner-grow spinner-grow-sm text-success me-1"></span><span class="text-success fw-semibold">Terhubung ke Database (Live)</span>';
 
-                    // Masukkan ke Grafik
+                    // Update grafik saat data riil masuk
                     if (tempChart) {
                         const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                         tempChart.data.labels.push(now);
                         tempChart.data.datasets[0].data.push(temp);
                         tempChart.data.datasets[1].data.push(hum);
-
-                        if (tempChart.data.labels.length > 15) {
-                            tempChart.data.labels.shift();
-                            tempChart.data.datasets.forEach(ds => ds.data.shift());
-                        }
                         tempChart.update();
                     }
                 }
             })
             .catch(() => {
-                // Status saat database / API belum merespons data (tetap menampilkan status menunggu)
+                // Tetap berada pada status OFFLINE & grafik diam jika database belum merespons
                 document.getElementById('cardCurrentTemp').textContent = '-- °C';
                 document.getElementById('cardCurrentHum').textContent = '-- %';
-                document.getElementById('cardConditionStatus').textContent = 'Menunggu DB';
-                document.getElementById('iotConnectionStatusText').innerHTML = '<span class="spinner-grow spinner-grow-sm text-warning me-1"></span><span class="text-warning fw-semibold">Belum ada data masuk dari database</span>';
+                document.getElementById('cardConditionStatus').textContent = 'Offline';
+                document.getElementById('cardConditionStatus').className = 'fw-bold mb-1 text-danger';
+                document.getElementById('tempStatusBadge').className = 'badge bg-secondary text-white px-3 py-1 rounded-pill';
+                document.getElementById('tempStatusBadge').textContent = 'Belum Ada Data';
+                document.getElementById('humStatusBadge').className = 'badge bg-secondary text-white px-3 py-1 rounded-pill';
+                document.getElementById('humStatusBadge').textContent = 'Belum Ada Data';
+                document.getElementById('iotConnectionStatusText').innerHTML = '<span class="spinner-grow spinner-grow-sm text-danger me-1"></span><span class="text-danger fw-semibold">Belum ada data masuk dari database</span>';
             });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         checkDatabaseTempData();
-        setInterval(checkDatabaseTempData, 5000); // Mengecek pembaruan data setiap 5 detik
+        setInterval(checkDatabaseTempData, 5000);
     });
 </script>
 @endpush

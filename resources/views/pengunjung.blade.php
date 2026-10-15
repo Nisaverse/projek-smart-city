@@ -10,6 +10,115 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
+/* ==========================================================
+      /* --- ANIMASI SECTION TENTANG (SLIDE DARI KIRI & KANAN) --- */
+    @keyframes tentangSlideLeft {
+      0% {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes tentangSlideRight {
+      0% {
+        opacity: 0;
+        transform: translateX(60px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Kondisi awal sebelum animasi aktif (tersembunyi) */
+    .tentang-pro-left, .tentang-pro-right {
+      opacity: 0;
+    }
+
+    /* Kelas saat animasi dijalankan dengan durasi pas (1.1 detik) */
+    .tentang-active .tentang-pro-left {
+      animation: tentangSlideLeft 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .tentang-active .tentang-pro-right {
+      animation: tentangSlideRight 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+
+    /* Efek Interaktif Hover pada Kartu Visi-Misi di Sebelah Kanan */
+    #tentang .p-5 {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+      border: 1px solid rgba(13, 110, 253, 0.15) !important;
+      box-shadow: 0 10px 30px rgba(11, 19, 41, 0.05);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #tentang .p-5:hover {
+      transform: translateY(-6px);
+      border-color: rgba(13, 110, 253, 0.4) !important;
+      box-shadow: 0 20px 40px rgba(13, 110, 253, 0.12) !important;
+    }
+
+    /* Efek Interaktif Item *Checklist* di Bawah */
+    #tentang .col-sm-6 > div {
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    #tentang .col-sm-6 > div:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      transform: translateX(4px);
+    }
+
+  /* Efek Glassmorphism & Modern Shadow untuk Seluruh Kartu */
+  .card, .zone-card, .hero-observatorium {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1rem !important;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Efek Melayang & Glow saat kursor menyentuh kartu */
+  .card:hover, .zone-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(13, 110, 253, 0.25) !important;
+    border-color: rgba(13, 110, 253, 0.5) !important;
+  }
+
+  /* Tombol Utama Lebih Elegan */
+  .btn-primary {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.6);
+  }
+
+  /* Tombol Chat Mengambang (Floating Chat Button) */
+  .chat-float-btn {
+    box-shadow: 0 10px 25px rgba(0, 136, 204, 0.5) !important;
+    animation: bounce-slow 3s infinite;
+  }
+
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+
     body {
       background-color: #0b1329;
       color: #1a1a1a;
@@ -32,12 +141,13 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 30px 60px;
+      padding: 15px 40px 25px 40px; /* Padding atas dikurangi jadi 15px, bawah 25px */
       background-image: linear-gradient(rgba(11, 19, 41, 0.45), rgba(11, 19, 41, 0.88)), url('image/alun-alun-tegal.jpeg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       transition: opacity 0.6s ease, transform 0.6s ease, background-image 1s ease-in-out;
+      box-sizing: border-box;
     }
 
     .bg-overlay {
@@ -104,22 +214,25 @@
     }
 
     /* Bagian Tengah */
+    /* 2. Rapatkan jarak judul & deskripsi di bagian tengah */
     .welcome-center {
-      max-width: 650px;
-      margin-top: 40px;
+      max-width: 600px;
+      margin-top: 5px; /* Margin dipangkas dari 15px/40px jadi 5px saja */
     }
+
     .welcome-title {
-      font-size: 3.5rem;
+      font-size: 3rem; /* Dikurangi sedikit dari 3.5rem agar memakan ruang lebih sedikit */
       font-weight: 800;
       letter-spacing: 2px;
-      margin-bottom: 15px;
+      margin-bottom: 10px; /* Margin bawah dikurangi */
       line-height: 1.1;
     }
+
     .welcome-desc {
-      font-size: 0.95rem;
-      line-height: 1.6;
+      font-size: 0.88rem;
+      line-height: 1.5;
       color: #e2e8f0;
-      margin-bottom: 25px;
+      margin-bottom: 18px; /* Margin bawah dikurangi */
     }
 
 /* --- ANIMASI TEKS LANDING SCREEN --- */
@@ -176,13 +289,15 @@
     /* Mini Preview Cards di kanan bawah */
     .welcome-preview-container {
       display: flex;
-      gap: 15px;
+      gap: 12px;
       align-items: center;
       justify-content: flex-end;
+      margin-bottom: 10px; /* Mengangkat seluruh kontainer kartu ke atas */
     }
+
     .preview-card {
-      width: 140px;
-      height: 180px;
+      width: 105px;  /* Disesuaikan jadi 105px */
+      height: 110px; /* Dipangkas dari 125px/180px jadi 110px agar terangkat penuh */
       border-radius: 12px;
       overflow: hidden;
       position: relative;
@@ -202,17 +317,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 10px;
-      font-size: 0.75rem;
+      padding: 8px;
+      font-size: 0.70rem;
       font-weight: 600;
     }
     .preview-nav-arrow {
-      width: 40px;
-      height: 40px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       border: 1px solid rgba(255,255,255,0.4);
       background: rgba(0,0,0,0.3);
@@ -235,6 +350,7 @@
     transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  /* Layer Utama */
   .hero-observatorium {
     min-height: 100vh;
     background-image: linear-gradient(rgba(11, 19, 41, 0.5), rgba(11, 19, 41, 0.85)), url('image/alun-alun-tegal.jpeg');
@@ -2272,6 +2388,77 @@
       .welcome-logos-row .logo-badge-item:nth-child(4) img { width:39px !important; height:43px !important; }
     }
 
+/* --- ANIMASI ELEGANT & RESPONSIVE BERANDA --- */
+    
+    /* Animation Keyframes Desktop */
+    @keyframes heroBadgeGrow {
+      from { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+      to { opacity: 1; transform: scale(1); filter: blur(0); }
+    }
+
+    @keyframes heroSlideLeft {
+      from { opacity: 0; transform: translateX(-35px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes heroSlideRight {
+      from { opacity: 0; transform: translateX(35px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Class Animasi */
+    .hero-pro-badge { animation: heroBadgeGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .hero-pro-title { opacity: 0; animation: heroSlideLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; }
+    .hero-pro-desc { opacity: 0; animation: heroSlideRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards; }
+    .hero-pro-btn { opacity: 0; animation: heroFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards; }
+
+
+    /* --- FIX KHUSUS MOBILE (HP) AGAR TAMPILAN TIDAK GESER / RUSAK --- */
+    @media (max-width: 767.98px) {
+      /* Mencegah layar HP bisa digeser ke kanan-kiri */
+      html, body, #welcomeSection, #mainWebsiteContent, .hero-observatorium {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+      }
+
+      /* Di HP, ganti slide samping menjadi Fade-In lurus dari bawah agar tidak merusak layout */
+      @keyframes heroSlideLeft {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes heroSlideRight {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Memaksa area logo welcome screen tetap di tengah atas */
+      .welcome-top-center {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        left: 0 !important;
+        right: 0 !important;
+      }
+
+      .welcome-logos-row {
+        width: 100% !important;
+        justify-content: center !important;
+        gap: 8px !important;
+      }
+
+      .logo-badge-item {
+        width: 36px !important;
+        height: 36px !important;
+        flex: 0 0 36px !important;
+      }
+    }
 </style>
 </head>
 <body>
@@ -2291,9 +2478,6 @@
         </div>
         <div class="logo-badge-item" title="Smart City">
           <img src="image/logo_smartcity_rm.png" alt="Smart City">
-        </div>
-        <div class="logo-badge-item" title="UHN">
-          <img src="image/uhn logo.png" alt="UHN">
         </div>
       </div>
       <div class="welcome-gov-title">Pemerintah Kota Tegal</div>
@@ -2324,7 +2508,7 @@
       <div class="preview-card" style="background-image: url('image/balaikota.jpeg');">
         <div class="preview-card-overlay">
           <span>Balaikota</span>
-          <span class="text-warning">33.5&deg;C</span>,
+          <span class="text-warning">33.5&deg;C</span>
         </div>
       </div>
       <div class="preview-card" style="background-image: url('image/masjid agung.jpeg');">
@@ -2370,27 +2554,35 @@
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-8">
-            <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 rounded-pill mb-3 fw-semibold">
-              <i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i> Smart City Alun-Alun Kota Tegal
-            </span>
-            <h1 class="display-4 fw-bold mb-3">Membangun Kota Pintar untuk Masa Depan</h1>
-            <p class="lead text-light opacity-75 mb-4" style="max-width: 650px;">
-              Platform inovatif pemantauan iklim mikro publik, kualitas udara real-time, dan tata kelola kawasan berbasis sensor IoT di pusat Kota Tegal.
-            </p>
-            <div class="d-flex gap-3">
-              <a href="#layanan" class="btn btn-primary px-4 py-3 rounded-pill fw-semibold shadow-sm">Jelajahi Layanan <i class="fa-solid fa-arrow-right ms-2"></i></a>
-              <a href="#tentang" class="btn btn-outline-light px-4 py-3 rounded-pill fw-semibold">Pelajari Lebih Lanjut</a>
-            </div>
-          </div>
+  <!-- Badge status dengan animasi Soft Zoom -->
+  <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 rounded-pill mb-3 fw-semibold hero-pro-badge">
+    <i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i> Smart City Alun-Alun Kota Tegal
+  </span>
+  
+  <!-- Judul dengan animasi Slide-In dari Kiri -->
+  <h1 class="display-4 fw-bold mb-3 hero-pro-title">Membangun Kota Pintar untuk Masa Depan</h1>
+  
+  <!-- Deskripsi dengan animasi Slide-In dari Kanan -->
+  <p class="lead text-light opacity-75 mb-4 hero-pro-desc" style="max-width: 650px;">
+    Platform inovatif pemantauan iklim mikro publik, kualitas udara real-time, dan tata kelola kawasan berbasis sensor IoT di pusat Kota Tegal.
+  </p>
+
+  <!-- Tombol dengan animasi Fade-Up -->
+  <div class="d-flex gap-3 hero-pro-btn">
+    <a href="#layanan" class="btn btn-primary px-4 py-3 rounded-pill fw-semibold shadow-sm">Jelajahi Layanan <i class="fa-solid fa-arrow-right ms-2"></i></a>
+    <a href="#tentang" class="btn btn-outline-light px-4 py-3 rounded-pill fw-semibold">Pelajari Lebih Lanjut</a>
+  </div>
+</div>
         </div>
       </div>
     </section>
 
-    <!-- 2. TENTANG SMART CITY -->
+  <!-- 2. TENTANG SMART CITY -->
     <section class="py-5 bg-white" id="tentang" style="padding-top: 100px; padding-bottom: 100px;">
       <div class="container">
         <div class="row align-items-center g-5">
-          <div class="col-lg-6">
+          <!-- Kolom Kiri -->
+          <div class="col-lg-6 tentang-pro-left">
             <h6 class="text-primary fw-bold text-uppercase tracking-wide">Tentang Inisiatif</h6>
             <h2 class="fw-bold mb-4">Apa itu Smart City & Tegal Ecosense?</h2>
             <p class="text-muted mb-3">Smart City adalah kerangka kerja penataan kota yang menggunakan teknologi informasi dan perangkat Internet of Things (IoT) untuk meningkatkan efisiensi pelayanan publik, mendukung kelestarian lingkungan, dan meningkatkan kenyamanan warga.</p>
@@ -2408,7 +2600,9 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-6">
+          
+          <!-- Kolom Kanan (Kotak Visi Misi yang Dipercantik) -->
+          <div class="col-lg-6 tentang-pro-right">
             <div class="p-5 bg-light rounded-4 border">
               <h4 class="fw-bold mb-3"><i class="fa-solid fa-bullseye text-primary me-2"></i> Visi Utama</h4>
               <p class="text-muted mb-4">Mewujudkan Kota Tegal sebagai kota bahari yang cerdas, hijau, ramah lingkungan, serta berbasis data digital terpadu.</p>
@@ -2560,6 +2754,39 @@
 
   <!-- SCRIPT KONTROL & AUTO-SLIDE BACKGROUND -->
   <script>
+
+    function triggerHeroAnimation() {
+      const badge = document.querySelector('.hero-pro-badge');
+      const title = document.querySelector('.hero-pro-title');
+      const desc = document.querySelector('.hero-pro-desc');
+      const btn = document.querySelector('.hero-pro-btn');
+
+      const elements = [badge, title, desc, btn];
+
+      // Hapus class animasi sejenak
+      elements.forEach(el => {
+        if (el) el.style.animation = 'none';
+      });
+
+      // Re-flow DOM (memaksa browser mereset animasi)
+      void document.body.offsetHeight;
+
+      // Kembalikan animasi seperti semula
+      elements.forEach(el => {
+        if (el) el.style.animation = '';
+      });
+    }
+
+    // --- FUNGSI ANIMASI SECTION TENTANG ---
+    function triggerTentangAnimation() {
+      const tentangSection = document.getElementById('tentang');
+      if (!tentangSection) return;
+
+      tentangSection.classList.remove('tentang-active');
+      void tentangSection.offsetWidth; // Force Reflow untuk reset animasi
+      tentangSection.classList.add('tentang-active');
+    }
+
     // =========================================================
     // NAVBAR ACTIVE MENU OTOMATIS
     // Menandai menu sesuai section yang sedang dilihat/dibuka.
@@ -2575,8 +2802,6 @@
       }
 
       // Saat menu diklik, arahkan section tepat di bawah navbar.
-      // Tidak memakai anchor scroll bawaan browser karena posisi navbar
-      // fixed dapat membuat section berhenti terlalu jauh dari atas.
       navLinks.forEach(link => {
         link.addEventListener('click', function (event) {
           const targetId = this.getAttribute('href').substring(1);
@@ -2589,9 +2814,17 @@
           event.preventDefault();
           setActiveMenu(targetId);
 
+          // Jika menu yang diklik adalah beranda, jalankan ulang animasinya
+          if (targetId === 'beranda') {
+            triggerHeroAnimation();
+          }
+
+          // Jika menu yang diklik adalah tentang, jalankan animasi tentang
+          if (targetId === 'tentang') {
+            triggerTentangAnimation();
+          }
+
           // Pada HP, navbar sedang terbuka ketika menu dipilih.
-          // Jika tinggi navbar diukur sebelum dropdown ditutup, offset menjadi
-          // terlalu besar sehingga section berhenti tidak tepat di bawah navbar.
           const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
           const scrollToTarget = () => {
             const navbarHeight = navbar.getBoundingClientRect().height;
@@ -2611,8 +2844,6 @@
             // Tutup dropdown terlebih dahulu, baru hitung posisi section.
             collapse.hide();
 
-            // Tunggu transisi Bootstrap selesai agar tinggi navbar sudah kembali
-            // ke tinggi normal (hanya header), lalu scroll tepat ke section.
             navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
           } else {
             scrollToTarget();
@@ -2623,19 +2854,25 @@
         });
       });
 
-      // Saat pengguna scroll, menu mengikuti section yang sedang terlihat.
+      // Saat pengguna scroll, menu mengikuti section yang sedang terlihat & aktifkan animasi Tentang.
       const observer = new IntersectionObserver((entries) => {
-        const visibleSections = entries
-          .filter(entry => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        if (visibleSections.length > 0) {
-          setActiveMenu(visibleSections[0].target.id);
-        }
+        entries.forEach(entry => {
+          const targetId = entry.target.id;
+          if (entry.isIntersecting) {
+            setActiveMenu(targetId);
+            if (targetId === 'tentang') {
+              entry.target.classList.add('tentang-active');
+            }
+          } else {
+            if (targetId === 'tentang') {
+              entry.target.classList.remove('tentang-active');
+            }
+          }
+        });
       }, {
         root: null,
-        rootMargin: '-90px 0px -45% 0px',
-        threshold: [0.1, 0.25, 0.5, 0.75]
+        rootMargin: '-90px 0px -30% 0px',
+        threshold: 0.15
       });
 
       sections.forEach(section => observer.observe(section));
@@ -2671,18 +2908,20 @@
       heroDashboard.style.backgroundImage = newBgUrl;
     }, 3000);
 
-
-
     // Fungsi Transisi Masuk ke Situs Utama
     function enterWebsite() {
       const mainContent = document.getElementById('mainWebsiteContent');
       
       welcomeSec.style.opacity = '0';
-      welcomeSec.style.transform = 'scale(1.05)';
+      welcomeSec.style.transform = 'scale(1.04)';
       
       setTimeout(() => {
         welcomeSec.style.display = 'none';
         mainContent.style.display = 'block';
+        
+        // Jalankan animasi teks beranda
+        triggerHeroAnimation();
+
         setTimeout(() => {
           mainContent.style.opacity = '1';
           window.scrollTo(0, 0);
@@ -2927,6 +3166,26 @@
         chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
         chatBody.scrollTop = chatBody.scrollHeight;
       }, 350);
+    }
+
+    //ANIMASI MASUK SITUS DAN BERANDA
+    function triggerHeroAnimation() {
+      const badge = document.querySelector('.hero-pro-badge');
+      const title = document.querySelector('.hero-pro-title');
+      const desc = document.querySelector('.hero-pro-desc');
+      const btn = document.querySelector('.hero-pro-btn');
+
+      const elements = [badge, title, desc, btn];
+
+      elements.forEach(el => {
+        if (el) el.style.animation = 'none';
+      });
+
+      void document.body.offsetHeight; // Reset animasi browser
+
+      elements.forEach(el => {
+        if (el) el.style.animation = '';
+      });
     }
   </script>
 </body>

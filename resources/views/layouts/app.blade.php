@@ -17,9 +17,9 @@
     <style>
         :root {
             --sidebar-width: 260px;
-            --bg-dark: #f8fafc;          /* Kembali ke Background Abu Terang */
+            --bg-dark: #f8fafc;
             --bg-card: #ffffff;
-            --bg-sidebar: #0b1120;       /* Khusus Sidebar: Navy Dark */
+            --bg-sidebar: #0d1321;
             --accent-blue: #3b82f6;
             --accent-green: #10b981;
             --accent-yellow: #f59e0b;
@@ -36,57 +36,48 @@
             scroll-behavior: smooth;
         }
 
-        body {
+       body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 24px 24px;
+            background-color: #cbd5e1 !important; /* Warna abu-abu pilihan Anda */
+            background-image: none !important;
             color: var(--text-primary);
             min-height: 100vh;
         }
 
-        /* ===== SIDEBAR (NAVY DARK SAJA) ===== */
+        /* ===== SIDEBAR (NAVY DARK & TEKS PUTIH) ===== */
         .sidebar {
             position: fixed;
             top: 0; left: 0;
             width: var(--sidebar-width);
             height: 100vh;
-            background: linear-gradient(180deg, #0b1120 0%, #0f172a 100%) !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background: #0b132b !important; /* Navy Dark */
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
             z-index: 1000;
             transition: transform 0.3s ease;
             overflow: hidden;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
         }
 
         .sidebar-header {
-            padding: 24px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
             flex-shrink: 0;
         }
 
         .sidebar-header h4 {
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 1.25rem;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-        }
-
-        .sidebar-header h4 i {
-            color: var(--accent-blue);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 1.2rem;
         }
 
         .sidebar-header small {
-            color: #94a3b8;
+            color: #94a3b8 !important;
             font-size: 0.75rem;
-            font-weight: 500;
         }
 
-        /* NAVIGASI MENU SIDEBAR */
+        /* KHUSUS NAVIGASI MENU YANG BISA DI-SCROLL */
         .sidebar-nav {
             padding: 15px 0;
             flex: 1;
@@ -95,35 +86,32 @@
         }
 
         .nav-label {
-            padding: 16px 20px 6px;
+            padding: 10px 20px 5px;
             font-size: 0.7rem;
             text-transform: uppercase;
-            color: #475569;
-            font-weight: 700;
-            letter-spacing: 1.2px;
+            color: #94a3b8 !important;
+            letter-spacing: 1px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             padding: 12px 20px;
-            color: #94a3b8;
+            color: #cbd5e1 !important; /* Warna teks putih/abu terang */
             text-decoration: none;
             transition: all 0.2s;
             border-left: 3px solid transparent;
             margin: 2px 0;
-            font-weight: 600;
-            font-size: 0.9rem;
         }
 
         .nav-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #f8fafc;
+            background: rgba(59, 130, 246, 0.2);
+            color: #ffffff !important;
         }
 
         .nav-item.active {
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.05) 100%);
-            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.3);
+            color: #ffffff !important;
             border-left-color: var(--accent-blue);
         }
 
@@ -132,13 +120,18 @@
             margin-right: 12px;
             font-size: 1rem;
             text-align: center;
+            color: #94a3b8;
         }
 
-        /* ESP CONNECT STATUS DI SIDEBAR */
+        .nav-item:hover i, .nav-item.active i {
+            color: var(--accent-blue);
+        }
+
+        /* ===== ESP CONNECT ===== */
         .esp-connect {
             padding: 15px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.15);
             flex-shrink: 0;
         }
 
@@ -163,9 +156,9 @@
             50% { opacity: 0.4; }
         }
 
-        .esp-info { color: #94a3b8; font-size: 0.7rem; }
+        .esp-info { color: #94a3b8 !important; font-size: 0.7rem; }
 
-        /* ===== MAIN CONTENT & TOP BAR ===== */
+        /* ===== MAIN CONTENT ===== */
         .main-content {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
@@ -180,13 +173,12 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        .top-bar h5 { font-weight: 600; color: var(--text-primary); }
+        .top-bar h5 { font-weight: 600; }
 
         .user-info {
             display: flex;
             align-items: center;
             gap: 12px;
-            color: var(--text-primary);
         }
 
         .user-avatar {
@@ -202,6 +194,54 @@
         }
 
         .content-area { padding: 25px 30px; padding-bottom: 60px; }
+
+        /* ===== CARDS & TOGGLE ===== */
+        .stat-card, .data-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px; height: 26px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input { display: none; }
+
+        .toggle-slider {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #cbd5e1;
+            border-radius: 26px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--accent-blue);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
 
         /* ===== MQTT STATUS BAR ===== */
         .mqtt-bar {
@@ -234,7 +274,7 @@
         @media (max-width: 768px) {
             .sidebar { 
                 transform: translateX(-100%); 
-                box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
             }
             .sidebar.show { transform: translateX(0); }
             
@@ -279,10 +319,10 @@
     <!-- OVERLAY UNTUK MOBILE -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- ===== SIDEBAR NAVY DARK ===== -->
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h4><i class="fas fa-city me-2"></i>Sisity</h4>
+            <h4><i class="fas fa-city text-primary"></i> SiSity</h4>
             <small>Control & Monitoring</small>
         </div>
 
@@ -310,7 +350,7 @@
             <a href="{{ route('smart-parking') }}" 
                class="nav-item {{ request()->routeIs('smart-parking') ? 'active' : '' }}"
                @if(request()->routeIs('smart-parking')) onclick="event.preventDefault();" @endif>
-                <i class="fas fa-car"></i> Smart Parking (beta)
+                <i class="fas fa-car"></i> Smart Parking 
             </a>
 
             <div class="nav-label">Control</div>
@@ -327,7 +367,7 @@
         </nav>
 
         <!-- Logout Button -->
-        <div style="margin-top: auto; padding: 15px; border-top: 1px solid rgba(255, 255, 255, 0.08); flex-shrink: 0;">
+        <div style="margin-top: auto; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;">
             <button type="button" class="btn btn-danger w-100 fw-semibold" data-bs-toggle="modal" data-bs-target="#logoutModal">
                 <i class="fas fa-sign-out-alt me-1"></i> Logout
             </button>
@@ -388,40 +428,8 @@
     <!-- ===== GLOBAL TEMP NOTIFICATION CONTAINER ===== -->
     <div id="globalTempNotification" style="position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; max-width:350px; pointer-events:none;"></div>
 
-    <!-- MODAL KONFIRMASI LOGOUT -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="background-color: #1e293b; color: #f1f5f9; border: 1px solid #334155; border-radius: 10px;">
-                <div class="modal-header" style="border-bottom: 1px solid #334155;">
-                    <h5 class="modal-title" id="logoutModalLabel">
-                        <i class="fas fa-exclamation-triangle text-warning me-2"></i> Konfirmasi Logout
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                
-                <div class="modal-body" style="font-size: 0.95rem;">
-                    Apakah Anda yakin ingin keluar dari sistem SmartCity?
-                    <br>
-                    <small class="text-muted" style="font-size: 0.8rem;">Anda harus login kembali untuk mengakses dashboard.</small>
-                </div>
-                
-                <div class="modal-footer" style="border-top: 1px solid #334155;">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i> Batal
-                    </button>
-                    
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-sign-out-alt me-1"></i> Ya, Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <!-- LENIS SMOOTH SCROLL JS CDN -->
     <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
 
@@ -455,6 +463,14 @@
             }
         });
 
+        // ===== CLOCK =====
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clockDisplay').textContent = now.toLocaleString('id-ID');
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
         // ===== SIDEBAR TOGGLE LOGIC =====
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -467,14 +483,6 @@
 
         if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
         if (overlay) overlay.addEventListener('click', toggleSidebar);
-
-        // ===== CLOCK =====
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clockDisplay').textContent = now.toLocaleString('id-ID');
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
 
         // ===== MQTT CLIENT =====
         let mqttClient = null;
@@ -564,7 +572,7 @@
                             </div>
                         </div>
                     </div>
-                    <button onclick="this.closest('div[style*=\"background\"]').remove()" 
+                    <button onclick="this.closest('div[style*=\'background\']').remove()" 
                             style="background:none; border:none; color:#94a3b8; cursor:pointer; font-size:1.2rem; padding:0; width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:4px; transition:all 0.2s;">
                         ×
                     </button>
@@ -632,5 +640,38 @@
         });
     </script>
     @stack('scripts')
+
+    <!-- MODAL KONFIRMASI LOGOUT -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: #1e293b; color: #f1f5f9; border: 1px solid #334155; border-radius: 10px;">
+                <div class="modal-header" style="border-bottom: 1px solid #334155;">
+                    <h5 class="modal-title" id="logoutModalLabel">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i> Konfirmasi Logout
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body" style="font-size: 0.95rem;">
+                    Apakah Anda yakin ingin keluar dari sistem SmartCity?
+                    <br>
+                    <small class="text-muted" style="font-size: 0.8rem;">Anda harus login kembali untuk mengakses dashboard.</small>
+                </div>
+                
+                <div class="modal-footer" style="border-top: 1px solid #334155;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Batal
+                    </button>
+                    
+                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-sign-out-alt me-1"></i> Ya, Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

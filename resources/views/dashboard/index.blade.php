@@ -1,232 +1,465 @@
 @extends('layouts.app')
-
-@section('title', 'Dashboard Overview - Tegal EcoSense')
+@section('title', 'Dashboard')
+@section('page-title', 'Dashboard Overview')
 
 @push('styles')
 <style>
-    /* ===== BACKGROUND UTAMA ===== */
-    .dashboard-wrapper {
-        width: 100%;
-        min-height: 100vh;
-        background-color: #f1f5f9;
-        padding: 20px;
-    }
-
-    /* ===== KARTU METALLIC SILVER DENGAN AKSEN GELEMBUNG (GLOW BULB) ===== */
+    /* ===== KARTU UTAMA & STATISTIK (PUTIH BERSIH DENGAN GLOW) ===== */
+    .dashboard-white-card,
     .stat-top-card,
-    .dashboard-glass-card {
-        background: linear-gradient(135deg, #d3d7de 0%, #b8bec7 50%, #a4abb5 100%) !important;
-        border: 1px solid #ffffff !important;
-        border-radius: 20px !important;
-        padding: 22px !important;
-        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12), 
-                    inset 0 2px 4px rgba(255, 255, 255, 0.9),
-                    inset 0 -2px 4px rgba(0, 0, 0, 0.05) !important;
+    .parking-white-card,
+    .lamp-white-card,
+    .temp-white-card {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 16px !important;
+        padding: 24px !important;
+        box-shadow: 0 12px 35px rgba(11, 19, 43, 0.1) !important;
         transition: all 0.3s ease;
         position: relative;
-        overflow: hidden; /* Menjaga efek gelembung melengkung di dalam kartu */
-    }
-
-    /* Aksen Gelembung Kilatan Cahaya Putih (3D Inner Glow) di Pojok Kanan Atas */
-    .stat-top-card::before,
-    .dashboard-glass-card::before {
-        content: "";
-        position: absolute;
-        top: -30px;
-        right: -30px;
-        width: 130px;
-        height: 130px;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.45) 40%, rgba(255, 255, 255, 0) 70%);
-        border-radius: 50%;
-        pointer-events: none;
-    }
-
-    .stat-top-card:hover,
-    .dashboard-glass-card:hover {
-        box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18), 
-                    inset 0 2px 5px rgba(255, 255, 255, 1) !important;
-        transform: translateY(-2px);
+        overflow: hidden;
     }
 
     .stat-top-card {
+        padding: 20px !important;
         height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
 
-    /* Typography */
-    .stat-title {
-        font-weight: 800;
-        color: #0f172a;
-        font-size: 0.95rem;
+    .dashboard-white-card:hover,
+    .stat-top-card:hover {
+        box-shadow: 0 18px 45px rgba(11, 19, 43, 0.18), 0 0 20px rgba(11, 19, 43, 0.08) !important;
+        transform: translateY(-2px);
     }
 
-    .stat-value {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: #0f172a;
-        line-height: 1;
-        margin: 12px 0;
+    /* ===== INNER CONTAINER PUTIH ===== */
+    .dashboard-inner-box {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 20px;
     }
 
-    .stat-subtitle {
-        font-size: 0.8rem;
-        font-weight: 700;
-        color: #475569;
+   /* ===== BANNER KOTA TEGAL (FULL SCREEN TINGGI & LEBAR MEGAH) ===== */
+    .city-banner-card {
+        background: linear-gradient(rgba(11, 19, 43, 0.65), rgba(11, 19, 43, 0.82)), url('{{ asset("image/alun-alun.jpeg") }}') center/cover no-repeat !important;
+        border: 1px solid #64748b !important;
+        border-radius: 20px !important;
+        padding: 70px 45px !important;
+        min-height: 400px !important;
+        display: flex;
+        align-items: center;
+        color: #ffffff !important;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35) !important;
+        width: 100% !important;
     }
 
-    /* Tabel Aktivitas Perangkat */
-    .table-custom-glass {
-        background: transparent;
-        width: 100%;
-        border-collapse: collapse;
+    /* ===== SLOT PARKIR KECIL DI DASHBOARD (DENGAN EFEK GLOW DARK NAVY) ===== */
+    .slot-box {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        padding: 16px;
+        height: 100%;
+        box-shadow: 0 6px 20px rgba(11, 19, 43, 0.08), 0 0 12px rgba(11, 19, 43, 0.06);
+        transition: all 0.3s ease;
+    }
+    .slot-box:hover {
+        box-shadow: 0 10px 25px rgba(11, 19, 43, 0.15), 0 0 18px rgba(11, 19, 43, 0.1);
+        transform: translateY(-2px);
+    }
+    .slot-box.is-available { border-left: 4px solid #10b981; }
+    .slot-box.is-occupied { border-left: 4px solid #ef4444; }
+    .slot-box.is-nodata { border-left: 4px solid #cbd5e1; }
+
+   /* ===== EFEK GLOW DARK NAVY PEKAT & MENYALA DI KARTU SLOT & SEKTOR ===== */
+    .dashboard-inner-box .col-md-3,
+    .dashboard-inner-box .col-md-6,
+    .dashboard-inner-box div[id^="slot-"],
+    .dashboard-inner-box div[id^="dash-lamp-"],
+    .slot-box, 
+    .sector-box {
+        background: #ffffff !important;
+        border: 1px solid #94a3b8 !important;
+        border-radius: 14px !important;
+        box-shadow: 0 10px 30px rgba(11, 19, 43, 0.35), 0 0 20px rgba(30, 58, 138, 0.25) !important;
+        transition: all 0.3s ease;
     }
 
-    .table-custom-glass th {
-        border-bottom: 2px solid rgba(255, 255, 255, 0.7);
-        padding: 12px 16px;
-        font-size: 0.85rem;
-        font-weight: 800;
-        color: #0f172a;
-    }
-
-    .table-custom-glass td {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-        padding: 12px 16px;
-        font-size: 0.85rem;
-        color: #334155;
-    }
-
-    .h3.mb-0.text-gray-800,
-    .d-sm-flex.align-items-center.justify-content-between.mb-4 > h1 {
-        display: none !important;
+    .dashboard-inner-box div[id^="slot-"]:hover,
+    .slot-box:hover, 
+    .sector-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(11, 19, 43, 0.5), 0 0 30px rgba(37, 99, 235, 0.4) !important;
+        border-color: #3b82f6 !important;
     }
 </style>
 @endpush
 
 @section('content')
-<div class="dashboard-wrapper">
+<div class="container-fluid px-0">
 
-    <!-- 1. BARIS ATAS: 4 KARTU RINGKASAN STATISTIK -->
-    <div class="row g-3 mb-4">
-        <!-- Smart Lamps Active -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-top-card">
-                <div class="stat-title">Smart Lamps Active</div>
-                <div class="stat-value">2 / 4</div>
-                <div class="stat-subtitle">Smart Lamps Active</div>
-            </div>
+    <!-- SELAMAT DATANG & WAKTU -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold mb-1" style="color: #0f172a;">Selamat Datang, Admin 👋</h4>
+            <p class="text-secondary mb-0" style="font-size: 0.85rem;">Pantau dan kelola seluruh sistem Smart City secara real-time.</p>
         </div>
-
-        <!-- Kelembapan Rata-Rata -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-top-card">
-                <div class="stat-title">Kelembapan Rata-Rata</div>
-                <div class="stat-value" style="color: #0284c7;">65%</div>
-                <div class="stat-subtitle">Kelembapan Rata-Rata</div>
-            </div>
-        </div>
-
-        <!-- Parking Available -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-top-card">
-                <div class="stat-title">Parking Available</div>
-                <div class="stat-value" style="color: #16a34a;">3 / 4</div>
-                <div class="stat-subtitle">Parking Available</div>
-            </div>
-        </div>
-
-        <!-- Active Alerts -->
-        <div class="col-md-6 col-lg-3">
-            <div class="stat-top-card">
-                <div class="stat-title">Active Alerts</div>
-                <div class="stat-value">0</div>
-                <div class="stat-subtitle">Active Alerts</div>
-            </div>
+        <div class="text-end d-none d-md-block">
+            <span class="fw-semibold text-dark" id="realtimeClock" style="font-size: 0.9rem;">-- / -- / ---- --:--:--</span>
         </div>
     </div>
 
-    <!-- 2. BARIS TENGAH: REALTIME SENSOR DATA OVERVIEW & PARKING OCCUPANCY -->
-    <div class="row g-4 mb-4">
-        <!-- Realtime Sensor Data Overview -->
-        <div class="col-lg-7">
-            <div class="dashboard-glass-card h-100" style="min-height: 320px;">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fas fa-chart-line text-dark"></i>
-                        <h6 class="m-0 font-weight-bold text-dark" style="font-weight: 800; text-transform: uppercase;">Realtime Sensor Data Overview</h6>
+   <!-- BANNER KOTA TEGAL / SMART CITY -->
+<div class="city-banner-card mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-12">
+            <span class="badge bg-primary text-white px-3 py-1 rounded-pill mb-2" style="font-size: 0.75rem; font-weight: 600;">Tegal EcoSense IoT Hub</span>
+            <h3 class="fw-bold text-white mb-2" style="font-size: 1.35rem; line-height: 1.4;">Mengenal Konsep Smart City Kota Tegal</h3>
+            <p class="text-light opacity-90 mb-0" style="font-size: 0.85rem; line-height: 1.55; max-width: 900px;">
+                Smart City (Kota Cerdas) adalah kerangka kerja berbasis teknologi informasi dan Internet of Things (IoT) yang dirancang untuk mengoptimalkan infrastruktur perkotaan, meningkatkan efisiensi pelayanan publik, serta memantau kondisi lingkungan secara <em>real-time</em> demi mewujudkan Kota Tegal yang modern, berkelanjutan, dan nyaman bagi masyarakat.
+            </p>
+        </div>
+    </div>
+</div>
+
+    <!-- BARIS 1: 3 KARTU RINGKASAN UTAMA -->
+    <div class="row g-4 mb-4 align-items-stretch">
+        <div class="col-md-4">
+            <div class="stat-top-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Smart Parking</div>
+                        <h3 class="fw-bold mb-1 text-dark" id="dashParkingSummary">-- / 10</h3>
+                        <small class="text-dark opacity-75" style="font-size: 0.75rem;">Slot Tersedia</small>
                     </div>
-                    <small class="text-secondary fw-bold d-flex align-items-center gap-1">
-                        <i class="fas fa-sync-alt"></i> Auto Update
-                    </small>
+                    <div style="width: 45px; height: 45px; background: rgba(37, 99, 235, 0.2); color: #1d4ed8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="fas fa-parking"></i>
+                    </div>
                 </div>
-                <!-- Area Grafik / Chart -->
-                <div class="d-flex align-items-center justify-content-center h-75 text-secondary">
-                    <!-- Grafik dimasukkan di sini jika menggunakan Chart.js/ApexCharts -->
+                <div class="mt-3 d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+                    <span class="badge bg-secondary text-white px-3 py-1 rounded-pill" style="font-size: 0.7rem;" id="dashParkingStatusBadge">Offline</span>
+                    <a href="{{ url('/dashboard/smart-parking') }}" class="text-decoration-none fw-bold text-dark" style="font-size: 0.8rem;">Detail <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
 
-        <!-- Parking Occupancy -->
-        <div class="col-lg-5">
-            <div class="dashboard-glass-card h-100" style="min-height: 320px;">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <i class="fas fa-parking text-dark"></i>
-                    <h6 class="m-0 font-weight-bold text-dark" style="font-weight: 800; text-transform: uppercase;">Parking Occupancy</h6>
+        <div class="col-md-4">
+            <div class="stat-top-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Smart Lamp</div>
+                        <h3 class="fw-bold mb-1 text-dark" id="dashLampSummary">--</h3>
+                        <small class="text-dark opacity-75" style="font-size: 0.75rem;">Sektor Menyala</small>
+                    </div>
+                    <div style="width: 45px; height: 45px; background: rgba(245, 158, 11, 0.2); color: #b45309; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
                 </div>
-                <!-- Area Preview Parkir -->
-                <div class="d-flex align-items-center justify-content-center h-75 text-secondary">
-                    <!-- Preview Parkir dimasukkan di sini -->
+                <div class="mt-3 d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+                    <span class="badge bg-secondary text-white px-3 py-1 rounded-pill" style="font-size: 0.7rem;" id="dashLampStatusBadge">Offline</span>
+                    <a href="{{ url('/dashboard/smart-lamp') }}" class="text-decoration-none fw-bold text-dark" style="font-size: 0.8rem;">Detail <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-top-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Smart Temperature</div>
+                        <h3 class="fw-bold mb-1 text-dark" id="dashTempSummary">-- °C</h3>
+                        <small class="text-dark opacity-75" style="font-size: 0.75rem;">Suhu Rata-rata Lingkungan</small>
+                    </div>
+                    <div style="width: 45px; height: 45px; background: rgba(16, 185, 129, 0.2); color: #047857; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                        <i class="fas fa-temperature-high"></i>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+                    <span class="badge bg-secondary text-white px-3 py-1 rounded-pill" style="font-size: 0.7rem;" id="dashTempStatusBadge">Offline</span>
+                    <a href="{{ url('/dashboard/smart-temp') }}" class="text-decoration-none fw-bold text-dark" style="font-size: 0.8rem;">Detail <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. BARIS BAWAH: TABEL AKTIVITAS PERANGKAT TERAKHIR -->
-    <div class="row">
-        <div class="col-12">
-            <div class="dashboard-glass-card">
-                <div class="d-flex align-items-center gap-2 mb-3">
-                    <i class="fas fa-history text-dark"></i>
-                    <h6 class="m-0 font-weight-bold text-dark" style="font-weight: 800;">Aktivitas Perangkat Terakhir</h6>
+    <!-- ===== SECTION 1: SMART PARKING LAYOUT ===== -->
+    <div class="dashboard-white-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Smart Parking - Layout Area Parkir</h5>
+                <small class="text-dark opacity-75 fw-semibold">10 titik slot pemantauan sensor ultrasonik</small>
+            </div>
+        </div>
+
+        <div class="dashboard-inner-box mt-3">
+            <div class="row g-3" id="dashParkingGrid">
+                <!-- Diisi via Javascript -->
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+            <div class="d-flex align-items-center gap-3" style="font-size: 0.78rem; color: #334155;">
+                <div><span class="badge rounded-pill bg-success me-1">&nbsp;</span> Available</div>
+                <div><span class="badge rounded-pill bg-danger me-1">&nbsp;</span> Occupied</div>
+                <div><span class="badge rounded-pill bg-dark me-1">&nbsp;</span> No Data</div>
+            </div>
+            <a href="{{ url('/dashboard/smart-parking') }}" class="btn btn-primary btn-sm px-4 rounded-pill fw-semibold" style="font-size: 0.8rem;">
+                Lihat Detail <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+   <!-- ===== SECTION 2: SMART LAMP LAYOUT ===== -->
+    <div class="dashboard-white-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Layout Sektor Lampu</h5>
+                <small class="text-secondary fw-semibold">4 sektor utama penerangan wilayah Kota Tegal</small>
+            </div>
+        </div>
+
+        <div class="dashboard-inner-box mt-3">
+            <div class="row g-3">
+                
+                <!-- Sektor L01 -->
+                <div class="col-md-6">
+                    <div class="sector-box p-3 border rounded-3 bg-white shadow-sm" id="dash-lamp-L01" style="border-left: 4px solid #cbd5e1; height: 100%;">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-primary" style="font-size: 0.9rem;">L01</span>
+                            <span class="badge bg-secondary text-white" id="dash-badge-L01" style="font-size: 0.65rem;">No Data</span>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #0f172a;">Sektor Utara (Alun-Alun)</h6>
+                        <div style="font-size: 0.78rem; color: #475569;" class="mt-2" id="dash-text-L01">
+                            <i class="fas fa-lightbulb text-warning me-1"></i> Status: Belum terhubung
+                        </div>
+                    </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="table-custom-glass">
-                        <thead>
-                            <tr>
-                                <th>Perangkat</th>
-                                <th>Modul</th>
-                                <th>Status / Nilai</th>
-                                <th>Waktu Update</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><b>Smart Lamp 01</b></td>
-                                <td>Penerangan Jalan</td>
-                                <td><span class="badge bg-warning text-dark px-2 py-1">Menyala (80%)</span></td>
-                                <td>2 Menit lalu</td>
-                            </tr>
-                            <tr>
-                                <td><b>Sensor Suhu 101</b></td>
-                                <td>Environment</td>
-                                <td><span class="badge bg-info text-white px-2 py-1">28.5 °C</span></td>
-                                <td>1 Min lalu</td>
-                            </tr>
-                            <tr>
-                                <td><b>Slot Parkir P02</b></td>
-                                <td>Smart Parking</td>
-                                <td><span class="badge bg-danger text-white px-2 py-1">Occupied</span></td>
-                                <td>Baru saja</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <!-- Sektor L02 -->
+                <div class="col-md-6">
+                    <div class="sector-box p-3 border rounded-3 bg-white shadow-sm" id="dash-lamp-L02" style="border-left: 4px solid #cbd5e1; height: 100%;">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-primary" style="font-size: 0.9rem;">L02</span>
+                            <span class="badge bg-secondary text-white" id="dash-badge-L02" style="font-size: 0.65rem;">No Data</span>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #0f172a;">Sektor Selatan (Panggung)</h6>
+                        <div style="font-size: 0.78rem; color: #475569;" class="mt-2" id="dash-text-L02">
+                            <i class="fas fa-lightbulb text-warning me-1"></i> Status: Belum terhubung
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Sektor L03 -->
+                <div class="col-md-6">
+                    <div class="sector-box p-3 border rounded-3 bg-white shadow-sm" id="dash-lamp-L03" style="border-left: 4px solid #cbd5e1; height: 100%;">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-primary" style="font-size: 0.9rem;">L03</span>
+                            <span class="badge bg-secondary text-white" id="dash-badge-L03" style="font-size: 0.65rem;">No Data</span>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #0f172a;">Sektor Timur (Kaligangsa)</h6>
+                        <div style="font-size: 0.78rem; color: #475569;" class="mt-2" id="dash-text-L03">
+                            <i class="fas fa-lightbulb text-warning me-1"></i> Status: Belum terhubung
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sektor L04 -->
+                <div class="col-md-6">
+                    <div class="sector-box p-3 border rounded-3 bg-white shadow-sm" id="dash-lamp-L04" style="border-left: 4px solid #cbd5e1; height: 100%;">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="fw-bold text-primary" style="font-size: 0.9rem;">L04</span>
+                            <span class="badge bg-secondary text-white" id="dash-badge-L04" style="font-size: 0.65rem;">No Data</span>
+                        </div>
+                        <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: #0f172a;">Sektor Barat (Tegal Marina)</h6>
+                        <div style="font-size: 0.78rem; color: #475569;" class="mt-2" id="dash-text-L04">
+                            <i class="fas fa-lightbulb text-warning me-1"></i> Status: Belum terhubung
+                        </div>
+                    </div>
+                </div>
+
             </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+            <div class="d-flex align-items-center gap-3" style="font-size: 0.78rem; color: #334155;">
+                <div><span class="badge rounded-pill bg-warning me-1">&nbsp;</span> Active (Menyala)</div>
+                <div><span class="badge rounded-pill bg-secondary me-1">&nbsp;</span> Inactive (Padam)</div>
+                <div><span class="badge rounded-pill bg-dark me-1">&nbsp;</span> No Data</div>
+            </div>
+            <a href="{{ url('/dashboard/smart-lamp') }}" class="btn btn-primary btn-sm px-4 rounded-pill fw-semibold" style="font-size: 0.8rem;">
+                Lihat Detail <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 3: SMART TEMPERATURE & HUMIDITY CHART ===== -->
+    <div class="dashboard-white-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Smart Temperature - Grafik Suhu dan Kelembapan</h5>
+                <small class="text-dark opacity-75 fw-semibold">Pemantauan parameter lingkungan secara real-time</small>
+            </div>
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-dark active">Hari</button>
+                <button type="button" class="btn btn-outline-dark">Minggu</button>
+            </div>
+        </div>
+
+        <div class="dashboard-inner-box mt-3">
+            <div style="position: relative; height: 260px; width: 100%;">
+                <canvas id="dashTempChart"></canvas>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center mt-3 pt-3 border-top border-secondary">
+            <a href="{{ url('/dashboard/temp') }}" class="btn btn-primary btn-sm px-4 rounded-pill fw-semibold" style="font-size: 0.8rem;">
+                Lihat Detail <i class="fas fa-arrow-right ms-1"></i>
+            </a>
         </div>
     </div>
 
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('realtimeClock').textContent = now.toLocaleDateString('id-ID', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('id-ID');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    const dashTempCtx = document.getElementById('dashTempChart')?.getContext('2d');
+    let dashTempChart;
+
+    if (dashTempCtx) {
+        dashTempChart = new Chart(dashTempCtx, {
+            type: 'line',
+            data: {
+                labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+                datasets: [
+                    { label: 'Suhu (°C)', data: [null, null, null, null, null, null], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', tension: 0.4, fill: true, borderWidth: 2 },
+                    { label: 'Kelembapan (%)', data: [null, null, null, null, null, null], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', tension: 0.4, fill: true, borderWidth: 2 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#0f172a', font: { weight: 'bold' } } } },
+                scales: {
+                    x: { ticks: { color: '#475569' }, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+                    y: { ticks: { color: '#475569' }, grid: { color: 'rgba(0, 0, 0, 0.05)' }, min: 0, max: 100 }
+                }
+            }
+        });
+    }
+
+    function fetchDashboardData() {
+        // 1. Fetch Smart Parking
+        fetch('/api/parking')
+            .then(res => res.json())
+            .then(data => {
+                const grid = document.getElementById('dashParkingGrid');
+                grid.innerHTML = '';
+                let available = 0;
+                const slots = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
+
+                slots.forEach(slotId => {
+                    const info = data[slotId] || { status: 'nodata' };
+                    let cls = 'is-nodata';
+                    let stText = 'Offline';
+                    if (info.status === 'available') { cls = 'is-available'; stText = 'Tersedia'; available++; }
+                    else if (info.status === 'occupied') { cls = 'is-occupied'; stText = 'Terisi'; }
+
+                    grid.innerHTML += `
+                        <div class="col-md-4 col-lg-2.4" style="flex: 0 0 20%; max-width: 20%;">
+                            <div class="slot-box ${cls}">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="fw-bold text-primary" style="font-size: 0.85rem;">${slotId}</span>
+                                    <span class="badge ${info.status === 'available' ? 'bg-success' : (info.status === 'occupied' ? 'bg-danger' : 'bg-secondary')} text-white" style="font-size: 0.55rem;">${stText}</span>
+                                </div>
+                                <div style="font-size: 0.72rem; color: #64748b;" class="text-truncate">
+                                    <i class="fas fa-car me-1"></i> ${stText}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('dashParkingSummary').textContent = available + ' / 10';
+                document.getElementById('dashParkingStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
+                document.getElementById('dashParkingStatusBadge').textContent = 'Online';
+            }).catch(() => {});
+
+        // 2 Fetch Smart Lamp untuk Dashboard
+        fetch('/api/smart-lamp')
+            .then(res => res.json())
+            .then(data => {
+                let activeCount = 0;
+                const sectors = ['L01', 'L02', 'L03', 'L04'];
+
+                sectors.forEach(secId => {
+                    const info = data[secId] || { status: 'nodata' };
+                    const cardBox = document.getElementById(`dash-lamp-${secId}`);
+                    const badge = document.getElementById(`dash-badge-${secId}`);
+                    const textDesc = document.getElementById(`dash-text-${secId}`);
+
+                    if (cardBox && badge && textDesc) {
+                        if (info.status === 'active') {
+                            cardBox.style.borderLeft = '4px solid #f59e0b';
+                            badge.className = 'badge bg-warning text-dark';
+                            badge.textContent = 'Menyala';
+                            textDesc.innerHTML = `<i class="fas fa-lightbulb text-warning me-1"></i> Status: Menyala`;
+                            activeCount++;
+                        } else if (info.status === 'inactive') {
+                            cardBox.style.borderLeft = '4px solid #64748b';
+                            badge.className = 'badge bg-secondary text-white';
+                            badge.textContent = 'Padam';
+                            textDesc.innerHTML = `<i class="fas fa-lightbulb text-muted me-1"></i> Status: Padam`;
+                        } else {
+                            cardBox.style.borderLeft = '4px solid #cbd5e1';
+                            badge.className = 'badge bg-dark text-white';
+                            badge.textContent = 'No Data';
+                            textDesc.innerHTML = `<i class="fas fa-lightbulb text-warning me-1"></i> Status: Belum terhubung`;
+                        }
+                    }
+                });
+
+                document.getElementById('dashLampSummary').textContent = activeCount + ' Sektor';
+                document.getElementById('dashLampStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
+                document.getElementById('dashLampStatusBadge').textContent = 'Online';
+            })
+            .catch(() => {});
+
+        // 3. Fetch Smart Temperature
+        fetch('/api/environment')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.temperature !== undefined) {
+                    document.getElementById('dashTempSummary').textContent = data.temperature + ' °C';
+                    document.getElementById('dashTempStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
+                    document.getElementById('dashTempStatusBadge').textContent = 'Online';
+
+                    if (dashTempChart) {
+                        const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        dashTempChart.data.labels.push(now);
+                        dashTempChart.data.datasets[0].data.push(data.temperature);
+                        dashTempChart.data.datasets[1].data.push(data.humidity || 50);
+                        dashTempChart.update();
+                    }
+                }
+            }).catch(() => {});
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchDashboardData();
+        setInterval(fetchDashboardData, 5000);
+    });
+</script>
+@endpush
