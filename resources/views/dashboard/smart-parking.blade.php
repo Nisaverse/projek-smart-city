@@ -44,45 +44,37 @@
         padding: 20px;
     }
 
-    /* ===== KARTU SLOT PARKIR & SEKTOR LAMPU KECIL (EFEK GLOW DARK NAVY PERMANEN) ===== */
-    .slot-box, 
-    .sector-box,
-    .dashboard-inner-box div[id^="slot-"],
-    .dashboard-inner-box div[id^="dash-lamp-"] {
+    /* ===== KARTU SLOT PARKIR KECIL (DESAIN PROPOSIONAL & SANGAT RAPI) ===== */
+    .slot-box {
         background: #ffffff !important;
         border: 1.5px solid #64748b !important;
-        border-radius: 14px !important;
-        padding: 16px !important;
-        box-shadow: 0 8px 25px rgba(11, 19, 43, 0.4), 0 0 20px rgba(30, 58, 138, 0.3) !important;
+        border-radius: 12px !important;
+        padding: 10px 12px !important; /* Padding diperkecil agar tulisan muat sempurna */
+        box-shadow: 0 8px 25px rgba(11, 19, 43, 0.35), 0 0 15px rgba(30, 58, 138, 0.2) !important;
         transition: transform 0.3s ease;
         position: relative;
         height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
-    .slot-box:hover, 
-    .sector-box:hover,
-    .dashboard-inner-box div[id^="slot-"]:hover {
+    .slot-box:hover {
         transform: translateY(-2px);
     }
 
-    /* Warna Border Indikator Samping */
-    .slot-box.is-available, .sector-box.is-active { border-left: 4px solid #10b981 !important; }
-    .slot-box.is-occupied, .sector-box.is-inactive { border-left: 4px solid #ef4444 !important; }
-    .slot-box.is-nodata, .sector-box.is-nodata { border-left: 4px solid #cbd5e1 !important; }
-
-    /* Badge Status */
-    .slot-badge-status,
-    .sector-badge-status {
-        font-size: 0.7rem;
+    /* Badge Status Ringkas di Pojok Kanan Atas Card */
+    .slot-badge-status {
+        font-size: 0.6rem !important; /* Ukuran font disesuaikan agar selalu muat di dalam kartu */
         font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 20px;
+        padding: 2px 6px !important;
+        border-radius: 12px;
         display: inline-block;
+        white-space: nowrap;
     }
 
-    .status-available { background: rgba(16, 185, 129, 0.1); color: #059669; }
-    .status-occupied { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
-    .status-nodata { background: rgba(203, 213, 225, 0.3); color: #64748b; }
+    .status-available { background: rgba(16, 185, 129, 0.15); color: #059669; }
+    .status-occupied { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
 
     .custom-progress {
         height: 6px;
@@ -90,16 +82,23 @@
         background: #cbd5e1;
         overflow: hidden;
     }
+
+    /* Pengaturan Grid Khusus Layar Laptop (5 Kolom) dan HP (2 Kolom) */
+    @media (min-width: 992px) {
+        .col-custom-5 {
+            flex: 0 0 20% !important;
+            max-width: 20% !important;
+        }
+    }
 </style>
 @endpush
 
 @section('content')
 <div class="container-fluid px-0">
 
-    <!-- BARIS 1: KARTU RINGKASAN STATISTIK BERBUNGKUS CARD PUTIH -->
+    <!-- BARIS 1: KARTU RINGKASAN STATISTIK -->
     <div class="row g-4 mb-4 align-items-stretch">
-        <!-- Total Slot -->
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Total Slot</div>
@@ -109,8 +108,7 @@
             </div>
         </div>
 
-        <!-- Available (Kosong) -->
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Available</div>
@@ -123,8 +121,7 @@
             </div>
         </div>
 
-        <!-- Occupied (Terisi) -->
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Occupied</div>
@@ -137,8 +134,7 @@
             </div>
         </div>
 
-        <!-- Status IoT -->
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Status IoT</div>
@@ -165,7 +161,7 @@
 
                 <!-- Kontainer Slot Parkir -->
                 <div class="parking-layout-container mt-3">
-                    <div class="row g-3" id="parkingSlotsGrid">
+                    <div class="row g-2 g-md-3" id="parkingSlotsGrid">
                         <!-- Diisi via Javascript -->
                     </div>
                 </div>
@@ -174,7 +170,6 @@
                 <div class="d-flex align-items-center gap-4 mt-4 pt-3 border-top" style="font-size: 0.8rem; color: #334155;">
                     <div><span class="badge rounded-pill bg-success me-1">&nbsp;</span> Available (Kosong)</div>
                     <div><span class="badge rounded-pill bg-danger me-1">&nbsp;</span> Occupied (Terisi)</div>
-                    <div><span class="badge rounded-pill bg-dark me-1">&nbsp;</span> No Data</div>
                 </div>
             </div>
         </div>
@@ -249,30 +244,29 @@
         let occupiedCount = 0;
 
         slotKeys.forEach(slotId => {
-            const slotInfo = data[slotId] || { status: 'nodata', time: 'Belum ada data' };
+            const slotInfo = data[slotId] || { status: 'available', time: 'Belum ada data' };
             
-            let statusClass = 'is-nodata';
-            let badgeClass = 'status-nodata';
+            let badgeClass = 'status-available';
+            let statusText = 'Available';
 
-            if (slotInfo.status === 'available') {
-                statusClass = 'is-available';
-                badgeClass = 'status-available';
-                availableCount++;
-            } else if (slotInfo.status === 'occupied') {
-                statusClass = 'is-occupied';
+            if (slotInfo.status === 'occupied') {
                 badgeClass = 'status-occupied';
+                statusText = 'Occupied';
                 occupiedCount++;
+            } else {
+                availableCount++;
             }
 
+            // Layar HP (col-6) -> 2 slot per baris. Layar Laptop (col-custom-5) -> 5 slot per baris. Teks selalu terbungkus rapi di dalam kartu.
             gridContainer.innerHTML += `
-                <div class="col-md-4 col-lg-2.4" style="flex: 0 0 20%; max-width: 20%;">
-                    <div class="slot-box ${statusClass}">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="col-6 col-sm-4 col-custom-5">
+                    <div class="slot-box">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="fw-bold text-primary" style="font-size: 0.85rem;">${slotId}</span>
-                            <span class="slot-badge-status ${badgeClass}" style="font-size: 0.6rem; padding: 2px 6px;">${slotInfo.status === 'available' ? 'Kosong' : (slotInfo.status === 'occupied' ? 'Terisi' : '-')}</span>
+                            <span class="slot-badge-status ${badgeClass}">${statusText}</span>
                         </div>
-                        <div style="font-size: 0.75rem; color: #64748b;" class="text-truncate">
-                            <i class="fas fa-car me-1"></i> ${slotInfo.status === 'available' ? 'Tersedia' : (slotInfo.status === 'occupied' ? 'Terisi' : 'Offline')}
+                        <div style="font-size: 0.72rem; color: #64748b;" class="text-truncate">
+                            <i class="fas fa-car me-1"></i> ${statusText}
                         </div>
                     </div>
                 </div>
@@ -309,9 +303,8 @@
     }
 
     function slotTextBadge(status) {
-        if (status === 'available') return '<span class="text-success fw-semibold">Kosong</span>';
-        if (status === 'occupied') return '<span class="text-danger fw-semibold">Terisi</span>';
-        return '<span class="text-muted">-</span>';
+        if (status === 'occupied') return '<span class="text-danger fw-semibold">Occupied</span>';
+        return '<span class="text-success fw-semibold">Available</span>';
     }
 
     function fetchParkingDataFromDB() {

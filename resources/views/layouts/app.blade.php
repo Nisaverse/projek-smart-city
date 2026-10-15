@@ -164,15 +164,17 @@
             min-height: 100vh;
         }
 
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background: #ffffff !important;
-            border-bottom: 1px solid var(--border-color);
-        }
-
+       .top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--border-color);
+}
         .top-bar h5 { font-weight: 600; }
 
         .user-info {

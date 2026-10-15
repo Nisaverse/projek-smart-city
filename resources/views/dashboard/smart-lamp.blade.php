@@ -59,10 +59,10 @@
         transform: translateY(-2px);
     }
 
-    .sector-box.is-active { border-left: 4px solid #f59e0b !important; }
-    .sector-box.is-inactive { border-left: 4px solid #64748b !important; }
-    .sector-box.is-nodata { border-left: 4px solid #cbd5e1 !important; }
+    .sector-box.is-active { border-left: 4px solid #facc15 !important; }
+    .sector-box.is-inactive, .sector-box.is-nodata { border-left: 4px solid #64748b !important; }
 
+    /* Badge Status di Card Sektor */
     .sector-badge-status {
         font-size: 0.7rem;
         font-weight: 700;
@@ -71,9 +71,8 @@
         display: inline-block;
     }
 
-    .status-active { background: rgba(245, 158, 11, 0.15); color: #b45309; }
-    .status-inactive { background: rgba(100, 116, 139, 0.15); color: #334155; }
-    .status-nodata { background: rgba(203, 213, 225, 0.4); color: #475569; }
+    .status-active { background: #fef08a !important; color: #000000 !important; }
+    .status-inactive, .status-nodata { background: #e2e8f0 !important; color: #334155 !important; }
 
     .custom-progress {
         height: 6px;
@@ -158,7 +157,6 @@
                 <div class="d-flex align-items-center gap-4 mt-4 pt-3 border-top" style="font-size: 0.8rem; color: #334155;">
                     <div><span class="badge rounded-pill bg-warning me-1">&nbsp;</span> Active (Menyala)</div>
                     <div><span class="badge rounded-pill bg-secondary me-1">&nbsp;</span> Inactive (Padam)</div>
-                    <div><span class="badge rounded-pill bg-dark me-1">&nbsp;</span> No Data</div>
                 </div>
             </div>
         </div>
@@ -208,10 +206,10 @@
 @push('scripts')
 <script>
     const sectorDataInfo = {
-        L01: { name: 'Sektor Utara (Alun-Alun)' },
-        L02: { name: 'Sektor Selatan (Panggung)' },
-        L03: { name: 'Sektor Timur (Kaligangsa)' },
-        L04: { name: 'Sektor Barat (Tegal Marina)' }
+        L01: { name: 'Sektor Utara ' },
+        L02: { name: 'Sektor Selatan ' },
+        L03: { name: 'Sektor Timur ' },
+        L04: { name: 'Sektor Barat ' }
     };
 
     const sectorKeys = Object.keys(sectorDataInfo);
@@ -229,19 +227,17 @@
         sectorKeys.forEach(sectorId => {
             const sectorInfo = data[sectorId] || { status: 'nodata', time: 'Belum ada data' };
             
-            let statusClass = 'is-nodata';
-            let badgeClass = 'status-nodata';
-            let statusText = 'No Data';
+            let statusClass = 'is-inactive';
+            let badgeClass = 'status-inactive';
+            let statusText = 'Inactive';
 
             if (sectorInfo.status === 'active') {
                 statusClass = 'is-active';
                 badgeClass = 'status-active';
-                statusText = 'Active (Menyala)';
+                statusText = 'Active';
                 activeCount++;
-            } else if (sectorInfo.status === 'inactive') {
-                statusClass = 'is-inactive';
-                badgeClass = 'status-inactive';
-                statusText = 'Inactive (Padam)';
+            } else {
+                // Jika status 'inactive' ataupun 'nodata' / menunggu database, anggap dan tampilkan sebagai Inactive
                 inactiveCount++;
             }
 
@@ -254,7 +250,7 @@
                         </div>
                         <h6 class="fw-bold mb-1" style="font-size: 0.95rem; color: #0f172a;">${sectorDataInfo[sectorId].name}</h6>
                         <div style="font-size: 0.8rem; color: #475569;" class="mt-2">
-                            Status: ${sectorInfo.status === 'active' ? 'Menyala' : (sectorInfo.status === 'inactive' ? 'Padam' : 'Belum terhubung')}
+                            Status: ${sectorInfo.status === 'active' ? 'Menyala' : 'Padam / Menunggu database'}
                         </div>
                     </div>
                 </div>
@@ -291,9 +287,8 @@
     }
 
     function sectorTextBadge(status) {
-        if (status === 'active') return '<span class="text-warning fw-semibold">Menyala</span>';
-        if (status === 'inactive') return '<span class="text-secondary fw-semibold">Padam</span>';
-        return '<span class="text-muted">-</span>';
+        if (status === 'active') return '<span class="text-dark fw-semibold" style="background: #fef08a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Active</span>';
+        return '<span class="text-secondary fw-semibold" style="background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Inactive</span>';
     }
 
     function fetchLampDataFromDB() {
