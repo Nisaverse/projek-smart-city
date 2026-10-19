@@ -56,11 +56,12 @@
         box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
     }
 
+    /* MODE AKTIF MENGGUNAKAN DARK NAVY */
     .mode-btn.active-mode {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        background: linear-gradient(135deg, #0b132b 0%, #1e3a8a 100%) !important;
         color: #ffffff !important;
-        border-color: #1e40af !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+        border-color: #0b132b !important;
+        box-shadow: 0 8px 20px rgba(11, 19, 43, 0.35);
     }
 
     .mode-btn.active-mode small {
@@ -68,13 +69,13 @@
     }
 
     .mode-btn.active-mode .mode-icon-box {
-        background: rgba(255, 255, 255, 0.2) !important;
+        background: rgba(255, 255, 255, 0.15) !important;
         color: #ffffff !important;
     }
 
     /* ===== INTERACTIVE SUB-CARDS ===== */
     .interactive-item-card {
-        background: #ffffff;
+        background: #ffffff !important;
         border: 1px solid #e2e8f0;
         border-radius: 14px;
         padding: 16px;
@@ -88,20 +89,22 @@
         transform: translateY(-2px);
     }
 
+    /* BORDER CARD SAAT AKTIF HANYA HIGHLIGHT NORMALLY */
     .interactive-item-card.is-active {
-        border-color: #93c5fd;
-        background: #f0f9ff;
+        border-color: #0b132b !important;
     }
 
-    .interactive-item-card.is-occupied {
-        border-color: #fca5a5;
-        background: #fff1f2;
-    }
-
-    .text-blue-title {
-        color: #2563eb !important;
+    /* JUDUL SEKTOR MENGGUNAKAN TEKS DARK NAVY */
+    .text-navy-title {
+        color: #0b132b !important;
         font-weight: 700;
         font-size: 0.95rem;
+    }
+
+    /* ===== TOMBOL SWITCH ON OFF DENGAN WARNA DARK NAVY ===== */
+    .form-check-input:checked {
+        background-color: #1e3a8a !important;
+        border-color: #0b132b !important;
     }
 
     /* ===== DISABLED STATE (AUTOMATIC MODE) ===== */
@@ -117,8 +120,8 @@
 @section('content')
 <div class="container-fluid px-0">
 
-    <!-- BARIS 1: MODE OPERASI & RELAY SAKELAR -->
-    <div class="row g-4 mb-4 align-items-stretch">
+    <!-- BARIS UTAMA: MODE OPERASI & RELAY SAKELAR LAMPU -->
+    <div class="row g-4 align-items-stretch">
         
         <!-- KOLOM KIRI: OPERATION MODES -->
         <div class="col-lg-6">
@@ -128,7 +131,7 @@
                         <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.15rem;">Mode Operasi Sistem</h5>
                         <small class="text-secondary fw-medium">Pilih mode kendali perangkat IoT Tegal EcoSense</small>
                     </div>
-                    <span class="badge bg-blue-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.75rem;">
+                    <span class="badge bg-light text-dark border border-secondary-subtle px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.75rem; color: #0b132b !important;">
                         <i class="fas fa-sliders-h me-1"></i> Control Mode
                     </span>
                 </div>
@@ -138,7 +141,7 @@
                         <!-- Mode Otomatis -->
                         <button type="button" class="mode-btn active-mode" id="btnModeAuto" onclick="setControlMode('auto')">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="mode-icon-box" style="width: 40px; height: 40px; background: rgba(37, 99, 235, 0.1); color: #2563eb; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <div class="mode-icon-box" style="width: 40px; height: 40px; background: rgba(11, 19, 43, 0.08); color: #0b132b; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                     <i class="fas fa-robot fa-lg"></i>
                                 </div>
                                 <div>
@@ -157,7 +160,7 @@
                                 </div>
                                 <div>
                                     <div class="fw-bold">Mode Manual (Kontrol Langsung)</div>
-                                    <small class="opacity-75" style="font-size: 0.75rem;">Akses penuh ke sakelar relay & slot parkir</small>
+                                    <small class="opacity-75" style="font-size: 0.75rem;">Akses penuh ke sakelar relay lampu</small>
                                 </div>
                             </div>
                             <i class="fas fa-circle text-muted fs-6" id="iconManual"></i>
@@ -193,7 +196,7 @@
                         <div class="col-md-6">
                             <div class="interactive-item-card d-flex justify-content-between align-items-center" id="relayBox{{ $i }}">
                                 <div>
-                                    <div class="text-blue-title">Sektor {{ $i }}</div>
+                                    <div class="text-navy-title">Sektor {{ $i }}</div>
                                     <small class="text-muted" style="font-size: 0.75rem;">Status: <span id="relay{{ $i }}StatusText" class="fw-semibold text-danger">Mati (Off)</span></small>
                                 </div>
                                 <div class="form-check form-switch fs-4 m-0">
@@ -211,49 +214,6 @@
             </div>
         </div>
 
-    </div>
-
-    <!-- BARIS 2: KARTU KONTROL PARKIR LANDSCAPE -->
-    <div class="row">
-        <div class="col-12">
-            <div class="control-white-card" id="parkingCardSection">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.15rem;">Kontrol Manual Smart Parking</h5>
-                        <small class="text-secondary fw-medium">Simulasi status keterisian 10 slot parkir kendaraan</small>
-                    </div>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold" style="font-size: 0.75rem;">
-                        <i class="fas fa-parking me-1"></i> Parking Grid
-                    </span>
-                </div>
-
-                <div class="control-inner-box mt-3">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
-                        @for ($i = 1; $i <= 10; $i++)
-                        @php $slotId = 'P' . str_pad($i, 2, '0', STR_PAD_LEFT); @endphp
-                        <div class="col">
-                            <div class="interactive-item-card d-flex justify-content-between align-items-center" id="parkingBox{{ $slotId }}">
-                                <div class="d-flex align-items-center gap-2">
-                                    <i class="fas fa-car text-secondary" id="parkingIcon{{ $slotId }}"></i>
-                                    <div>
-                                        <span class="text-blue-title d-block">{{ $slotId }}</span>
-                                        <small class="text-success fw-bold" id="parkingStatusText{{ $slotId }}" style="font-size: 0.7rem;">Available</small>
-                                    </div>
-                                </div>
-                                <div class="form-check form-switch fs-5 m-0">
-                                    <input class="form-check-input parking-switch" type="checkbox" role="switch" id="parkingSwitch{{ $slotId }}" onchange="toggleParkingSlot('{{ $slotId }}')">
-                                </div>
-                            </div>
-                        </div>
-                        @endfor
-                    </div>
-
-                    <div class="mt-4 pt-3 border-top text-secondary" style="font-size: 0.8rem;">
-                        <i class="fas fa-info-circle me-1"></i> Perubahan sakelar dikirim otomatis ke Dashboard Tegal EcoSense
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
 </div>
@@ -275,9 +235,7 @@
         iconManual.className = "fas fa-circle text-muted fs-6";
 
         const relaySwitches = document.querySelectorAll('.relay-switch');
-        const parkingSwitches = document.querySelectorAll('.parking-switch');
         const relaySection = document.getElementById('relayCardSection');
-        const parkingSection = document.getElementById('parkingCardSection');
 
         if (mode === 'auto') {
             btnAuto.classList.add('active-mode');
@@ -289,9 +247,7 @@
             }
 
             relaySwitches.forEach(sw => sw.disabled = true);
-            parkingSwitches.forEach(sw => sw.disabled = true);
             relaySection.classList.add('disabled-control');
-            parkingSection.classList.add('disabled-control');
 
         } else if (mode === 'manual') {
             btnManual.classList.add('active-mode');
@@ -303,9 +259,7 @@
             }
 
             relaySwitches.forEach(sw => sw.disabled = false);
-            parkingSwitches.forEach(sw => sw.disabled = false);
             relaySection.classList.remove('disabled-control');
-            parkingSection.classList.remove('disabled-control');
         }
 
         localStorage.setItem('iot_system_mode', mode);
@@ -344,36 +298,6 @@
         }).catch(() => {});
     }
 
-    function toggleParkingSlot(slotId) {
-        const sw = document.getElementById(`parkingSwitch${slotId}`);
-        const statusText = document.getElementById(`parkingStatusText${slotId}`);
-        const icon = document.getElementById(`parkingIcon${slotId}`);
-        const box = document.getElementById(`parkingBox${slotId}`);
-        const isChecked = sw.checked;
-
-        if (isChecked) {
-            statusText.textContent = 'Occupied';
-            statusText.className = 'text-danger fw-bold';
-            icon.className = 'fas fa-car text-danger';
-            if (box) box.classList.add('is-occupied');
-        } else {
-            statusText.textContent = 'Available';
-            statusText.className = 'text-success fw-bold';
-            icon.className = 'fas fa-car text-secondary';
-            if (box) box.classList.remove('is-occupied');
-        }
-
-        let parkingStates = JSON.parse(localStorage.getItem('iot_parking_states')) || {};
-        parkingStates[slotId] = isChecked ? 'occupied' : 'available';
-        localStorage.setItem('iot_parking_states', JSON.stringify(parkingStates));
-
-        fetch('/api/control/parking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ slot: slotId, status: isChecked ? 'occupied' : 'available' })
-        }).catch(() => {});
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
         const currentMode = localStorage.getItem('iot_system_mode') || 'auto';
         setControlMode(currentMode);
@@ -385,18 +309,6 @@
                 if (sw) {
                     sw.checked = savedRelays[i] === 1;
                     toggleRelay(i);
-                }
-            }
-        }
-
-        const savedParking = JSON.parse(localStorage.getItem('iot_parking_states')) || {};
-        for (let i = 1; i <= 10; i++) {
-            const slotId = 'P' + String(i).padStart(2, '0');
-            if (savedParking[slotId] !== undefined) {
-                const sw = document.getElementById(`parkingSwitch${slotId}`);
-                if (sw) {
-                    sw.checked = savedParking[slotId] === 'occupied';
-                    toggleParkingSlot(slotId);
                 }
             }
         }
