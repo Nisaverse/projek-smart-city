@@ -411,25 +411,20 @@
         }
     }
 
-    function renderParkingGrid(data = {}) {
+    function renderParkingGrid(apiResponse = {}) {
         const grid = document.getElementById('dashParkingGrid');
         if (!grid) return;
 
         grid.innerHTML = '';
-        let available = 0;
+        let availableCount = 0;
         const slots = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
 
-        const localParking = JSON.parse(localStorage.getItem('iot_parking_states')) || {};
+        // Ambil objek slot dari properti 'slots' atau langsung dari respons API database MySQL
+        const slotsData = apiResponse.slots || apiResponse;
 
         slots.forEach(slotId => {
-            const slotInfo = data[slotId] || { status: 'available' };
-            
-            let isOccupied = false;
-            if (localParking[slotId] !== undefined) {
-                isOccupied = localParking[slotId] === 'occupied';
-            } else {
-                isOccupied = slotInfo.status === 'occupied';
-            }
+            const slotInfo = slotsData[slotId] || { status: 'available' };
+            const isOccupied = slotInfo.status === 'occupied';
 
             let badgeClass = 'status-available';
             let statusText = 'Available';
@@ -438,7 +433,7 @@
                 badgeClass = 'status-occupied';
                 statusText = 'Occupied';
             } else {
-                available++;
+                availableCount++;
             }
 
             grid.innerHTML += `
@@ -456,13 +451,14 @@
             `;
         });
 
-        document.getElementById('dashParkingSummary').textContent = available + ' / 10';
+        // Update kartu ringkasan total slot tersedia di atas dashboard
+        document.getElementById('dashParkingSummary').textContent = availableCount + ' / 10';
         document.getElementById('dashParkingStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
         document.getElementById('dashParkingStatusBadge').textContent = 'Online';
     }
 
     function fetchDashboardData() {
-        // 1. Fetch Smart Parking
+        // 1. Fetch Smart Parking dari Database MySQL via API
         fetch('/api/parking')
             .then(res => res.json())
             .then(data => renderParkingGrid(data))
