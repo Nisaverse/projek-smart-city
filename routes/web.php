@@ -41,6 +41,7 @@ Route::middleware('admin')->group(function () {
 
     // ===== API ENDPOINTS (DATA) =====
     Route::get('/api/lamp', [DashboardController::class, 'apiLampData']);
+    Route::get('/api/smart-lamp', [DashboardController::class, 'apiLampData']);
     
     // API Suhu & Kelembapan (Menggantikan /api/waste)
     Route::get('/api/environment', [DashboardController::class, 'apiEnvironmentData']);
