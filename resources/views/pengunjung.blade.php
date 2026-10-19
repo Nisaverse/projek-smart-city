@@ -2552,7 +2552,7 @@
     <div class="welcome-center">
       <h1 class="welcome-title animate-title">SMARTCITY KOTA TEGAL</h1>
       
-      <p class="welcome-desc animate-desc">Observatorium iklim mikro publik dan pemantauan kualitas udara real-time di kawasan Alun-Alun Kota Tegal berbasis sensor IoT ESP32 untuk mewujudkan kota cerdas yang berkelanjutan dan nyaman bagi warga.</p>
+      <p class="welcome-desc animate-desc">Pusat informasi dan layanan publik Smart City Kota Tegal yang menghadirkan pemantauan kondisi lingkungan ruang publik secara transparan, akurat, dan dapat diakses langsung oleh warga.</p>
       
       <div class="d-flex align-items-center animate-btn">
         <button class="btn-masuk-situs" onclick="enterWebsite()">MASUK SITUS &rarr;</button>
