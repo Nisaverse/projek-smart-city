@@ -289,11 +289,39 @@ class IoTStateManager
 
     public function getParkingData()
     {
+        try {
+            // Mengambil langsung dari tabel database MySQL smart_parkings
+            $parkings = DB::table('smart_parkings')->get();
+
+            if ($parkings->isNotEmpty()) {
+                $totalSlots = $parkings->count();
+                $occupiedCount = $parkings->where('status', 'occupied')->count();
+                $availableCount = $totalSlots - $occupiedCount;
+
+                $slots = [];
+                foreach ($parkings as $p) {
+                    $slots[$p->slot_code] = [
+                        'status' => $p->status, // 'available' atau 'occupied'
+                    ];
+                }
+
+                return [
+                    'total_slots' => $totalSlots,
+                    'occupied'    => $occupiedCount,
+                    'available'   => $availableCount,
+                    'slots'       => $slots,
+                    'timestamp'   => now()->format('H:i:s'),
+                ];
+            }
+        } catch (\Exception $e) {
+            // Fallback jika terjadi kendala
+        }
+
+        // Fallback cadangan jika database kosong
         return [
-            'total_slots' => $this->state['parking']['total_slots'],
-            'occupied' => $this->state['parking']['occupied'],
-            'available' => $this->state['parking']['total_slots'] - $this->state['parking']['occupied'],
-            'zones' => $this->state['parking']['zones'],
+            'total_slots' => 10,
+            'occupied' => 4,
+            'available' => 6,
             'timestamp' => now()->format('H:i:s'),
         ];
     }
@@ -302,18 +330,32 @@ class IoTStateManager
     {
         $lamps = $this->state['lamps'] ?? $this->getDefaultState()['lamps'];
         $waste = $this->state['waste'] ?? $this->getDefaultState()['waste'];
-        $parking = $this->state['parking'] ?? $this->getDefaultState()['parking'];
         $env = $this->getEnvironmentData();
+
+        // Ambil data parkir langsung dari database MySQL agar sinkron dengan Smart Parking
+        $parkingTotal = 10;
+        $parkingOccupied = 4;
+        try {
+            $parkings = DB::table('smart_parkings')->get();
+            if ($parkings->isNotEmpty()) {
+                $parkingTotal = $parkings->count();
+                $parkingOccupied = $parkings->where('status', 'occupied')->count();
+            }
+        } catch (\Exception $e) {
+            // Fallback jika gagal query
+        }
+        $parkingAvailable = $parkingTotal - $parkingOccupied;
 
         $activeLamps = count(array_filter($lamps, fn($l) => $l['status'] === 1));
         $totalBins = count($waste);
-        $parkingAvailable = $parking['total_slots'] - $parking['occupied'];
         $alerts = count(array_filter($waste, fn($b) => $b['level'] > 80));
 
         return [
             'active_lamps' => $activeLamps,
             'total_bins' => $totalBins,
             'parking_available' => $parkingAvailable,
+            'parking_occupied' => $parkingOccupied, // Tambahan agar dashboard tahu jumlah terisi
+            'parking_total' => $parkingTotal,       // Tambahan total slot
             'alerts' => $alerts,
             'avg_lamp_brightness' => round(array_sum(array_column($lamps, 'brightness')) / 4),
             'avg_waste_level' => round(array_sum(array_column($waste, 'level')) / 4),

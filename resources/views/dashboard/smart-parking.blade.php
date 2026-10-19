@@ -44,12 +44,12 @@
         padding: 20px;
     }
 
-    /* ===== KARTU SLOT PARKIR KECIL (DESAIN PROPOSIONAL & SANGAT RAPI) ===== */
+    /* ===== KARTU SLOT PARKIR KECIL ===== */
     .slot-box {
         background: #ffffff !important;
         border: 1.5px solid #64748b !important;
         border-radius: 12px !important;
-        padding: 10px 12px !important; /* Padding diperkecil agar tulisan muat sempurna */
+        padding: 10px 12px !important;
         box-shadow: 0 8px 25px rgba(11, 19, 43, 0.35), 0 0 15px rgba(30, 58, 138, 0.2) !important;
         transition: transform 0.3s ease;
         position: relative;
@@ -65,7 +65,7 @@
 
     /* Badge Status Ringkas di Pojok Kanan Atas Card */
     .slot-badge-status {
-        font-size: 0.6rem !important; /* Ukuran font disesuaikan agar selalu muat di dalam kartu */
+        font-size: 0.6rem !important;
         font-weight: 700;
         padding: 2px 6px !important;
         border-radius: 12px;
@@ -243,8 +243,12 @@
         let availableCount = 0;
         let occupiedCount = 0;
 
+        // Penanganan fleksibel: mendukung format { slots: { P01: ... } } maupun format objek langsung
+        const slotsObj = data.slots || data;
+        const updateTime = data.timestamp || new Date().toLocaleTimeString('id-ID');
+
         slotKeys.forEach(slotId => {
-            const slotInfo = data[slotId] || { status: 'available', time: 'Belum ada data' };
+            const slotInfo = slotsObj[slotId] || { status: 'available' };
             
             let badgeClass = 'status-available';
             let statusText = 'Available';
@@ -257,7 +261,7 @@
                 availableCount++;
             }
 
-            // Layar HP (col-6) -> 2 slot per baris. Layar Laptop (col-custom-5) -> 5 slot per baris. Teks selalu terbungkus rapi di dalam kartu.
+            // Render ke Grid Card Slot Parkir
             gridContainer.innerHTML += `
                 <div class="col-6 col-sm-4 col-custom-5">
                     <div class="slot-box">
@@ -272,15 +276,18 @@
                 </div>
             `;
 
+            // Render ke Tabel Detail Slot Parkir
             tableBody.innerHTML += `
                 <tr class="border-bottom">
                     <td class="fw-bold text-dark">${slotId}</td>
                     <td>${slotTextBadge(slotInfo.status)}</td>
-                    <td class="text-end text-dark opacity-75" style="font-size: 0.75rem;">${slotInfo.time || 'Belum ada data'}</td>
+                    <td class="text-end text-dark opacity-75" style="font-size: 0.75rem;">${updateTime}</td>
                 </tr>
             `;
         });
 
+        // Update Ringkasan Angka Statistik
+        document.getElementById('cardTotalSlot').textContent = slotKeys.length;
         document.getElementById('cardAvailableCount').textContent = availableCount;
         document.getElementById('cardOccupiedCount').textContent = occupiedCount;
         
@@ -314,9 +321,22 @@
             .catch(() => renderParkingUI({}));
     }
 
+    // Filter Pencarian Tabel Slot
     document.addEventListener('DOMContentLoaded', () => {
         fetchParkingDataFromDB();
-        setInterval(fetchParkingDataFromDB, 5000);
+        setInterval(fetchParkingDataFromDB, 3000);
+
+        const searchInput = document.getElementById('searchSlotInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const filter = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#detailSlotTableBody tr');
+                rows.forEach(row => {
+                    const slotText = row.cells[0].textContent.toLowerCase();
+                    row.style.display = slotText.includes(filter) ? '' : 'none';
+                });
+            });
+        }
     });
 </script>
 @endpush
