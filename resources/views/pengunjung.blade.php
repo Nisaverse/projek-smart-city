@@ -2628,7 +2628,7 @@
   
   <!-- Deskripsi dengan animasi Slide-In dari Kanan -->
   <p class="lead text-light opacity-75 mb-4 hero-pro-desc" style="max-width: 650px;">
-    Platform inovatif pemantauan iklim mikro publik, kualitas udara real-time, dan tata kelola kawasan berbasis sensor IoT di pusat Kota Tegal.
+    Selamat datang di portal Smart City Kota Tegal. Akses informasi kondisi lingkungan terkini, kualitas udara, dan pemantauan kawasan Alun-Alun secara langsung untuk mendukung aktivitas harian Anda.
   </p>
 
   <!-- Tombol dengan animasi Fade-Up -->
