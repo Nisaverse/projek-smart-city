@@ -361,24 +361,15 @@
         grid.innerHTML = '';
         let activeCount = 0;
 
-        const localRelays = JSON.parse(localStorage.getItem('iot_relay_states')) || {};
-
-        Object.keys(sectorDetails).forEach((secId, index) => {
-            const sectorNum = index + 1;
+        Object.keys(sectorDetails).forEach(secId => {
             const sectorInfo = data[secId] || { status: 'inactive' };
-            
-            let isLightingActive = false;
-            if (localRelays[sectorNum] !== undefined) {
-                isLightingActive = localRelays[sectorNum] === 1;
-            } else {
-                isLightingActive = sectorInfo.status === 'active';
-            }
+            const isActive = sectorInfo.status === 'active' || sectorInfo.status === 1 || sectorInfo.status === true;
 
             let badgeClass = 'status-inactive';
             let statusText = 'Inactive';
-            let statusDesc = 'Status: Padam / Menunggu database';
+            let statusDesc = 'Status: Padam';
 
-            if (isLightingActive) {
+            if (isActive) {
                 badgeClass = 'status-active';
                 statusText = 'Active';
                 statusDesc = 'Status: Menyala / Terhubung';
@@ -419,7 +410,6 @@
         let availableCount = 0;
         const slots = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
 
-        // Ambil objek slot dari properti 'slots' atau langsung dari respons API database MySQL
         const slotsData = apiResponse.slots || apiResponse;
 
         slots.forEach(slotId => {
@@ -451,24 +441,28 @@
             `;
         });
 
-        // Update kartu ringkasan total slot tersedia di atas dashboard
         document.getElementById('dashParkingSummary').textContent = availableCount + ' / 10';
         document.getElementById('dashParkingStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
         document.getElementById('dashParkingStatusBadge').textContent = 'Online';
     }
 
     function fetchDashboardData() {
-        // 1. Fetch Smart Parking dari Database MySQL via API
+        // 1. Fetch Smart Parking
         fetch('/api/parking')
             .then(res => res.json())
             .then(data => renderParkingGrid(data))
             .catch(() => renderParkingGrid({}));
 
-        // 2. Fetch Smart Lamp
-        fetch('/api/smart-lamp')
+        // 2. Fetch Smart Lamp (Menggunakan rute yang benar /api/lamp sesuai routes/web.php)
+        fetch('/api/lamp')
             .then(res => res.json())
             .then(data => renderLampGrid(data))
-            .catch(() => renderLampGrid({}));
+            .catch(() => {
+                fetch('/api/smart-lamp')
+                    .then(res => res.json())
+                    .then(data => renderLampGrid(data))
+                    .catch(() => renderLampGrid({}));
+            });
 
         // 3. Fetch Smart Temperature
         fetch('/api/environment')
@@ -498,12 +492,6 @@
                 }
             }).catch(() => {});
     }
-
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'iot_relay_states' || e.key === 'iot_parking_states') {
-            fetchDashboardData();
-        }
-    });
 
     document.addEventListener('DOMContentLoaded', () => {
         renderParkingGrid({});
