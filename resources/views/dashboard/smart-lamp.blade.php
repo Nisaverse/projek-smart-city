@@ -43,7 +43,7 @@
         padding: 20px;
     }
 
-    /* ===== KARTU SEKTOR LAMPU KECIL (DENGAN EFEK GLOW DARK NAVY PERMANEN) ===== */
+    /* ===== KARTU SEKTOR LAMPU KECIL ===== */
     .sector-box {
         background: #ffffff !important;
         border: 1.5px solid #64748b !important;
@@ -206,15 +206,15 @@
 @push('scripts')
 <script>
     const sectorDataInfo = {
-        L01: { name: 'Sektor Utara ' },
-        L02: { name: 'Sektor Selatan ' },
-        L03: { name: 'Sektor Timur ' },
-        L04: { name: 'Sektor Barat ' }
+        L01: { name: 'Sektor Utara' },
+        L02: { name: 'Sektor Selatan' },
+        L03: { name: 'Sektor Timur' },
+        L04: { name: 'Sektor Barat' }
     };
 
     const sectorKeys = Object.keys(sectorDataInfo);
 
-    function renderLampUI(data) {
+    function renderLampUI(data = {}) {
         const gridContainer = document.getElementById('lampSectorsGrid');
         const tableBody = document.getElementById('detailSectorTableBody');
         
@@ -224,23 +224,27 @@
         let activeCount = 0;
         let inactiveCount = 0;
 
+        const updateTime = data.timestamp || new Date().toLocaleTimeString('id-ID');
+
         sectorKeys.forEach(sectorId => {
-            const sectorInfo = data[sectorId] || { status: 'nodata', time: 'Belum ada data' };
-            
+            const sectorInfo = data[sectorId] || { status: 'inactive' };
+            const timeStr = sectorInfo.updated_at || updateTime;
+
             let statusClass = 'is-inactive';
             let badgeClass = 'status-inactive';
             let statusText = 'Inactive';
 
-            if (sectorInfo.status === 'active') {
+            // Penanganan fleksibel untuk status 'active' (baik string maupun angka 1)
+            if (sectorInfo.status === 'active' || sectorInfo.status === 1 || sectorInfo.status === true) {
                 statusClass = 'is-active';
                 badgeClass = 'status-active';
                 statusText = 'Active';
                 activeCount++;
             } else {
-                // Jika status 'inactive' ataupun 'nodata' / menunggu database, anggap dan tampilkan sebagai Inactive
                 inactiveCount++;
             }
 
+            // Render ke Grid Kartu Sektor Lampu
             gridContainer.innerHTML += `
                 <div class="col-md-6">
                     <div class="sector-box ${statusClass}">
@@ -250,21 +254,23 @@
                         </div>
                         <h6 class="fw-bold mb-1" style="font-size: 0.95rem; color: #0f172a;">${sectorDataInfo[sectorId].name}</h6>
                         <div style="font-size: 0.8rem; color: #475569;" class="mt-2">
-                            Status: ${sectorInfo.status === 'active' ? 'Menyala' : 'Padam / Menunggu database'}
+                            Status: ${statusText === 'Active' ? 'Menyala' : 'Padam'}
                         </div>
                     </div>
                 </div>
             `;
 
+            // Render ke Tabel Detail Sektor Lampu
             tableBody.innerHTML += `
                 <tr class="border-bottom">
                     <td class="fw-bold text-dark">${sectorId}</td>
                     <td>${sectorTextBadge(sectorInfo.status)}</td>
-                    <td class="text-end text-dark opacity-75" style="font-size: 0.75rem;">${sectorInfo.time || 'Belum ada data'}</td>
+                    <td class="text-end text-dark opacity-75" style="font-size: 0.75rem;">${timeStr}</td>
                 </tr>
             `;
         });
 
+        // Update Kartu Statistik Atas
         document.getElementById('cardActiveCount').textContent = activeCount;
         document.getElementById('cardInactiveCount').textContent = inactiveCount;
         
@@ -287,7 +293,9 @@
     }
 
     function sectorTextBadge(status) {
-        if (status === 'active') return '<span class="text-dark fw-semibold" style="background: #fef08a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Active</span>';
+        if (status === 'active' || status === 1 || status === true) {
+            return '<span class="text-dark fw-semibold" style="background: #fef08a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Active</span>';
+        }
         return '<span class="text-secondary fw-semibold" style="background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Inactive</span>';
     }
 
@@ -298,9 +306,22 @@
             .catch(() => renderLampUI({}));
     }
 
+    // Filter Pencarian Tabel Sektor Lampu
     document.addEventListener('DOMContentLoaded', () => {
         fetchLampDataFromDB();
-        setInterval(fetchLampDataFromDB, 5000);
+        setInterval(fetchLampDataFromDB, 3000);
+
+        const searchInput = document.getElementById('searchSectorInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                const filter = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#detailSectorTableBody tr');
+                rows.forEach(row => {
+                    const sectorText = row.cells[0].textContent.toLowerCase();
+                    row.style.display = sectorText.includes(filter) ? '' : 'none';
+                });
+            });
+        }
     });
 </script>
 @endpush

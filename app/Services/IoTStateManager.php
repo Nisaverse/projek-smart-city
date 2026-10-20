@@ -224,7 +224,7 @@ class IoTStateManager
         $this->saveState();
     }
 
-    // ✅ TERHUBUNG KE DATABASE MYSQl (tabel environment_histories) untuk Suhu & Kelembapan
+    // ✅ DATABASE MYSQl (tabel environment_histories) untuk Suhu & Kelembapan
     public function getEnvironmentData()
     {
         try {
@@ -248,29 +248,43 @@ class IoTStateManager
         ];
     }
 
+    // ✅ DATABASE MYSQL (tabel smart_lamps) untuk Smart Lamp
     public function getLampData()
     {
-        $lamps = $this->state['lamps'] ?? $this->getDefaultState()['lamps'];
-        
-        // Ambil mode kontrol terbaru dari database jika ada
-        $dbMode = 'manual';
         try {
-            $setting = DB::table('control_settings')->where('setting_key', 'control_mode')->first();
-            if ($setting) {
-                $dbMode = $setting->setting_value;
+            $lamps = DB::table('smart_lamps')->get();
+
+            if ($lamps->isNotEmpty()) {
+                $result = [];
+                foreach ($lamps as $lamp) {
+                    $result[$lamp->sector_code] = [
+                        'name'       => $lamp->sector_name,
+                        'status'     => $lamp->status, // 'active' atau 'inactive'
+                        'updated_at' => Carbon::parse($lamp->updated_at)->format('H:i:s')
+                    ];
+                }
+
+                $dbMode = 'manual';
+                $setting = DB::table('control_settings')->where('setting_key', 'control_mode')->first();
+                if ($setting) {
+                    $dbMode = $setting->setting_value;
+                }
+
+                $result['control_mode'] = $dbMode;
+                $result['timestamp']    = now()->format('H:i:s');
+
+                return $result;
             }
         } catch (\Exception $e) {
-            $dbMode = $this->state['control_mode'] ?? 'manual';
+            // Fallback jika terjadi kendala DB
         }
-        
+
         return [
-            'lamp_1' => $lamps['lamp_1'] ?? [],
-            'lamp_2' => $lamps['lamp_2'] ?? [],
-            'lamp_3' => $lamps['lamp_3'] ?? [],
-            'lamp_4' => $lamps['lamp_4'] ?? [],
-            'sensor_light_level' => round($this->state['sensor_light_level'] ?? 0, 1),
-            'control_mode' => $dbMode,
-            'auto_settings' => $this->getAutoSettings(),
+            'L01' => ['name' => 'Sektor Utara', 'status' => 'active', 'updated_at' => now()->format('H:i:s')],
+            'L02' => ['name' => 'Sektor Selatan', 'status' => 'inactive', 'updated_at' => now()->format('H:i:s')],
+            'L03' => ['name' => 'Sektor Timur', 'status' => 'active', 'updated_at' => now()->format('H:i:s')],
+            'L04' => ['name' => 'Sektor Barat', 'status' => 'inactive', 'updated_at' => now()->format('H:i:s')],
+            'control_mode' => 'manual',
             'timestamp' => now()->format('H:i:s'),
         ];
     }
@@ -287,10 +301,10 @@ class IoTStateManager
         ];
     }
 
+    // ✅ DATABASE MYSQL (tabel smart_parkings) untuk Smart Parking
     public function getParkingData()
     {
         try {
-            // Mengambil langsung dari tabel database MySQL smart_parkings
             $parkings = DB::table('smart_parkings')->get();
 
             if ($parkings->isNotEmpty()) {
@@ -302,6 +316,7 @@ class IoTStateManager
                 foreach ($parkings as $p) {
                     $slots[$p->slot_code] = [
                         'status' => $p->status, // 'available' atau 'occupied'
+                        'updated_at' => Carbon::parse($p->updated_at)->format('H:i:s'),
                     ];
                 }
 
@@ -314,10 +329,9 @@ class IoTStateManager
                 ];
             }
         } catch (\Exception $e) {
-            // Fallback jika terjadi kendala
+            // Fallback
         }
 
-        // Fallback cadangan jika database kosong
         return [
             'total_slots' => 10,
             'occupied' => 4,
@@ -326,13 +340,13 @@ class IoTStateManager
         ];
     }
 
+    // ✅ SUMMARY UNTUK HALAMAN DASHBOARD UTAMA
     public function getDashboardSummary()
     {
-        $lamps = $this->state['lamps'] ?? $this->getDefaultState()['lamps'];
         $waste = $this->state['waste'] ?? $this->getDefaultState()['waste'];
         $env = $this->getEnvironmentData();
 
-        // Ambil data parkir langsung dari database MySQL agar sinkron dengan Smart Parking
+        // 1. Data Parkir dari MySQL
         $parkingTotal = 10;
         $parkingOccupied = 4;
         try {
@@ -341,26 +355,28 @@ class IoTStateManager
                 $parkingTotal = $parkings->count();
                 $parkingOccupied = $parkings->where('status', 'occupied')->count();
             }
-        } catch (\Exception $e) {
-            // Fallback jika gagal query
-        }
+        } catch (\Exception $e) {}
         $parkingAvailable = $parkingTotal - $parkingOccupied;
 
-        $activeLamps = count(array_filter($lamps, fn($l) => $l['status'] === 1));
+        // 2. Data Lampu dari MySQL
+        $activeLamps = 0;
+        try {
+            $activeLamps = DB::table('smart_lamps')->where('status', 'active')->count();
+        } catch (\Exception $e) {}
+
         $totalBins = count($waste);
         $alerts = count(array_filter($waste, fn($b) => $b['level'] > 80));
 
         return [
-            'active_lamps' => $activeLamps,
-            'total_bins' => $totalBins,
+            'active_lamps'      => $activeLamps,
+            'total_bins'        => $totalBins,
             'parking_available' => $parkingAvailable,
-            'parking_occupied' => $parkingOccupied, // Tambahan agar dashboard tahu jumlah terisi
-            'parking_total' => $parkingTotal,       // Tambahan total slot
-            'alerts' => $alerts,
-            'avg_lamp_brightness' => round(array_sum(array_column($lamps, 'brightness')) / 4),
-            'avg_waste_level' => round(array_sum(array_column($waste, 'level')) / 4),
-            'temperature' => $env['temperature'],
-            'humidity' => $env['humidity'],
+            'parking_occupied'  => $parkingOccupied,
+            'parking_total'     => $parkingTotal,
+            'alerts'            => $alerts,
+            'avg_waste_level'   => round(array_sum(array_column($waste, 'level')) / 4),
+            'temperature'       => $env['temperature'],
+            'humidity'          => $env['humidity'],
         ];
     }
 
