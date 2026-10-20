@@ -33,16 +33,6 @@
         padding: 20px;
     }
 
-    .stat-icon-box {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
-    }
-
     .btn-navy-detail {
         background-color: #0b132b !important;
         border-color: #0b132b !important;
@@ -61,102 +51,76 @@
 @section('content')
 <div class="container-fluid px-0">
 
-    <!-- BARIS 1: 6 KARTU PARAMETER LINGKUNGAN -->
+    <!-- BARIS 1: 6 KARTU PARAMETER LINGKUNGAN (TANPA IKON) -->
     <div class="row g-3 mb-4">
         
         <!-- 1. Suhu Saat Ini -->
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <small class="text-secondary fw-bold" style="font-size: 0.75rem;">Suhu Saat Ini</small>
-                        <h4 class="fw-bold my-1 text-dark" id="envTemp">29.5 °C</h4>
-                    </div>
-                    <div class="stat-icon-box" style="background: rgba(239, 68, 68, 0.15); color: #dc2626;">
-                        <i class="fas fa-temperature-high"></i>
-                    </div>
+                <div>
+                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Suhu Saat Ini</small>
+                    <h4 class="fw-bold my-1 text-dark" id="envTemp">29.5 °C</h4>
                 </div>
-                <small class="text-muted" style="font-size: 0.7rem;">Suhu lingkungan</small>
+                <small class="text-muted" style="font-size: 0.75rem;">Suhu lingkungan</small>
             </div>
         </div>
 
         <!-- 2. Kelembapan Udara -->
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <small class="text-secondary fw-bold" style="font-size: 0.75rem;">Kelembapan</small>
-                        <h4 class="fw-bold my-1 text-dark" id="envHumidity">65 %</h4>
-                    </div>
-                    <div class="stat-icon-box" style="background: rgba(37, 99, 235, 0.15); color: #2563eb;">
-                        <i class="fas fa-tint"></i>
-                    </div>
+                <div>
+                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Kelembapan</small>
+                    <h4 class="fw-bold my-1 text-dark" id="envHumidity">65 %</h4>
                 </div>
-                <small class="text-muted" style="font-size: 0.7rem;">Kelembapan relatif</small>
+                <small class="text-muted" style="font-size: 0.75rem;">Kelembapan relatif</small>
             </div>
         </div>
 
         <!-- 3. Kualitas Udara (AQI) -->
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <small class="text-secondary fw-bold" style="font-size: 0.75rem;">Kualitas Udara</small>
-                        <h4 class="fw-bold my-1 text-success" id="envAqi">42 AQI</h4>
-                    </div>
-                    <div class="stat-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #059669;">
-                        <i class="fas fa-wind"></i>
-                    </div>
+                <div>
+                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Kualitas Udara</small>
+                    <h4 class="fw-bold my-1 text-dark" id="envAqi">42 AQI</h4>
                 </div>
-                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style="font-size: 0.65rem;" id="envAqiStatus">Baik</span>
+                <div>
+                    <span class="text-dark px-2 py-1 " style="font-size: 0.75rem;" id="envAqiStatus">Baik</span>
+                </div>
             </div>
         </div>
 
         <!-- 4. Status Hujan -->
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <small class="text-secondary fw-bold" style="font-size: 0.75rem;">Status Hujan</small>
-                        <h4 class="fw-bold my-1 text-dark" id="envRain">Cerah</h4>
-                    </div>
-                    <div class="stat-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #d97706;" id="envRainIconBox">
-                        <i class="fas fa-sun" id="envRainIcon"></i>
-                    </div>
+                <div>
+                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Status Hujan</small>
+                    <h4 class="fw-bold my-1 text-dark" id="envRain">Cerah</h4>
                 </div>
-                <small class="text-muted" style="font-size: 0.7rem;" id="envRainDesc">Tidak Presipitasi</small>
+                <small class="text-muted" style="font-size: 0.75rem;" id="envRainDesc">Tidak Presipitasi</small>
             </div>
         </div>
 
         <!-- 5. Ketinggian Air Sungai -->
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <small class="text-secondary fw-bold" style="font-size: 0.75rem;">Air Sungai</small>
-                        <h4 class="fw-bold my-1 text-primary" id="envWaterLevel">120 cm</h4>
-                    </div>
-                    <div class="stat-icon-box" style="background: rgba(14, 165, 233, 0.15); color: #0284c7;">
-                        <i class="fas fa-water"></i>
-                    </div>
+                <div>
+                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Air Sungai</small>
+                    <h4 class="fw-bold my-1 text-dark" id="envWaterLevel">120 cm</h4>
                 </div>
-                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style="font-size: 0.65rem;" id="envWaterStatus">Aman</span>
+                <div>
+                    <span class=" text-dark px-2 py-1 " style="font-size: 0.75rem;" id="envWaterStatus">Aman</span>
+                </div>
             </div>
         </div>
 
         <!-- 6. Status Sistem IoT -->
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-top-card">
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div>
-                        <small class="text-secondary fw-bold" style="font-size: 0.75rem;">Status IoT</small>
-                        <h4 class="fw-bold my-1 text-dark" id="envIotStatus">Online</h4>
-                    </div>
-                    <div class="stat-icon-box" style="background: rgba(11, 19, 43, 0.1); color: #0b132b;">
-                        <i class="fas fa-wifi"></i>
-                    </div>
+                <div>
+                    <small class="text-dark fw-bold" style="font-size: 0.75rem;">Status IoT</small>
+                    <h4 class="fw-bold my-1 text-dark" id="envIotStatus">Online</h4>
                 </div>
-                <small class="text-success fw-semibold" style="font-size: 0.7rem;"><i class="fas fa-circle me-1" style="font-size: 0.5rem;"></i> Terhubung</small>
+                <small class="text-dark fw-bold" style="font-size: 0.75rem;">Terhubung</small>
             </div>
         </div>
 
@@ -187,14 +151,13 @@
         <div class="col-lg-4">
             <div class="dashboard-white-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Log Terakhir</h5>
+                    <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Riwayat Terakhir</h5>
                     <a href="#" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.8rem;">Lihat Semua</a>
                 </div>
 
                 <div class="dashboard-inner-box" style="max-height: 320px; overflow-y: auto;">
                     <div class="d-flex flex-column gap-3" id="envLogContainer">
                         
-                        <!-- Log Item 1 -->
                         <div class="p-3 bg-white border rounded-3 shadow-sm">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <span class="fw-bold text-dark" style="font-size: 0.85rem;">Zona Utama Kota</span>
@@ -257,33 +220,22 @@
                     const isRaining = data.is_raining ?? false;
                     const waterLevel = data.water_level ?? 120;
 
-                    // Update UI
                     document.getElementById('envTemp').textContent = temp + ' °C';
                     document.getElementById('envHumidity').textContent = hum + ' %';
                     document.getElementById('envAqi').textContent = aqi + ' AQI';
                     document.getElementById('envWaterLevel').textContent = waterLevel + ' cm';
 
-                    // Logika Status Hujan
                     const rainElem = document.getElementById('envRain');
-                    const rainIcon = document.getElementById('envRainIcon');
-                    const rainIconBox = document.getElementById('envRainIconBox');
                     const rainDesc = document.getElementById('envRainDesc');
 
                     if (isRaining) {
                         rainElem.textContent = 'Hujan';
-                        rainIcon.className = 'fas fa-cloud-showers-heavy';
-                        rainIconBox.style.background = 'rgba(37, 99, 235, 0.15)';
-                        rainIconBox.style.color = '#2563eb';
                         rainDesc.textContent = 'Presipitasi Terdeteksi';
                     } else {
                         rainElem.textContent = 'Cerah';
-                        rainIcon.className = 'fas fa-sun';
-                        rainIconBox.style.background = 'rgba(245, 158, 11, 0.15)';
-                        rainIconBox.style.color = '#d97706';
                         rainDesc.textContent = 'Tidak Presipitasi';
                     }
 
-                    // Logika Status Air Sungai
                     const waterBadge = document.getElementById('envWaterStatus');
                     if (waterLevel > 200) {
                         waterBadge.textContent = 'Bahaya (Banjir)';
@@ -293,10 +245,9 @@
                         waterBadge.className = 'badge bg-warning-subtle text-warning px-2 py-1 rounded-pill';
                     } else {
                         waterBadge.textContent = 'Aman';
-                        waterBadge.className = 'badge bg-success-subtle text-success px-2 py-1 rounded-pill';
+                        waterBadge.className = 'text-dark px-2 py-1 rounded-pill';
                     }
 
-                    // Update Chart
                     if (envChart) {
                         const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                         envChart.data.labels.push(now);
