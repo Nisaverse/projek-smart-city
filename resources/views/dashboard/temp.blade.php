@@ -51,7 +51,7 @@
 @section('content')
 <div class="container-fluid px-0">
 
-    <!-- BARIS 1: 6 KARTU PARAMETER LINGKUNGAN (TANPA IKON) -->
+    <!-- BARIS 1: 6 KARTU PARAMETER LINGKUNGAN -->
     <div class="row g-3 mb-4">
         
         <!-- 1. Suhu Saat Ini -->
@@ -59,7 +59,7 @@
             <div class="stat-top-card">
                 <div>
                     <small class="text-dark fw-bold" style="font-size: 0.75rem;">Suhu Saat Ini</small>
-                    <h4 class="fw-bold my-1 text-dark" id="envTemp">29.5 °C</h4>
+                    <h4 class="fw-bold my-1 text-dark" id="envTemp">-- °C</h4>
                 </div>
                 <small class="text-muted" style="font-size: 0.75rem;">Suhu lingkungan</small>
             </div>
@@ -70,7 +70,7 @@
             <div class="stat-top-card">
                 <div>
                     <small class="text-dark fw-bold" style="font-size: 0.75rem;">Kelembapan</small>
-                    <h4 class="fw-bold my-1 text-dark" id="envHumidity">65 %</h4>
+                    <h4 class="fw-bold my-1 text-dark" id="envHumidity">-- %</h4>
                 </div>
                 <small class="text-muted" style="font-size: 0.75rem;">Kelembapan relatif</small>
             </div>
@@ -81,10 +81,10 @@
             <div class="stat-top-card">
                 <div>
                     <small class="text-dark fw-bold" style="font-size: 0.75rem;">Kualitas Udara</small>
-                    <h4 class="fw-bold my-1 text-dark" id="envAqi">42 AQI</h4>
+                    <h4 class="fw-bold my-1 text-dark" id="envAqi">-- AQI</h4>
                 </div>
                 <div>
-                    <span class="text-dark px-2 py-1 " style="font-size: 0.75rem;" id="envAqiStatus">Baik</span>
+                    <span class="text-dark px-2 py-1" style="font-size: 0.75rem;" id="envAqiStatus">-</span>
                 </div>
             </div>
         </div>
@@ -94,9 +94,9 @@
             <div class="stat-top-card">
                 <div>
                     <small class="text-dark fw-bold" style="font-size: 0.75rem;">Status Hujan</small>
-                    <h4 class="fw-bold my-1 text-dark" id="envRain">Cerah</h4>
+                    <h4 class="fw-bold my-1 text-dark" id="envRain">Menunggu</h4>
                 </div>
-                <small class="text-muted" style="font-size: 0.75rem;" id="envRainDesc">Tidak Presipitasi</small>
+                <small class="text-muted" style="font-size: 0.75rem;" id="envRainDesc">Belum ada data</small>
             </div>
         </div>
 
@@ -105,10 +105,10 @@
             <div class="stat-top-card">
                 <div>
                     <small class="text-dark fw-bold" style="font-size: 0.75rem;">Air Sungai</small>
-                    <h4 class="fw-bold my-1 text-dark" id="envWaterLevel">120 cm</h4>
+                    <h4 class="fw-bold my-1 text-dark" id="envWaterLevel">-- cm</h4>
                 </div>
                 <div>
-                    <span class=" text-dark px-2 py-1 " style="font-size: 0.75rem;" id="envWaterStatus">Aman</span>
+                    <span class="text-dark px-2 py-1" style="font-size: 0.75rem;" id="envWaterStatus">-</span>
                 </div>
             </div>
         </div>
@@ -118,9 +118,9 @@
             <div class="stat-top-card">
                 <div>
                     <small class="text-dark fw-bold" style="font-size: 0.75rem;">Status IoT</small>
-                    <h4 class="fw-bold my-1 text-dark" id="envIotStatus">Online</h4>
+                    <h4 class="fw-bold my-1 text-dark" id="envIotStatus">Offline</h4>
                 </div>
-                <small class="text-dark fw-bold" style="font-size: 0.75rem;">Terhubung</small>
+                <small class="text-dark fw-bold" style="font-size: 0.75rem;" id="envIotDesc">Menunggu data</small>
             </div>
         </div>
 
@@ -157,18 +157,9 @@
 
                 <div class="dashboard-inner-box" style="max-height: 320px; overflow-y: auto;">
                     <div class="d-flex flex-column gap-3" id="envLogContainer">
-                        
-                        <div class="p-3 bg-white border rounded-3 shadow-sm">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-dark" style="font-size: 0.85rem;">Zona Utama Kota</span>
-                                <span class="badge bg-success text-white" style="font-size: 0.65rem;">Aman</span>
-                            </div>
-                            <div class="text-secondary" style="font-size: 0.75rem;">
-                                Suhu: 29.5°C | Air: 120cm | AQI: 42
-                            </div>
-                            <small class="text-muted d-block mt-1" style="font-size: 0.7rem;" id="logTime1">Baru saja</small>
+                        <div class="p-3 bg-white border rounded-3 shadow-sm text-center text-muted" style="font-size: 0.8rem;">
+                            Belum ada riwayat data masuk.
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -213,29 +204,38 @@
         fetch('/api/environment')
             .then(res => res.json())
             .then(data => {
-                if (data) {
-                    const temp = data.temperature ?? 29.5;
-                    const hum = data.humidity ?? 65;
-                    const aqi = data.aqi ?? 42;
-                    const isRaining = data.is_raining ?? false;
-                    const waterLevel = data.water_level ?? 120;
+                if (data && data.has_data === true) {
+                    const temp = data.temperature;
+                    const hum = data.humidity;
+                    const aqi = data.air_quality;
+                    const rainStatus = data.rain_status;
+                    const waterLevel = data.water_level;
+                    const timeStr = data.timestamp;
 
+                    // Update Nilai di Kartu
                     document.getElementById('envTemp').textContent = temp + ' °C';
                     document.getElementById('envHumidity').textContent = hum + ' %';
                     document.getElementById('envAqi').textContent = aqi + ' AQI';
+                    document.getElementById('envRain').textContent = rainStatus;
                     document.getElementById('envWaterLevel').textContent = waterLevel + ' cm';
 
-                    const rainElem = document.getElementById('envRain');
-                    const rainDesc = document.getElementById('envRainDesc');
+                    document.getElementById('envIotStatus').textContent = 'Online';
+                    document.getElementById('envIotDesc').textContent = 'Terhubung';
 
-                    if (isRaining) {
-                        rainElem.textContent = 'Hujan';
-                        rainDesc.textContent = 'Presipitasi Terdeteksi';
+                    // Kualitas Udara Badge Status
+                    const aqiStatus = document.getElementById('envAqiStatus');
+                    if (aqi <= 50) {
+                        aqiStatus.textContent = 'Baik';
+                        aqiStatus.className = 'badge bg-success-subtle text-success px-2 py-1 rounded-pill';
                     } else {
-                        rainElem.textContent = 'Cerah';
-                        rainDesc.textContent = 'Tidak Presipitasi';
+                        aqiStatus.textContent = 'Kurang Sehat';
+                        aqiStatus.className = 'badge bg-warning-subtle text-warning px-2 py-1 rounded-pill';
                     }
 
+                    // Status Hujan Desc
+                    document.getElementById('envRainDesc').textContent = rainStatus.toLowerCase().includes('hujan') ? 'Presipitasi Terdeteksi' : 'Tidak Presipitasi';
+
+                    // Status Air Sungai Badge
                     const waterBadge = document.getElementById('envWaterStatus');
                     if (waterLevel > 200) {
                         waterBadge.textContent = 'Bahaya (Banjir)';
@@ -245,12 +245,29 @@
                         waterBadge.className = 'badge bg-warning-subtle text-warning px-2 py-1 rounded-pill';
                     } else {
                         waterBadge.textContent = 'Aman';
-                        waterBadge.className = 'text-dark px-2 py-1 rounded-pill';
+                        waterBadge.className = 'badge bg-success-subtle text-success px-2 py-1 rounded-pill';
                     }
 
+                    // Update Riwayat Terakhir / Log
+                    const logContainer = document.getElementById('envLogContainer');
+                    if (logContainer) {
+                        logContainer.innerHTML = `
+                            <div class="p-3 bg-white border rounded-3 shadow-sm">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-bold text-dark" style="font-size: 0.85rem;">Zona Utama Kota</span>
+                                    <span class="badge bg-success text-white" style="font-size: 0.65rem;">Terbaru</span>
+                                </div>
+                                <div class="text-secondary" style="font-size: 0.75rem;">
+                                    Suhu: ${temp}°C | Air: ${waterLevel}cm | AQI: ${aqi}
+                                </div>
+                                <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">Pukul ${timeStr}</small>
+                            </div>
+                        `;
+                    }
+
+                    // Update Grafik Real-Time
                     if (envChart) {
-                        const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                        envChart.data.labels.push(now);
+                        envChart.data.labels.push(timeStr);
                         envChart.data.datasets[0].data.push(temp);
                         envChart.data.datasets[1].data.push(hum);
                         envChart.data.datasets[2].data.push(waterLevel);
@@ -261,6 +278,15 @@
                         }
                         envChart.update();
                     }
+                } else {
+                    // Jika Database Kosong / Belum Ada Data
+                    document.getElementById('envTemp').textContent = '-- °C';
+                    document.getElementById('envHumidity').textContent = '-- %';
+                    document.getElementById('envAqi').textContent = '-- AQI';
+                    document.getElementById('envRain').textContent = 'Menunggu';
+                    document.getElementById('envWaterLevel').textContent = '-- cm';
+                    document.getElementById('envIotStatus').textContent = 'Offline';
+                    document.getElementById('envIotDesc').textContent = 'Menunggu data';
                 }
             }).catch(() => {});
     }
