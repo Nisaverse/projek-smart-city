@@ -147,35 +147,45 @@
             </div>
         </div>
 
-        <!-- KOLOM KANAN: LOG MONITORING TERAKHIR -->
-        <div class="col-lg-4">
-            <div class="dashboard-white-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Riwayat Terakhir</h5>
-                    <a href="#" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.8rem;">Lihat Semua</a>
+       <!-- KOLOM KANAN: LOG MONITORING TERAKHIR -->
+<div class="col-lg-4">
+    <div class="dashboard-white-card h-100 d-flex flex-column justify-content-start">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Riwayat Terakhir</h5>
+            <a href="#" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.8rem;">Lihat Semua</a>
+        </div>
+
+        <div class="dashboard-inner-box flex-grow-1" style="max-height: 360px; overflow-y: auto;">
+            <div class="d-flex flex-column gap-3" id="envLogContainer">
+                
+                <!-- Log Item 1 -->
+                <div class="p-3 bg-white border rounded-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark" style="font-size: 0.88rem;">Zona Utama Kota</span>
+                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Aman</span>
+                    </div>
+                    <div class="text-secondary fw-medium" style="font-size: 0.78rem; line-height: 1.4;">
+                        Suhu: 29.5°C | Air: 120cm | AQI: 42
+                    </div>
+                    <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">Baru saja</small>
                 </div>
 
-                <div class="dashboard-inner-box" style="max-height: 320px; overflow-y: auto;">
-                    <div class="d-flex flex-column gap-3" id="envLogContainer">
-                        
-                        <div class="p-3 bg-white border rounded-3 shadow-sm">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <span class="fw-bold text-dark" style="font-size: 0.85rem;">Zona Utama Kota</span>
-                                <span class="badge bg-success text-white" style="font-size: 0.65rem;">Aman</span>
-                            </div>
-                            <div class="text-secondary" style="font-size: 0.75rem;">
-                                Suhu: 29.5°C | Air: 120cm | AQI: 42
-                            </div>
-                            <small class="text-muted d-block mt-1" style="font-size: 0.7rem;" id="logTime1">Baru saja</small>
-                        </div>
-
+                <!-- Contoh Log Item 2 (Opsional jika data bertambah) -->
+                <div class="p-3 bg-white border rounded-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark" style="font-size: 0.88rem;">Zona Pesisir Pantai</span>
+                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Aman</span>
                     </div>
+                    <div class="text-secondary fw-medium" style="font-size: 0.78rem; line-height: 1.4;">
+                        Suhu: 30.1°C | Air: 110cm | AQI: 38
+                    </div>
+                    <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">5 menit yang lalu</small>
+                    </div>
+                 </div>
                 </div>
             </div>
         </div>
-
-    </div>
-
+     </div>
 </div>
 @endsection
 
