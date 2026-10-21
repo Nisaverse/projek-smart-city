@@ -228,22 +228,28 @@ class IoTStateManager
     public function getEnvironmentData()
     {
         try {
-            $latest = DB::table('environment_histories')->orderBy('created_at', 'desc')->first();
+            $latest = DB::table('environment_histories')->orderBy('id', 'desc')->first();
 
             if ($latest) {
                 return [
+                    'has_data'    => true,
                     'temperature' => (float)$latest->temperature,
                     'humidity'    => (float)$latest->humidity,
-                    'timestamp'   => Carbon::parse($latest->created_at)->format('H:i:s')
+                    'air_quality' => (int)($latest->air_quality ?? 0),
+                    'rain_status' => $latest->rain_status ?? 'Cerah',
+                    'water_level' => (float)($latest->water_level ?? 0),
+                    'timestamp'   => now()->format('H:i:s')
                 ];
             }
-        } catch (\Exception $e) {
-            // Fallback jika tabel belum di-query
-        }
+        } catch (\Exception $e) {}
 
         return [
-            'temperature' => 29.5,
-            'humidity'    => 65.0,
+            'has_data'    => false,
+            'temperature' => '--',
+            'humidity'    => '--',
+            'air_quality' => '--',
+            'rain_status' => 'Menunggu data',
+            'water_level' => '--',
             'timestamp'   => now()->format('H:i:s')
         ];
     }
