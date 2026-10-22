@@ -72,19 +72,53 @@
         padding: 20px;
     }
 
-    /* ===== BANNER KOTA TEGAL ===== */
+    /* ===== BANNER KOTA TEGAL & GLASS CARD ===== */
     .city-banner-card {
         background: linear-gradient(rgba(11, 19, 43, 0.65), rgba(11, 19, 43, 0.82)), url('{{ asset("image/alun-alun.jpeg") }}') center/cover no-repeat !important;
         border: 1px solid #64748b !important;
         border-radius: 20px !important;
-        padding: 70px 45px !important;
-        min-height: 400px !important;
+        padding: 40px 35px !important;
+        min-height: 380px !important;
         display: flex;
         align-items: center;
         color: #ffffff !important;
         box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35) !important;
         width: 100% !important;
         overflow: hidden;
+    }
+
+    .banner-glass-card {
+        background: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(12px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        border-radius: 16px !important;
+        padding: 12px 16px !important; /* Padding atas-bawah ditipisin */
+        color: #ffffff !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+        max-width: 270px !important; /* Lebar kotak diperkecil jadi lebih ramping */
+        margin-left: auto;
+    }
+
+    .banner-glass-divider {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+        margin: 6px 0 !important; /* Jarak garis pemisah dideketin */
+    }
+
+    .banner-glass-card h4, 
+    .banner-glass-card div, 
+    .banner-glass-card span {
+        color: #ffffff !important;
+    }
+
+    .banner-glass-card .text-muted,
+    .banner-glass-card small {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .banner-glass-divider {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+        margin: 12px 0;
     }
 
     .animate-banner-content {
@@ -167,12 +201,59 @@
     <!-- BANNER KOTA TEGAL -->
     <div class="city-banner-card mb-4">
         <div class="row align-items-center g-4 w-100 m-0">
-            <div class="col-lg-12 animate-banner-content px-0">
+            <!-- SISI KIRI: DESKRIPSI -->
+            <div class="col-lg-7 animate-banner-content px-0">
                 <span class="badge bg-primary text-white px-3 py-1 rounded-pill mb-2" style="font-size: 0.75rem; font-weight: 600;">Tegal EcoSense IoT Hub</span>
                 <h3 class="fw-bold text-white mb-2" style="font-size: 1.35rem; line-height: 1.4;">Mengenal Konsep Smart City Kota Tegal</h3>
                 <p class="text-light opacity-90 mb-0" style="font-size: 0.85rem; line-height: 1.55; max-width: 900px;">
                     Smart City (Kota Cerdas) adalah kerangka kerja berbasis teknologi informasi dan Internet of Things (IoT) yang dirancang untuk mengoptimalkan infrastruktur perkotaan, meningkatkan efisiensi pelayanan publik, serta memantau kondisi lingkungan secara <em>real-time</em> demi mewujudkan Kota Tegal yang modern, berkelanjutan, dan nyaman bagi masyarakat.
                 </p>
+            </div>
+
+            <!-- SISI KANAN: KARTU STATISTIK TRANSPARAN (GLASSMORPHISM) -->
+            <div class="col-lg-5 animate-banner-content px-0 pe-lg-2">
+                <div class="banner-glass-card">
+                    
+                    <!-- 1. Kualitas Udara -->
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-wind text-info" style="font-size: 1.1rem;"></i>
+                            <span class="fw-semibold" style="font-size: 0.85rem;">Kualitas Udara</span>
+                        </div>
+                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Online</span>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2">
+                        <h4 class="fw-bold mb-0" style="font-size: 1.4rem;" id="bannerAqi">48 AQI</h4>
+                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;" id="bannerAqiStatus">Baik</span>
+                    </div>
+
+                    <div class="banner-glass-divider"></div>
+
+                    <!-- 2. Kelembapan -->
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-tint text-primary" style="font-size: 1.1rem;"></i>
+                            <span class="fw-semibold" style="font-size: 0.85rem;">Kelembapan</span>
+                        </div>
+                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Online</span>
+                    </div>
+                    <h4 class="fw-bold mb-0" style="font-size: 1.4rem;" id="bannerHumidity">70 %</h4>
+                    <small style="font-size: 0.72rem;">Kelembapan relatif</small>
+
+                    <div class="banner-glass-divider"></div>
+
+                    <!-- 3. Status Hujan -->
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="fas fa-cloud-showers-heavy text-info" style="font-size: 1.1rem;"></i>
+                            <span class="fw-semibold" style="font-size: 0.85rem;">Status Hujan</span>
+                        </div>
+                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Online</span>
+                    </div>
+                    <h4 class="fw-bold mb-0" style="font-size: 1.3rem;" id="bannerRain">Hujan Ringan</h4>
+                    <small style="font-size: 0.72rem;" id="bannerRainDesc">Presipitasi Terdeteksi</small>
+
+                </div>
             </div>
         </div>
     </div>
@@ -290,13 +371,13 @@
     <div class="dashboard-white-card mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Smart Temperature - Grafik Suhu dan Kelembapan</h5>
-                <small class="text-dark opacity-75 fw-semibold">Pemantauan parameter lingkungan secara real-time</small>
+                <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Grafik Pemantauan Parameter Lingkungan Real-Time</h5>
+                <small class="text-dark opacity-75 fw-semibold">Grafik memperbarui data pemantauan berkala</small>
             </div>
         </div>
 
         <div class="dashboard-inner-box mt-3">
-            <div style="position: relative; height: 260px; width: 100%;">
+            <div style="position: relative; height: 280px; width: 100%;">
                 <canvas id="dashTempChart"></canvas>
             </div>
         </div>
@@ -331,8 +412,9 @@
             data: {
                 labels: [],
                 datasets: [
-                    { label: 'Suhu (°C)', data: [], borderColor: '#0b132b', backgroundColor: 'rgba(11, 19, 43, 0.12)', tension: 0.4, fill: true, borderWidth: 2.5 },
-                    { label: 'Kelembapan (%)', data: [], borderColor: '#1e3a8a', backgroundColor: 'rgba(30, 58, 138, 0.1)', tension: 0.4, fill: true, borderWidth: 2.5 }
+                    { label: 'Suhu (°C)', data: [], borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.05)', tension: 0.4, fill: true, borderWidth: 2.5 },
+                    { label: 'Kelembapan (%)', data: [], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.05)', tension: 0.4, fill: true, borderWidth: 2.5 },
+                    { label: 'Tinggi Air (cm)', data: [], borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.05)', tension: 0.4, fill: true, borderWidth: 2.5 }
                 ]
             },
             options: {
@@ -341,7 +423,7 @@
                 plugins: { legend: { labels: { color: '#0f172a', font: { weight: 'bold' } } } },
                 scales: {
                     x: { ticks: { color: '#475569' }, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
-                    y: { ticks: { color: '#475569' }, grid: { color: 'rgba(0, 0, 0, 0.05)' }, min: 0, max: 100 }
+                    y: { ticks: { color: '#475569' }, grid: { color: 'rgba(0, 0, 0, 0.05)' }, min: 0 }
                 }
             }
         });
@@ -409,7 +491,6 @@
         grid.innerHTML = '';
         let availableCount = 0;
         const slots = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
-
         const slotsData = apiResponse.slots || apiResponse;
 
         slots.forEach(slotId => {
@@ -453,7 +534,7 @@
             .then(data => renderParkingGrid(data))
             .catch(() => renderParkingGrid({}));
 
-        // 2. Fetch Smart Lamp (Menggunakan rute yang benar /api/lamp sesuai routes/web.php)
+        // 2. Fetch Smart Lamp
         fetch('/api/lamp')
             .then(res => res.json())
             .then(data => renderLampGrid(data))
@@ -464,28 +545,41 @@
                     .catch(() => renderLampGrid({}));
             });
 
-        // 3. Fetch Smart Temperature
+        // 3. Fetch Smart Environment / Temperature & Update Chart + Banner Glass
         fetch('/api/environment')
             .then(res => res.json())
             .then(data => {
-                if (data && (data.temperature !== undefined || data.temp !== undefined)) {
-                    const temp = data.temperature !== undefined ? data.temperature : data.temp;
-                    const hum = data.humidity !== undefined ? data.humidity : data.hum;
+                if (data && data.has_data === true) {
+                    const temp = data.temperature;
+                    const hum = data.humidity;
+                    const aqi = data.air_quality ?? 48;
+                    const rainStatus = data.rain_status ?? 'Cerah';
+                    const waterLevel = data.water_level ?? 120;
+                    const timeStr = data.timestamp || new Date().toLocaleTimeString('id-ID');
 
+                    // Update Top Card Summary
                     document.getElementById('dashTempSummary').textContent = temp + ' °C';
                     document.getElementById('dashTempStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
                     document.getElementById('dashTempStatusBadge').textContent = 'Online';
 
+                    // Update Banner Glass Card (Transparan)
+                    if (document.getElementById('bannerAqi')) document.getElementById('bannerAqi').textContent = aqi + ' AQI';
+                    if (document.getElementById('bannerHumidity')) document.getElementById('bannerHumidity').textContent = hum + ' %';
+                    if (document.getElementById('bannerRain')) document.getElementById('bannerRain').textContent = rainStatus;
+                    if (document.getElementById('bannerRainDesc')) {
+                        document.getElementById('bannerRainDesc').textContent = rainStatus.toLowerCase().includes('hujan') ? 'Presipitasi Terdeteksi' : 'Tidak Presipitasi';
+                    }
+
+                    // Update Grafik Real-Time
                     if (dashTempChart) {
-                        const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                        dashTempChart.data.labels.push(now);
+                        dashTempChart.data.labels.push(timeStr);
                         dashTempChart.data.datasets[0].data.push(temp);
                         dashTempChart.data.datasets[1].data.push(hum);
+                        dashTempChart.data.datasets[2].data.push(waterLevel);
 
                         if (dashTempChart.data.labels.length > maxDataPoints) {
                             dashTempChart.data.labels.shift();
-                            dashTempChart.data.datasets[0].data.shift();
-                            dashTempChart.data.datasets[1].data.shift();
+                            dashTempChart.data.datasets.forEach(ds => ds.data.shift());
                         }
                         dashTempChart.update();
                     }
@@ -496,7 +590,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         renderParkingGrid({});
         renderLampGrid({});
-
         fetchDashboardData();
         setInterval(fetchDashboardData, 5000);
     });
