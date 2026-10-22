@@ -108,7 +108,7 @@
                     <h4 class="fw-bold my-1 text-dark" id="envWaterLevel">-- cm</h4>
                 </div>
                 <div>
-                    <span class="text-dark px-2 py-1" style="font-size: 0.75rem;" id="envWaterStatus">-</span>
+                    <span class="text-muted px-2 py-1" style="font-size: 0.75rem;" id="envWaterStatus">-</span>
                 </div>
             </div>
         </div>
@@ -148,39 +148,30 @@
         </div>
 
        <!-- KOLOM KANAN: LOG MONITORING TERAKHIR -->
-<div class="col-lg-4">
-    <div class="dashboard-white-card h-100 d-flex flex-column justify-content-start">
+<div class="col-lg-4 align-self-start">
+    <div class="dashboard-white-card" style="display: block !important; height: auto !important;">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Riwayat Terakhir</h5>
             <a href="#" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.8rem;">Lihat Semua</a>
         </div>
 
-        <div class="dashboard-inner-box flex-grow-1" style="max-height: 360px; overflow-y: auto;">
-            <div class="d-flex flex-column gap-3" id="envLogContainer">
+        <div class="dashboard-inner-box p-3" style="height: auto !important; min-height: unset !important;">
+            <div class="d-flex flex-column gap-2" id="envLogContainer">
                 
-                <!-- Log Item 1 -->
+                <!-- Log Item -->
                 <div class="p-3 bg-white border rounded-3 shadow-sm">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="fw-bold text-dark" style="font-size: 0.88rem;">Zona Utama Kota</span>
-                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Aman</span>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-dark" style="font-size: 0.85rem;">Zona Utama Kota</span>
+                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Terbaru</span>
                     </div>
-                    <div class="text-secondary fw-medium" style="font-size: 0.78rem; line-height: 1.4;">
-                        Suhu: 29.5°C | Air: 120cm | AQI: 42
+                    <div class="text-secondary fw-medium" style="font-size: 0.75rem; line-height: 1.4;">
+                        Suhu: 31.5°C | Air: 135.5cm | AQI: 48
                     </div>
-                    <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">Baru saja</small>
-                </div>
-
-                    </div>
-                    <div class="text-secondary fw-medium" style="font-size: 0.78rem; line-height: 1.4;">
-                        Suhu: 30.1°C | Air: 110cm | AQI: 38
-                    </div>
-                    <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">5 menit yang lalu</small>
-                    </div>
-                 </div>
+                    <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">Pukul 11:26:32</small>
                 </div>
             </div>
         </div>
-     </div>
+    </div>
 </div>
 @endsection
 
@@ -240,10 +231,10 @@
                     const aqiStatus = document.getElementById('envAqiStatus');
                     if (aqi <= 50) {
                         aqiStatus.textContent = 'Baik';
-                        aqiStatus.className = 'badge bg-success-subtle text-success px-2 py-1 rounded-pill';
+                        aqiStatus.className = ' text-dark px-2 py-1 rounded-pill';
                     } else {
                         aqiStatus.textContent = 'Kurang Sehat';
-                        aqiStatus.className = 'badge bg-warning-subtle text-warning px-2 py-1 rounded-pill';
+                        aqiStatus.className = ' text-dark px-2 py-1 rounded-pill';
                     }
 
                     // Status Hujan Desc
@@ -253,13 +244,13 @@
                     const waterBadge = document.getElementById('envWaterStatus');
                     if (waterLevel > 200) {
                         waterBadge.textContent = 'Bahaya (Banjir)';
-                        waterBadge.className = 'badge bg-danger-subtle text-danger px-2 py-1 rounded-pill';
+                        waterBadge.className = 'text-danger px-2 py-1 rounded-pill';
                     } else if (waterLevel > 150) {
                         waterBadge.textContent = 'Waspada';
-                        waterBadge.className = 'badge bg-warning-subtle text-warning px-2 py-1 rounded-pill';
+                        waterBadge.className = 'text-warning px-2 py-1 rounded-pill';
                     } else {
                         waterBadge.textContent = 'Aman';
-                        waterBadge.className = 'badge bg-success-subtle text-success px-2 py-1 rounded-pill';
+                        waterBadge.className = 'text-dark px-2 py-1 rounded-pill';
                     }
 
                     // Update Riwayat Terakhir / Log

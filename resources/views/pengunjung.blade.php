@@ -85,7 +85,7 @@
     border-radius: 1rem !important;
     transition: all 0.3s ease-in-out;
   }
-
+  
   /* Efek Melayang & Glow saat kursor menyentuh kartu */
   .card:hover, .zone-card:hover {
     transform: translateY(-5px);
