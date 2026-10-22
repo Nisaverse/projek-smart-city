@@ -16,7 +16,7 @@
         }
 
         body {
-            background-color: #0d1321;
+            background-color: #0b132b;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -25,19 +25,21 @@
             padding: 20px;
         }
 
+        /* Warna kartu login disamakan dengan background abu-abu dashboard */
         .login-card {
-            background: #ffffff;
+            background: #e2e8f0;
+            border: 1px solid #cbd5e1;
             border-radius: 24px;
             padding: 40px 35px;
             width: 100%;
             max-width: 440px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
         .header-icon {
             width: 64px;
             height: 64px;
-            background-color: #0d6efd;
+            background-color: #0b132b;
             color: #ffffff;
             border-radius: 16px;
             display: flex;
@@ -48,7 +50,7 @@
         }
 
         .login-title {
-            color: #111827;
+            color: #0f172a;
             font-weight: 700;
             font-size: 26px;
             text-align: center;
@@ -56,7 +58,7 @@
         }
 
         .login-subtitle {
-            color: #6b7280;
+            color: #475569;
             font-size: 14px;
             text-align: center;
             margin-bottom: 28px;
@@ -64,13 +66,13 @@
 
         .form-label {
             font-weight: 700;
-            color: #1f2937;
+            color: #1e293b;
             font-size: 14px;
             margin-bottom: 8px;
         }
 
         .input-group {
-            border: 1px solid #e5e7eb;
+            border: 1px solid #94a3b8;
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease-in-out;
@@ -78,9 +80,9 @@
         }
 
         .input-group-text {
-            background-color: #f9fafb;
+            background-color: #f1f5f9;
             border: none;
-            color: #4b5563;
+            color: #334155;
             padding-left: 16px;
             padding-right: 12px;
             font-size: 16px;
@@ -97,25 +99,31 @@
         }
 
         .form-control {
+            background-color: #ffffff;
             border: none;
             padding: 12px 14px;
             font-size: 14px;
-            color: #1f2937;
+            color: #0f172a;
             box-shadow: none !important;
         }
 
         .form-control::placeholder {
-            color: #9ca3af;
+            color: #94a3b8;
         }
 
-        /* Efek Ring Fokus Warna Biru Muda */
+        .form-control:focus {
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+
+        /* Efek Ring Fokus */
         .input-group:focus-within {
-            border-color: #93c5fd;
-            box-shadow: 0 0 0 4px #bfdbfe;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
         }
 
         .btn-submit {
-            background-color: #0d6efd;
+            background-color: #0b132b;
             border: none;
             border-radius: 12px;
             color: #ffffff;
@@ -124,20 +132,21 @@
             padding: 12px;
             width: 100%;
             margin-top: 24px;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s ease, transform 0.2s ease;
         }
 
         .btn-submit:hover {
-            background-color: #0b5ed7;
+            background-color: #1e3a8a;
+            transform: translateY(-1px);
         }
     </style>
 </head>
 <body>
 
 <div class="login-card">
-    <!-- Ikon Gedung -->
-    <div class="header-icon">
-        <i class="fas fa-city"></i>
+   <!-- Logo Sendiri -->
+    <div class="text-center mb-4">
+        <img src="{{ asset('image/logo_smartcity_rm.png') }}" alt="Logo Smart City" style="width: 75px; height: 75px; object-fit: contain;">
     </div>
 
     <!-- Judul & Subjudul -->

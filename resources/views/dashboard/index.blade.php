@@ -190,7 +190,7 @@
     <!-- SELAMAT DATANG & WAKTU -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h4 class="fw-bold mb-1" style="color: #0f172a;">Selamat Datang, Admin 👋</h4>
+            <h4 class="fw-bold mb-1" style="color: #0f172a;">Selamat Datang, Admin  👋</h4>
             <p class="text-secondary mb-0" style="font-size: 0.85rem;">Pantau dan kelola seluruh sistem Smart City secara real-time.</p>
         </div>
         <div class="text-end d-none d-md-block">
@@ -215,16 +215,16 @@
                 <div class="banner-glass-card">
                     
                     <!-- 1. Kualitas Udara -->
-                    <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fas fa-wind text-info" style="font-size: 1.1rem;"></i>
-                            <span class="fw-semibold" style="font-size: 0.85rem;">Kualitas Udara</span>
+                            <i class="fas fa-wind text-info" style="font-size: 0.9rem;"></i>
+                            <span class="fw-semibold" style="font-size: 0.78rem;">Kualitas Udara</span>
                         </div>
-                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Online</span>
+                        <span class="badge bg-success text-white px-2 py-0.5 rounded-pill" style="font-size: 0.6rem;">Online</span>
                     </div>
-                    <div class="d-flex align-items-baseline gap-2">
-                        <h4 class="fw-bold mb-0" style="font-size: 1.4rem;" id="bannerAqi">48 AQI</h4>
-                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;" id="bannerAqiStatus">Baik</span>
+                    <h5 class="fw-bold mb-0 mt-1" style="font-size: 1.15rem;" id="bannerAqi">48 AQI</h5>
+                    <div class="mt-0.5">
+                        <span class="text-white px-2 py-0.5 rounded-pill" style="font-size: 0.72rem;" id="bannerAqiStatus">Baik</span>
                     </div>
 
                     <div class="banner-glass-divider"></div>
