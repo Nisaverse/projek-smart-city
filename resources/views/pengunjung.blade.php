@@ -85,7 +85,7 @@
     border-radius: 1rem !important;
     transition: all 0.3s ease-in-out;
   }
-  
+
   /* Efek Melayang & Glow saat kursor menyentuh kartu */
   .card:hover, .zone-card:hover {
     transform: translateY(-5px);
@@ -2523,6 +2523,25 @@
   animation: lokasiTeksFadeDown 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   will-change: opacity, transform, filter;
 }
+
+/* =========================================================
+       ANIMASI KARTU TELEMETRI (MUNCUL HALUS DARI BAWAH)
+       ========================================================= */
+    @keyframes telemetriFadeUpSmooth {
+      0% {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .animate-telemetri-smooth {
+      animation: telemetriFadeUpSmooth 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+      will-change: opacity, transform;
+    }
 </style>
 </head>
 <body>
@@ -2618,25 +2637,95 @@
       <div class="container">
         <div class="row align-items-center">
           <div class="col-lg-8">
-  <!-- Badge status dengan animasi Soft Zoom -->
-  <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 rounded-pill mb-3 fw-semibold hero-pro-badge">
-    <i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i> Smart City Alun-Alun Kota Tegal
-  </span>
-  
-  <!-- Judul dengan animasi Slide-In dari Kiri -->
-  <h1 class="display-4 fw-bold mb-3 hero-pro-title">Membangun Kota Pintar untuk Masa Depan</h1>
-  
-  <!-- Deskripsi dengan animasi Slide-In dari Kanan -->
-  <p class="lead text-light opacity-75 mb-4 hero-pro-desc" style="max-width: 650px;">
-    Selamat datang di portal Smart City Kota Tegal. Akses informasi kondisi lingkungan terkini, kualitas udara, dan pemantauan kawasan Alun-Alun secara langsung untuk mendukung aktivitas harian Anda.
-  </p>
+            <!-- Badge status dengan animasi Soft Zoom -->
+            <span class="badge bg-primary bg-opacity-25 text-info px-3 py-2 rounded-pill mb-3 fw-semibold hero-pro-badge">
+              <i class="fa-solid fa-circle me-1" style="font-size: 8px;"></i> Smart City Alun-Alun Kota Tegal
+            </span>
+            
+            <!-- Judul dengan animasi Slide-In dari Kiri -->
+            <h1 class="display-4 fw-bold mb-3 hero-pro-title">Membangun Kota Pintar untuk Masa Depan</h1>
+            
+            <!-- Deskripsi dengan animasi Slide-In dari Kanan -->
+            <p class="lead text-light opacity-75 mb-4 hero-pro-desc" style="max-width: 650px;">
+              Platform inovatif pemantauan iklim mikro publik, kualitas udara real-time, dan tata kelola kawasan berbasis sensor IoT di pusat Kota Tegal.
+            </p>
 
-  <!-- Tombol dengan animasi Fade-Up -->
-  <div class="d-flex gap-3 hero-pro-btn">
-    <a href="#layanan" class="btn btn-primary px-4 py-3 rounded-pill fw-semibold shadow-sm">Jelajahi Layanan <i class="fa-solid fa-arrow-right ms-2"></i></a>
-    <a href="#tentang" class="btn btn-outline-light px-4 py-3 rounded-pill fw-semibold">Pelajari Lebih Lanjut</a>
-  </div>
-</div>
+            <!-- Tombol dengan animasi Fade-Up -->
+            <div class="d-flex gap-3 hero-pro-btn">
+              <a href="#layanan" class="btn btn-primary px-4 py-3 rounded-pill fw-semibold shadow-sm">Jelajahi Layanan <i class="fa-solid fa-arrow-right ms-2"></i></a>
+              <a href="#tentang" class="btn btn-outline-light px-4 py-3 rounded-pill fw-semibold">Pelajari Lebih Lanjut</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1.1 LIVE TELEMETRI / KARTU METRIK ALA ADMIN -->
+    <section class="py-5" id="telemetri" style="background-color: #f1f5f9;">
+  <div class="container">
+    <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+      <h6 class="text-primary fw-bold text-uppercase">Live Telemetri</h6>
+      <h2 class="fw-bold text-dark">Parameter Lingkungan Saat Ini</h2>
+      <p class="text-muted">Pemantauan langsung data sensor lingkungan kawasan Alun-Alun Kota Tegal.</p>
+    </div>
+
+        <!-- Barisan 6 Kartu Metrik -->
+        <div class="row g-3 justify-content-center">
+          
+          <!-- 1. Suhu Saat Ini -->
+          <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
+              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Suhu Saat Ini</div>
+              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">31.5 &deg;C</h3>
+              <div class="text-muted" style="font-size: 0.72rem;">Suhu lingkungan</div>
+            </div>
+          </div>
+
+          <!-- 2. Kelembaban -->
+          <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
+              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Kelembaban</div>
+              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">70 %</h3>
+              <div class="text-muted" style="font-size: 0.72rem;">Kelembaban relatif</div>
+            </div>
+          </div>
+
+          <!-- 3. Kualitas Udara -->
+          <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
+              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Kualitas Udara</div>
+              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">48 AQI</h3>
+              <div class="text-muted" style="font-size: 0.72rem;">Baik</div>
+            </div>
+          </div>
+
+          <!-- 4. Status Hujan -->
+          <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
+              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Status Hujan</div>
+              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.25rem; line-height: 1.2;">Hujan Ringan</h3>
+              <div class="text-muted mt-auto" style="font-size: 0.72rem;">Presipitasi Terdeteksi</div>
+            </div>
+          </div>
+
+          <!-- 5. Air Sungai -->
+          <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
+              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Air Sungai</div>
+              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.4rem;">135.5 cm</h3>
+              <div class="text-muted" style="font-size: 0.72rem;">Aman</div>
+            </div>
+          </div>
+
+          <!-- 6. Status IoT -->
+          <div class="col-6 col-md-4 col-lg-2">
+            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
+              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Status IoT</div>
+              <h3 class="fw-bold text-success mb-1" style="font-size: 1.5rem;">Online</h3>
+              <div class="text-muted" style="font-size: 0.72rem;">Terhubung</div>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
@@ -2821,7 +2910,7 @@
   </div>
 
   
-  <!-- SCRIPT KONTROL & AUTO-SLIDE BACKGROUND -->
+ <!-- SCRIPT KONTROL & AUTO-SLIDE BACKGROUND -->
   <script>
 
     function triggerHeroAnimation() {
@@ -2856,79 +2945,96 @@
       tentangSection.classList.add('tentang-active');
     }
 
- function triggerKawasanAnimation() {
-  const kawasanSection = document.getElementById('kawasan');
-  if (!kawasanSection) return;
+    function triggerKawasanAnimation() {
+      const kawasanSection = document.getElementById('kawasan');
+      if (!kawasanSection) return;
 
-  // Seleksi elemen teks, judul, tab, dan kartu di kawasan
-  const targetElements = kawasanSection.querySelectorAll(
-    'h1, h2, h3, h4, p, .lead, .section-title, .section-subtitle, .zone-tab-item, .zone-card, .card, .btn'
-  );
+      // Seleksi elemen teks, judul, tab, dan kartu di kawasan
+      const targetElements = kawasanSection.querySelectorAll(
+        'h1, h2, h3, h4, p, .lead, .section-title, .section-subtitle, .zone-tab-item, .zone-card, .card, .btn'
+      );
 
-  targetElements.forEach((el, index) => {
-    el.classList.remove('animate-kawasan-zoom');
-    el.style.animationDelay = '0s';
-    void el.offsetWidth; // Force Reflow reset animasi
+      targetElements.forEach((el, index) => {
+        el.classList.remove('animate-kawasan-zoom');
+        el.style.animationDelay = '0s';
+        void el.offsetWidth; // Force Reflow reset animasi
 
-    // Jeda 0.08 detik per elemen agar urutan mekarnya terasa santai & mengalir
-    const delay = (index * 0.08).toFixed(2);
-    el.style.animationDelay = `${delay}s`;
+        // Jeda 0.08 detik per elemen agar urutan mekarnya terasa santai & mengalir
+        const delay = (index * 0.08).toFixed(2);
+        el.style.animationDelay = `${delay}s`;
 
-    el.classList.add('animate-kawasan-zoom');
-  });
-}
+        el.classList.add('animate-kawasan-zoom');
+      });
+    }
 
 
-// --- FUNGSI ANIMASI SECTION LAYANAN ---
-function triggerLayananAnimation() {
-  const layananSection = document.getElementById('layanan');
-  if (!layananSection) return;
+    // --- FUNGSI ANIMASI SECTION LAYANAN ---
+    function triggerLayananAnimation() {
+      const layananSection = document.getElementById('layanan');
+      if (!layananSection) return;
 
-  // Seleksi sub-judul, judul utama, deskripsi, dan kartu-kartu layanan
-  const targetElements = layananSection.querySelectorAll(
-    'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle, .card, .col-lg-4, .col-md-6'
-  );
+      // Seleksi sub-judul, judul utama, deskripsi, dan kartu-kartu layanan
+      const targetElements = layananSection.querySelectorAll(
+        'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle, .card, .col-lg-4, .col-md-6'
+      );
 
-  targetElements.forEach((el, index) => {
-    // Reset animasi
-    el.classList.remove('animate-layanan-smooth');
-    el.style.animationDelay = '0s';
-    void el.offsetWidth; // Force Reflow untuk reset animasi browser
+      targetElements.forEach((el, index) => {
+        // Reset animasi
+        el.classList.remove('animate-layanan-smooth');
+        el.style.animationDelay = '0s';
+        void el.offsetWidth; // Force Reflow untuk reset animasi browser
 
-    // Jeda 0.1 detik per elemen agar kartu & teks muncul berurutan secara pelan-pelan
-    const delay = (index * 0.1).toFixed(2);
-    el.style.animationDelay = `${delay}s`;
+        // Jeda 0.1 detik per elemen agar kartu & teks muncul berurutan secara pelan-pelan
+        const delay = (index * 0.1).toFixed(2);
+        el.style.animationDelay = `${delay}s`;
 
-    // Pasang class animasi
-    el.classList.add('animate-layanan-smooth');
-  });
-}
+        // Pasang class animasi
+        el.classList.add('animate-layanan-smooth');
+      });
+    }
 
-// --- FUNGSI ANIMASI KHUSUS TEKS SECTION LOKASI ---
-function triggerLokasiAnimation() {
-  const lokasiSection = document.getElementById('lokasi');
-  if (!lokasiSection) return;
+    // --- FUNGSI ANIMASI SECTION TELEMETRI (BARU) ---
+    function triggerTelemetriAnimation() {
+      const telemetriSection = document.getElementById('telemetri');
+      if (!telemetriSection) return;
 
-  // Hanya menyeleksi elemen teks (h1-h4, p, badge, span) dan MENGECUALIKAN container peta/iframe
-  const textElements = lokasiSection.querySelectorAll(
-    'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle'
-  );
+      const cards = telemetriSection.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.classList.remove('animate-telemetri-smooth');
+        card.style.animationDelay = '0s';
+        void card.offsetWidth; // Force reflow untuk mereset animasi
 
-  textElements.forEach((el, index) => {
-    // Pastikan tidak mengenai elemen peta atau iframe
-    if (el.tagName === 'IFRAME' || el.closest('.map-container') || el.closest('#map')) return;
+        const delay = (index * 0.08).toFixed(2);
+        card.style.animationDelay = `${delay}s`;
+        card.classList.add('animate-telemetri-smooth');
+      });
+    }
 
-    el.classList.remove('animate-lokasi-text');
-    el.style.animationDelay = '0s';
-    void el.offsetWidth; // Force reflow browser
+    // --- FUNGSI ANIMASI KHUSUS TEKS SECTION LOKASI ---
+    function triggerLokasiAnimation() {
+      const lokasiSection = document.getElementById('lokasi');
+      if (!lokasiSection) return;
 
-    // Jeda bertahap (stagger) 0.1 detik per baris teks dari atas ke bawah
-    const delay = (index * 0.1).toFixed(2);
-    el.style.animationDelay = `${delay}s`;
+      // Hanya menyeleksi elemen teks (h1-h4, p, badge, span) dan MENGECUALIKAN container peta/iframe
+      const textElements = lokasiSection.querySelectorAll(
+        'h1, h2, h3, h4, p, .badge, .section-title, .section-subtitle'
+      );
 
-    el.classList.add('animate-lokasi-text');
-  });
-}
+      textElements.forEach((el, index) => {
+        // Pastikan tidak mengenai elemen peta atau iframe
+        if (el.tagName === 'IFRAME' || el.closest('.map-container') || el.closest('#map')) return;
+
+        el.classList.remove('animate-lokasi-text');
+        el.style.animationDelay = '0s';
+        void el.offsetWidth; // Force reflow browser
+
+        // Jeda bertahap (stagger) 0.1 detik per baris teks dari atas ke bawah
+        const delay = (index * 0.1).toFixed(2);
+        el.style.animationDelay = `${delay}s`;
+
+        el.classList.add('animate-lokasi-text');
+      });
+    }
 
     // =========================================================
     // NAVBAR ACTIVE MENU OTOMATIS
@@ -2975,6 +3081,10 @@ function triggerLokasiAnimation() {
             triggerLayananAnimation();
           }
 
+          if (targetId === 'telemetri') {
+            triggerTelemetriAnimation();
+          }
+
           if (targetId === 'lokasi') {
             triggerLokasiAnimation();
           }
@@ -3011,62 +3121,65 @@ function triggerLokasiAnimation() {
       let isBerandaAnimated = true;
 
       // Saat pengguna scroll, menu mengikuti section & animasi Beranda/Tentang aktif otomatis.
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const targetId = entry.target.id;
-          if (entry.isIntersecting) {
-            setActiveMenu(targetId);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const targetId = entry.target.id;
+        if (entry.isIntersecting) {
+          setActiveMenu(targetId);
 
-            if (targetId === 'tentang') {
-              entry.target.classList.add('tentang-active');
-            }
+          if (targetId === 'tentang') {
+            entry.target.classList.add('tentang-active');
+          }
 
-            // TAMBAHKAN INI: Pemicu saat scroll masuk ke kawasan
-            if (targetId === 'kawasan') {
-              triggerKawasanAnimation();
-            }
+          if (targetId === 'kawasan') {
+            triggerKawasanAnimation();
+          }
 
-            if (targetId === 'layanan') {
-              triggerLayananAnimation();
-            }
+          if (targetId === 'layanan') {
+            triggerLayananAnimation();
+          }
 
-            if (targetId === 'lokasi') {
-              triggerLokasiAnimation();
-            }
+          if (targetId === 'telemetri') {
+            triggerTelemetriAnimation();
+          }
 
-            if (targetId === 'beranda') {
-              if (!isBerandaAnimated) {
-                triggerHeroAnimation();
-                isBerandaAnimated = true;
-              }
-            }
-          } else {
-            if (targetId === 'tentang') {
-              entry.target.classList.remove('tentang-active');
-            }
+          if (targetId === 'lokasi') {
+            triggerLokasiAnimation();
+          }
 
-            if (targetId === 'beranda') {
-              isBerandaAnimated = false;
+          if (targetId === 'beranda') {
+            if (!isBerandaAnimated) {
+              triggerHeroAnimation();
+              isBerandaAnimated = true;
             }
           }
-        });
-      }, {
-        root: null,
-        rootMargin: '-90px 0px -30% 0px',
-        threshold: 0.15
-      });
+        } else {
+          if (targetId === 'tentang') {
+            entry.target.classList.remove('tentang-active');
+          }
 
-      sections.forEach(section => observer.observe(section));
-
-      // Pengaman jika pengguna scroll penuh ke paling atas layar
-      window.addEventListener('scroll', function() {
-        if (window.pageYOffset < 50) {
-          if (!isBerandaAnimated) {
-            triggerHeroAnimation();
-            isBerandaAnimated = true;
+          if (targetId === 'beranda') {
+            isBerandaAnimated = false;
           }
         }
       });
+    }, {
+      root: null,
+      rootMargin: '-90px 0px -30% 0px',
+      threshold: 0.15
+    });
+
+    sections.forEach(section => observer.observe(section));
+
+    // Pengaman jika pengguna scroll penuh ke paling atas layar
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset < 50) {
+        if (!isBerandaAnimated) {
+          triggerHeroAnimation();
+          isBerandaAnimated = true;
+        }
+      }
+    });
 
       // Jika halaman dibuka langsung dengan URL #tentang, #kawasan, dst.
       if (window.location.hash) {
@@ -3165,7 +3278,7 @@ function triggerLokasiAnimation() {
       switchZone(currentZoneIndex);
     }
 
-</script>
+  </script>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
