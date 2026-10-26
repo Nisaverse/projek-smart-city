@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\IoTStateManager;
+use App\Models\EnvironmentLog; // Pastikan Model ini sudah dibuat untuk tabel riwayat data lingkungan
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -13,6 +15,8 @@ class DashboardController extends Controller
     {
         $this->stateManager = $stateManager;
     }
+
+    // ===== PAGES ROUTES =====
 
     public function index()
     {
@@ -39,12 +43,14 @@ class DashboardController extends Controller
         return view('dashboard.control');
     }
 
+    // ===== API ENDPOINTS (GET DATA) =====
+
     public function apiLampData()
     {
         return response()->json($this->stateManager->getLampData());
     }
 
-    // Menggantikan apiWasteData() untuk melayani data Suhu & Kelembapan (DHT Sensor)
+    // Melayani data Suhu & Kelembapan (DHT Sensor)
     public function apiEnvironmentData()
     {
         if (method_exists($this->stateManager, 'getEnvironmentData')) {
@@ -81,11 +87,74 @@ class DashboardController extends Controller
         return response()->json($summary);
     }
 
+    // ===== API ESP INGESTION (PENERIMAAN DATA SENSOR) =====
+
+    /**
+     * Menerima kiriman data dari ESP (misal setiap 5 menit sekali).
+     * Logika Filter: Hanya menyimpan ke database jika interval data terakhir sudah >= 1 jam (60 menit).
+     */
+    public function storeEnvironmentData(Request $request)
+    {
+        // Validasi payload dari ESP
+        $validated = $request->validate([
+            'temperature' => 'required|numeric',
+            'humidity'    => 'required|numeric',
+            'air_quality' => 'nullable|numeric',
+            'rain_status' => 'nullable|string',
+        ]);
+
+        $now = Carbon::now();
+
+        // Cek log data terakhir di database
+        $latestLog = EnvironmentLog::latest('created_at')->first();
+        $shouldStore = false;
+
+        if (!$latestLog) {
+            // Jika database masih kosong, izinkan penyimpanan pertama
+            $shouldStore = true;
+        } else {
+            // Hitung selisih waktu dalam menit
+            $diffInMinutes = $latestLog->created_at->diffInMinutes($now);
+            
+            // Jika selisih waktu sudah mencapai 60 menit (1 jam) atau lebih
+            if ($diffInMinutes >= 60) {
+                $shouldStore = true;
+            }
+        }
+
+        // Simpan ke database jika memenuhi interval 1 jam
+        if ($shouldStore) {
+            EnvironmentLog::create([
+                'temperature' => $validated['temperature'],
+                'humidity'    => $validated['humidity'],
+                'air_quality' => $validated['air_quality'] ?? 0,
+                'rain_status' => $validated['rain_status'] ?? 'Normal',
+                'created_at'  => $now,
+            ]);
+        }
+
+        // Update state secara real-time di memori/cache agar grafik & UI langsung diperbarui
+        if (method_exists($this->stateManager, 'updateEnvironmentData')) {
+            $this->stateManager->updateEnvironmentData($validated);
+        }
+
+        return response()->json([
+            'success'   => true,
+            'stored'    => $shouldStore,
+            'message'   => $shouldStore 
+                ? 'Data berhasil disimpan ke database (interval 1 jam terpenuhi).' 
+                : 'Data diterima untuk monitoring real-time, tetapi tidak disimpan (belum 1 jam).',
+            'timestamp' => $now->format('Y-m-d H:i:s')
+        ]);
+    }
+
+    // ===== API ENDPOINTS (CONTROL) =====
+
     public function controlLamp(Request $request)
     {
         $validated = $request->validate([
-            'lamp_id' => 'required|in:lamp_1,lamp_2,lamp_3,lamp_4',
-            'status' => 'nullable|boolean',
+            'lamp_id'    => 'required|in:lamp_1,lamp_2,lamp_3,lamp_4',
+            'status'     => 'nullable|boolean',
             'brightness' => 'nullable|integer|min:0|max:100',
         ]);
 
@@ -115,6 +184,8 @@ class DashboardController extends Controller
         return response()->json(['success' => true, 'light_level' => $validated['level']]);
     }
 
+    // ===== AUTO SETTINGS =====
+
     public function getAutoSettings()
     {
         return response()->json($this->stateManager->getAutoSettings());
@@ -123,17 +194,17 @@ class DashboardController extends Controller
     public function updateAutoSettings(Request $request)
     {
         $validated = $request->validate([
-            'schedule_on_hour' => 'required|integer|min:0|max:23',
-            'schedule_on_minute' => 'required|integer|min:0|max:59',
-            'schedule_off_hour' => 'required|integer|min:0|max:23',
+            'schedule_on_hour'    => 'required|integer|min:0|max:23',
+            'schedule_on_minute'  => 'required|integer|min:0|max:59',
+            'schedule_off_hour'   => 'required|integer|min:0|max:23',
             'schedule_off_minute' => 'required|integer|min:0|max:59',
-            'sensor_threshold' => 'required|integer|min:0|max:100',
+            'sensor_threshold'   => 'required|integer|min:0|max:100',
         ]);
 
         $this->stateManager->updateAutoSettings($validated);
         $this->stateManager->reEvaluateAutoLogic();
         return response()->json([
-            'success' => true, 
+            'success'  => true, 
             'settings' => $this->stateManager->getAutoSettings()
         ]);
     }
@@ -148,7 +219,7 @@ class DashboardController extends Controller
         $enabled = $this->stateManager->toggleAutoSchedule($validated['enabled']);
         
         return response()->json([
-            'success' => true,
+            'success'               => true,
             'auto_schedule_enabled' => $enabled,
         ]);
     }
@@ -163,7 +234,7 @@ class DashboardController extends Controller
         $enabled = $this->stateManager->toggleAutoSensor($validated['enabled']);
         
         return response()->json([
-            'success' => true,
+            'success'             => true,
             'auto_sensor_enabled' => $enabled,
         ]);
     }

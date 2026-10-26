@@ -28,7 +28,6 @@ Route::middleware('admin')->group(function () {
     
     // Route Suhu & Kelembapan (Menggantikan Smart Waste)
     Route::get('/smart-temp', [DashboardController::class, 'smartTemp'])->name('smart-temp');
-    // Opsional: Redirect route lama /smart-waste ke /smart-temp jika ada tautan lama
     Route::get('/smart-waste', function () {
         return redirect()->route('smart-temp');
     });
@@ -45,7 +44,6 @@ Route::middleware('admin')->group(function () {
     
     // API Suhu & Kelembapan (Menggantikan /api/waste)
     Route::get('/api/environment', [DashboardController::class, 'apiEnvironmentData']);
-    // Fallback alias jika ada script lama yang masih memanggil /api/waste
     Route::get('/api/waste', [DashboardController::class, 'apiEnvironmentData']);
 
     Route::get('/api/parking', [DashboardController::class, 'apiParkingData']);
@@ -55,6 +53,10 @@ Route::middleware('admin')->group(function () {
     Route::post('/api/lamp/control', [DashboardController::class, 'controlLamp']);
     Route::post('/api/control/mode', [DashboardController::class, 'setControlMode']);
     Route::post('/api/sensor-level', [DashboardController::class, 'setSensorLightLevel']);
+
+    // ===== API ENDPOINTS (ESP INGESTION / PENERIMAAN DATA SENSOR) =====
+    // Rute POST ini disiapkan bagi perangkat/ESP untuk mengirim data setiap 5 menit
+    Route::post('/api/environment/store', [DashboardController::class, 'storeEnvironmentData']);
 
     // ===== AUTO SETTINGS =====
     Route::get('/api/auto-settings', [DashboardController::class, 'getAutoSettings']);

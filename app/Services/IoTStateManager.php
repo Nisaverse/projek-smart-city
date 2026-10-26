@@ -204,7 +204,6 @@ class IoTStateManager
         $this->setControlModeDB($mode);
     }
 
-    // Sinkronisasi mode ke Database MySQL (tabel control_settings)
     private function setControlModeDB($mode)
     {
         try {
@@ -213,9 +212,7 @@ class IoTStateManager
                     ['setting_key' => 'control_mode'],
                     ['setting_value' => $mode, 'updated_at' => now()]
                 );
-        } catch (\Exception $e) {
-            // Abaikan jika tabel belum siap
-        }
+        } catch (\Exception $e) {}
     }
 
     public function setSensorLightLevel($level)
@@ -224,7 +221,16 @@ class IoTStateManager
         $this->saveState();
     }
 
-    // ✅ DATABASE MYSQl (tabel environment_histories) untuk Suhu & Kelembapan
+    // Tambahan method untuk update state lingkungan secara real-time
+    public function updateEnvironmentData(array $data)
+    {
+        if (!isset($this->state['environment'])) {
+            $this->state['environment'] = [];
+        }
+        $this->state['environment'] = array_merge($this->state['environment'], $data);
+        $this->saveState();
+    }
+
     public function getEnvironmentData()
     {
         try {
@@ -254,7 +260,6 @@ class IoTStateManager
         ];
     }
 
-    // ✅ DATABASE MYSQL (tabel smart_lamps) untuk Smart Lamp
     public function getLampData()
     {
         try {
@@ -265,7 +270,7 @@ class IoTStateManager
                 foreach ($lamps as $lamp) {
                     $result[$lamp->sector_code] = [
                         'name'       => $lamp->sector_name,
-                        'status'     => $lamp->status, // 'active' atau 'inactive'
+                        'status'     => $lamp->status,
                         'updated_at' => Carbon::parse($lamp->updated_at)->format('H:i:s')
                     ];
                 }
@@ -281,9 +286,7 @@ class IoTStateManager
 
                 return $result;
             }
-        } catch (\Exception $e) {
-            // Fallback jika terjadi kendala DB
-        }
+        } catch (\Exception $e) {}
 
         return [
             'L01' => ['name' => 'Sektor Utara', 'status' => 'active', 'updated_at' => now()->format('H:i:s')],
@@ -307,7 +310,6 @@ class IoTStateManager
         ];
     }
 
-    // ✅ DATABASE MYSQL (tabel smart_parkings) untuk Smart Parking
     public function getParkingData()
     {
         try {
@@ -316,12 +318,12 @@ class IoTStateManager
             if ($parkings->isNotEmpty()) {
                 $totalSlots = $parkings->count();
                 $occupiedCount = $parkings->where('status', 'occupied')->count();
-                $availableCount = $totalSlots - $occupiedCount;
+                $availableCount = $totalSlots - $occupiedCount; // Diperbaiki dari baris terpotong
 
                 $slots = [];
                 foreach ($parkings as $p) {
                     $slots[$p->slot_code] = [
-                        'status' => $p->status, // 'available' atau 'occupied'
+                        'status' => $p->status,
                         'updated_at' => Carbon::parse($p->updated_at)->format('H:i:s'),
                     ];
                 }
@@ -334,9 +336,7 @@ class IoTStateManager
                     'timestamp'   => now()->format('H:i:s'),
                 ];
             }
-        } catch (\Exception $e) {
-            // Fallback
-        }
+        } catch (\Exception $e) {}
 
         return [
             'total_slots' => 10,
@@ -346,13 +346,11 @@ class IoTStateManager
         ];
     }
 
-    // ✅ SUMMARY UNTUK HALAMAN DASHBOARD UTAMA
     public function getDashboardSummary()
     {
         $waste = $this->state['waste'] ?? $this->getDefaultState()['waste'];
         $env = $this->getEnvironmentData();
 
-        // 1. Data Parkir dari MySQL
         $parkingTotal = 10;
         $parkingOccupied = 4;
         try {
@@ -362,9 +360,9 @@ class IoTStateManager
                 $parkingOccupied = $parkings->where('status', 'occupied')->count();
             }
         } catch (\Exception $e) {}
-        $parkingAvailable = $parkingTotal - $parkingOccupied;
+        
+        $parkingAvailable = $parkingTotal - $parkingOccupied; // Diperbaiki dari baris terpotong
 
-        // 2. Data Lampu dari MySQL
         $activeLamps = 0;
         try {
             $activeLamps = DB::table('smart_lamps')->where('status', 'active')->count();
@@ -408,7 +406,7 @@ class IoTStateManager
         if ($controlMode === 'auto_schedule' && ($settings['auto_schedule_enabled'] ?? false)) {
             $currentHour = (int)now()->format('H');
             $currentMinute = (int)now()->format('i');
-            $currentTime = ($currentHour * 60) + $currentMinute;
+            $currentTime = ($currentHour * 60) + $currentMinute; // Diperbaiki dari baris terpotong
             
             $onTimeMinutes = ($settings['schedule_on_hour'] * 60) + $settings['schedule_on_minute'];
             $offTimeMinutes = ($settings['schedule_off_hour'] * 60) + $settings['schedule_off_minute'];
