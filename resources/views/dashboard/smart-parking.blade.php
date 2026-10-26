@@ -101,7 +101,7 @@
         <div class="col-6 col-md-3">
             <div class="stat-top-card">
                 <div>
-                    <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Total Slot</div>
+                    <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Total Area</div>
                     <h3 class="fw-bold mb-1 text-dark" id="cardTotalSlot">10</h3>
                 </div>
                 <div class="text-dark opacity-75 mt-2" style="font-size: 0.75rem; font-weight: 600;">Total area parkir yang tersedia</div>
@@ -117,7 +117,7 @@
                         <div id="barAvailable" class="progress-bar bg-success" style="width: 0%;"></div>
                     </div>
                 </div>
-                <div class="text-dark opacity-75 mt-2" style="font-size: 0.75rem; font-weight: 600;" id="textAvailableDesc">Slot kosong (0%)</div>
+                <div class="text-dark opacity-75 mt-2" style="font-size: 0.75rem; font-weight: 600;" id="textAvailableDesc">Area kosong (0%)</div>
             </div>
         </div>
 
@@ -130,7 +130,7 @@
                         <div id="barOccupied" class="progress-bar bg-danger" style="width: 0%;"></div>
                     </div>
                 </div>
-                <div class="text-dark opacity-75 mt-2" style="font-size: 0.75rem; font-weight: 600;" id="textOccupiedDesc">Slot terisi (0%)</div>
+                <div class="text-dark opacity-75 mt-2" style="font-size: 0.75rem; font-weight: 600;" id="textOccupiedDesc">Area terisi (0%)</div>
             </div>
         </div>
 
@@ -155,7 +155,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <div>
                         <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Layout Area Parkir</h5>
-                        <small class="text-dark opacity-75 fw-semibold">10 titik slot pemantauan sensor ultrasonik</small>
+                        <small class="text-dark opacity-75 fw-semibold">10 titik area pemantauan sensor ultrasonik</small>
                     </div>
                 </div>
 
@@ -178,15 +178,15 @@
         <div class="col-lg-4">
             <!-- Tabel Detail Slot -->
             <div class="parking-white-card mb-4">
-                <h6 class="fw-bold mb-3" style="color: #0f172a;">Detail Slot Parkir</h6>
+                <h6 class="fw-bold mb-3" style="color: #0f172a;">Detail Area Parkir</h6>
                 <div class="mb-3">
-                    <input type="text" id="searchSlotInput" class="form-control form-control-sm" placeholder="Cari slot...">
+                    <input type="text" id="searchSlotInput" class="form-control form-control-sm" placeholder="Cari Area...">
                 </div>
                 <div style="max-height: 220px; overflow-y: auto;" class="pe-1">
                     <table class="table table-sm align-middle" style="font-size: 0.82rem;">
                         <thead>
                             <tr class="text-dark border-bottom fw-bold">
-                                <th>Slot</th>
+                                <th>Area</th>
                                 <th>Status</th>
                                 <th class="text-end">Waktu Update</th>
                             </tr>
@@ -219,16 +219,16 @@
 @push('scripts')
 <script>
     const slotDataInfo = {
-        P01: { name: 'Slot Parkir Utama 01' },
-        P02: { name: 'Slot Parkir Utama 02' },
-        P03: { name: 'Slot Parkir Utama 03' },
-        P04: { name: 'Slot Parkir Utama 04' },
-        P05: { name: 'Slot Parkir Utama 05' },
-        P06: { name: 'Slot Parkir Utama 06' },
-        P07: { name: 'Slot Parkir Utama 07' },
-        P08: { name: 'Slot Parkir Utama 08' },
-        P09: { name: 'Slot Parkir Utama 09' },
-        P10: { name: 'Slot Parkir Utama 10' }
+        P01: { name: 'Area Parkir Utama 01' },
+        P02: { name: 'Area Parkir Utama 02' },
+        P03: { name: 'Area Parkir Utama 03' },
+        P04: { name: 'Area Parkir Utama 04' },
+        P05: { name: 'Area Parkir Utama 05' },
+        P06: { name: 'Area Parkir Utama 06' },
+        P07: { name: 'Area Parkir Utama 07' },
+        P08: { name: 'Area Parkir Utama 08' },
+        P09: { name: 'Area Parkir Utama 09' },
+        P10: { name: 'Area Parkir Utama 10' }
     };
 
     const slotKeys = Object.keys(slotDataInfo);
@@ -295,10 +295,10 @@
         const pctOccupied = Math.round((occupiedCount / slotKeys.length) * 100);
 
         document.getElementById('barAvailable').style.width = pctAvailable + '%';
-        document.getElementById('textAvailableDesc').textContent = `Slot kosong (${pctAvailable}%)`;
+        document.getElementById('textAvailableDesc').textContent = `Area kosong (${pctAvailable}%)`;
 
         document.getElementById('barOccupied').style.width = pctOccupied + '%';
-        document.getElementById('textOccupiedDesc').textContent = `Slot terisi (${pctOccupied}%)`;
+        document.getElementById('textOccupiedDesc').textContent = `Area terisi (${pctOccupied}%)`;
 
         if (availableCount > 0 || occupiedCount > 0) {
             document.getElementById('iotMainStatus').textContent = 'Online';
