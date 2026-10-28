@@ -2662,7 +2662,7 @@
       </div>
     </section>
 
-    <!-- 1.1 LIVE TELEMETRI / KARTU METRIK ALA ADMIN (BIRU GRADASI & PUTIH) -->
+  <!-- 1.1 LIVE TELEMETRI / KARTU METRIK ALA ADMIN (BIRU GRADASI & PUTIH) -->
     <section class="py-5" id="telemetri" style="background: linear-gradient(135deg, #0b1329 0%, #1e3a8a 100%); color: #ffffff;">
       <div class="container">
         <div class="text-center mx-auto mb-5" style="max-width: 700px;">
@@ -2679,7 +2679,7 @@
             <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
               <div>
                 <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Suhu Saat Ini</div>
-                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;">31.5 &deg;C</h3>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;" id="temp-value">31.5 &deg;C</h3>
               </div>
               <div class="text-muted" style="font-size: 0.75rem;">Suhu lingkungan</div>
             </div>
@@ -2690,7 +2690,7 @@
             <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
               <div>
                 <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Kelembaban</div>
-                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;">70 %</h3>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;" id="humidity-value">70 %</h3>
               </div>
               <div class="text-muted" style="font-size: 0.75rem;">Kelembaban relatif</div>
             </div>
@@ -2701,7 +2701,7 @@
             <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
               <div>
                 <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Kualitas Udara</div>
-                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;">48 AQI</h3>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;" id="aqi-value">48 AQI</h3>
               </div>
               <div class="text-muted" style="font-size: 0.75rem;">Baik</div>
             </div>
@@ -2712,7 +2712,7 @@
             <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
               <div>
                 <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Status Hujan</div>
-                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.3rem; line-height: 1.2;">Hujan Ringan</h3>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.3rem; line-height: 1.2;" id="rain-value">Hujan Ringan</h3>
               </div>
               <div class="text-muted" style="font-size: 0.75rem;">Presipitasi Terdeteksi</div>
             </div>
@@ -2723,7 +2723,7 @@
             <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
               <div>
                 <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Air Sungai</div>
-                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">135.5 cm</h3>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;" id="water-value">135.5 cm</h3>
               </div>
               <div class="text-muted" style="font-size: 0.75rem;">Aman</div>
             </div>
@@ -2734,7 +2734,7 @@
             <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
               <div>
                 <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Status IoT</div>
-                <h3 class="fw-bold text-success mb-1" style="font-size: 1.6rem;">Online</h3>
+                <h3 class="fw-bold text-success mb-1" style="font-size: 1.6rem;" id="iot-status-value">Online</h3>
               </div>
               <div class="text-muted" style="font-size: 0.75rem;">Terhubung</div>
             </div>
