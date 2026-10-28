@@ -3422,34 +3422,9 @@
       }
     }
 
-    // --- AMBIL DATA REAL-TIME DARI DATABASE (BACKEND API) ---
-    function fetchPublicEnvironmentData() {
-      fetch('/api/public-environment')
-        .then(response => response.json())
-        .then(result => {
-          if (result.status === 'success') {
-            let d = result.data;
-            
-            // Memperbarui elemen kartu monitoring secara dinamis
-            if(document.getElementById('temp-value')) document.getElementById('temp-value').innerText = d.temperature + ' °C';
-            if(document.getElementById('humidity-value')) document.getElementById('humidity-value').innerText = d.humidity + ' %';
-            if(document.getElementById('aqi-value')) document.getElementById('aqi-value').innerText = d.air_quality + ' AQI';
-            if(document.getElementById('rain-value')) document.getElementById('rain-value').innerText = d.rain_status;
-            if(document.getElementById('water-value')) document.getElementById('water-value').innerText = d.water_level + ' cm';
-          }
-        })
-        .catch(error => console.error('Gagal memuat data monitoring:', error));
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
       const initTime = document.getElementById('initialTime');
       if (initTime) initTime.innerText = getTimeNow();
-
-      // Jalankan pengambilan data pertama kali saat halaman dibuka
-      fetchPublicEnvironmentData();
-
-      // Atur agar data otomatis merefresh setiap 5 detik sekali (Real-time)
-      setInterval(fetchPublicEnvironmentData, 5000);
     });
 
     function resetBot() {
@@ -3481,16 +3456,16 @@
       let botResponse = "";
       switch(key) {
         case 'Suhu Udara':
-          botResponse = "🌡️ <b>TELEMETRI SUHU UDARA</b><br>Suhu ambien Alun-Alun Kota Tegal saat ini mengikuti data real-time database.<br><i>Status: Terhubung dengan server backend.</i>";
+          botResponse = "🌡️ <b>TELEMETRI SUHU UDARA</b><br>Suhu ambien Alun-Alun Kota Tegal saat ini <b>31.10 °C</b>.<br><i>Status: Hangat Terik dengan paparan radiasi termal pesisir.</i>";
           break;
         case 'Kualitas Udara':
-          botResponse = "💨 <b>SENSOR MQ135 KUALITAS UDARA</b><br>Data kualitas udara disinkronkan langsung dari sensor mikrokontroler.<br><i>Status: Stabil.</i>";
+          botResponse = "💨 <b>SENSOR MQ135 KUALITAS UDARA</b><br>Pembacaan ADC: <b>3140 ADC (4330 mV)</b>.<br><i>Status: Kadar gas emisi kendaraan tergolong stabil di ruang terbuka.</i>";
           break;
         case 'Deteksi Hujan':
-          botResponse = "🌧️ <b>SENSOR PRESIPITASI HUJAN</b><br>Status pelat pembaca cuaca aktif memantau kondisi sekitar.<br><i>Status: Normal.</i>";
+          botResponse = "🌧️ <b>SENSOR PRESIPITASI HUJAN</b><br>Status Pelat GPIO 8: <b>Kering (3914 ADC)</b>.<br><i>Status: Tidak terdeteksi adanya tetesan air hujan.</i>";
           break;
         case 'Kelembaban Udara':
-          botResponse = "💧 <b>KELEMBABAN RELATIF (RH)</b><br>Kelembaban udara diperbarui otomatis via database sistem.<br><i>Status: Terpantau stabil.</i>";
+          botResponse = "💧 <b>KELEMBABAN RELATIF (RH)</b><br>Kelembaban udara tercatat <b>69.60 % RH</b>.<br><i>Status: Dipengaruhi oleh kelembaban uap air Laut Jawa.</i>";
           break;
         case 'Info Kawasan':
           botResponse = "📍 <b>DAFTAR ZONA OBSERVASIONAL</b><br>1. <b>Rumput Sintetis</b> (Plaza Sentral)<br>2. <b>Jalan Pancasila</b> (Koridor Heritage)<br>3. <b>Masjid Agung Tegal</b> (Kawasan Religi)<br>4. <b>Saluran Sungai</b> (Titik Hidro)";
