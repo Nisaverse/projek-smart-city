@@ -9,6 +9,9 @@ Route::get('/pengunjung', function () {
     return view('pengunjung');
 })->name('pengunjung');
 
+// Rute API agar halaman pengunjung bisa mengambil data monitoring secara real-time
+Route::get('/api/public-environment', [DashboardController::class, 'publicEnvironmentData']);
+
 // ===== LOGIN ROUTES (PUBLIC - TANPA MIDDLEWARE) =====
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);

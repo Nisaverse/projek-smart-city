@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\IoTStateManager;
-use App\Models\EnvironmentLog; // Pastikan Model ini sudah dibuat untuk tabel riwayat data lingkungan
+use App\Models\EnvironmentLog;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -65,6 +65,40 @@ class DashboardController extends Controller
         ]);
     }
 
+    // ===== API KHUSUS HALAMAN PENGUNJUNG (MONITORING PUBLIC) =====
+    public function publicEnvironmentData()
+    {
+        try {
+            $latest = EnvironmentLog::orderBy('id', 'desc')->first();
+
+            if ($latest) {
+                return response()->json([
+                    'status' => 'success',
+                    'data' => [
+                        'temperature' => (float)$latest->temperature,
+                        'humidity'    => (float)$latest->humidity,
+                        'air_quality' => (int)($latest->air_quality ?? 0),
+                        'rain_status' => $latest->rain_status ?? 'Cerah',
+                        'water_level' => (float)($latest->water_level ?? 0),
+                        'iot_status'  => 'Online',
+                    ]
+                ]);
+            }
+        } catch (\Exception $e) {}
+
+        return response()->json([
+            'status' => 'empty',
+            'data' => [
+                'temperature' => '--',
+                'humidity'    => '--',
+                'air_quality' => '--',
+                'rain_status' => 'Menunggu data',
+                'water_level' => '--',
+                'iot_status'  => 'Offline',
+            ]
+        ]);
+    }
+
     public function apiParkingData()
     {
         return response()->json($this->stateManager->getParkingData());
@@ -101,6 +135,7 @@ class DashboardController extends Controller
             'humidity'    => 'required|numeric',
             'air_quality' => 'nullable|numeric',
             'rain_status' => 'nullable|string',
+            'water_level' => 'nullable|numeric',
         ]);
 
         $now = Carbon::now();
@@ -129,6 +164,7 @@ class DashboardController extends Controller
                 'humidity'    => $validated['humidity'],
                 'air_quality' => $validated['air_quality'] ?? 0,
                 'rain_status' => $validated['rain_status'] ?? 'Normal',
+                'water_level' => $validated['water_level'] ?? 0,
                 'created_at'  => $now,
             ]);
         }
