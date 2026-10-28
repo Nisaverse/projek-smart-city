@@ -2539,7 +2539,7 @@
     }
 
     .animate-telemetri-smooth {
-      animation: telemetriFadeUpSmooth 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+      animation: telemetriFadeUpSmooth 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
       will-change: opacity, transform;
     }
 </style>
@@ -2620,10 +2620,12 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav align-items-center">
             <li class="nav-item"><a class="nav-link active" href="#beranda">Beranda</a></li>
+            <li class="nav-item"><a class="nav-link" href="#telemetri">Parameter</a></li>
             <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
             <li class="nav-item"><a class="nav-link" href="#kawasan">Kawasan</a></li>
             <li class="nav-item"><a class="nav-link" href="#layanan">Layanan</a></li>
             <li class="nav-item"><a class="nav-link" href="#kontak">Lokasi</a></li>
+
             <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
               <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="returnToWelcome()">Keluar Situs</button>
             </li>
@@ -2660,69 +2662,81 @@
       </div>
     </section>
 
-    <!-- 1.1 LIVE TELEMETRI / KARTU METRIK ALA ADMIN -->
-    <section class="py-5" id="telemetri" style="background-color: #f1f5f9;">
-  <div class="container">
-    <div class="text-center mx-auto mb-5" style="max-width: 700px;">
-      <h6 class="text-primary fw-bold text-uppercase">Live Telemetri</h6>
-      <h2 class="fw-bold text-dark">Parameter Lingkungan Saat Ini</h2>
-      <p class="text-muted">Pemantauan langsung data sensor lingkungan kawasan Alun-Alun Kota Tegal.</p>
-    </div>
+    <!-- 1.1 LIVE TELEMETRI / KARTU METRIK ALA ADMIN (BIRU GRADASI & PUTIH) -->
+    <section class="py-5" id="telemetri" style="background: linear-gradient(135deg, #0b1329 0%, #1e3a8a 100%); color: #ffffff;">
+      <div class="container">
+        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+          <h6 class="text-info fw-bold text-uppercase" style="letter-spacing: 1px;">Live Telemetri</h6>
+          <h2 class="fw-bold text-white mb-2">Parameter Lingkungan Saat Ini</h2>
+          <p class="text-light opacity-75">Pantauan langsung kondisi cuaca dan kualitas lingkungan kawasan Alun-Alun Kota Tegal untuk kenyamanan Anda.</p>
+        </div>
 
-        <!-- Barisan 6 Kartu Metrik -->
+        <!-- Barisan 6 Kartu Metrik (Background Putih & Teks Gelap agar kontras) -->
         <div class="row g-3 justify-content-center">
           
           <!-- 1. Suhu Saat Ini -->
           <div class="col-6 col-md-4 col-lg-2">
-            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
-              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Suhu Saat Ini</div>
-              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">31.5 &deg;C</h3>
-              <div class="text-muted" style="font-size: 0.72rem;">Suhu lingkungan</div>
+            <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
+              <div>
+                <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Suhu Saat Ini</div>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;">31.5 &deg;C</h3>
+              </div>
+              <div class="text-muted" style="font-size: 0.75rem;">Suhu lingkungan</div>
             </div>
           </div>
 
           <!-- 2. Kelembaban -->
           <div class="col-6 col-md-4 col-lg-2">
-            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
-              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Kelembaban</div>
-              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">70 %</h3>
-              <div class="text-muted" style="font-size: 0.72rem;">Kelembaban relatif</div>
+            <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
+              <div>
+                <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Kelembaban</div>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;">70 %</h3>
+              </div>
+              <div class="text-muted" style="font-size: 0.75rem;">Kelembaban relatif</div>
             </div>
           </div>
 
           <!-- 3. Kualitas Udara -->
           <div class="col-6 col-md-4 col-lg-2">
-            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
-              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Kualitas Udara</div>
-              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">48 AQI</h3>
-              <div class="text-muted" style="font-size: 0.72rem;">Baik</div>
+            <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
+              <div>
+                <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Kualitas Udara</div>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.6rem;">48 AQI</h3>
+              </div>
+              <div class="text-muted" style="font-size: 0.75rem;">Baik</div>
             </div>
           </div>
 
           <!-- 4. Status Hujan -->
           <div class="col-6 col-md-4 col-lg-2">
-            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
-              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Status Hujan</div>
-              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.25rem; line-height: 1.2;">Hujan Ringan</h3>
-              <div class="text-muted mt-auto" style="font-size: 0.72rem;">Presipitasi Terdeteksi</div>
+            <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
+              <div>
+                <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Status Hujan</div>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.3rem; line-height: 1.2;">Hujan Ringan</h3>
+              </div>
+              <div class="text-muted" style="font-size: 0.75rem;">Presipitasi Terdeteksi</div>
             </div>
           </div>
 
           <!-- 5. Air Sungai -->
           <div class="col-6 col-md-4 col-lg-2">
-            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
-              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Air Sungai</div>
-              <h3 class="fw-bold text-dark mb-1" style="font-size: 1.4rem;">135.5 cm</h3>
-              <div class="text-muted" style="font-size: 0.72rem;">Aman</div>
+            <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
+              <div>
+                <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Air Sungai</div>
+                <h3 class="fw-bold text-dark mb-1" style="font-size: 1.5rem;">135.5 cm</h3>
+              </div>
+              <div class="text-muted" style="font-size: 0.75rem;">Aman</div>
             </div>
           </div>
 
           <!-- 6. Status IoT -->
           <div class="col-6 col-md-4 col-lg-2">
-            <div class="card border-0 shadow-sm p-3 rounded-4 h-100 bg-white">
-              <div class="text-muted small mb-1" style="font-size: 0.8rem;">Status IoT</div>
-              <h3 class="fw-bold text-success mb-1" style="font-size: 1.5rem;">Online</h3>
-              <div class="text-muted" style="font-size: 0.72rem;">Terhubung</div>
+            <div class="card border-0 shadow-lg p-4 rounded-4 h-100 bg-white d-flex flex-column justify-content-between" style="min-height: 220px;">
+              <div>
+                <div class="text-muted small mb-2" style="font-size: 0.8rem; font-weight: 600;">Status IoT</div>
+                <h3 class="fw-bold text-success mb-1" style="font-size: 1.6rem;">Online</h3>
+              </div>
+              <div class="text-muted" style="font-size: 0.75rem;">Terhubung</div>
             </div>
           </div>
 
@@ -3004,7 +3018,7 @@
         card.style.animationDelay = '0s';
         void card.offsetWidth; // Force reflow untuk mereset animasi
 
-        const delay = (index * 0.08).toFixed(2);
+        const delay = (index * 0.12).toFixed(2);
         card.style.animationDelay = `${delay}s`;
         card.classList.add('animate-telemetri-smooth');
       });
