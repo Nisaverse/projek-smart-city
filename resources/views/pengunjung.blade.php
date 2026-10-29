@@ -350,7 +350,7 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- JAVASCRIPT KONTROL ANIMASI & CHATBOT -->
+  <!-- JAVASCRIPT KONTROL ANIMASI & ENGINE CHATBOT -->
   <script>
     function triggerHeroAnimation() {
       const badge = document.querySelector('.hero-pro-badge');
@@ -404,7 +404,6 @@
       });
     }
 
-    /* ANIMASI LOKASI MENGGUNAKAN SLIDE UP BERSIH TANPA BLUR */
     function triggerLokasiAnimation() {
       const lokasiSection = document.getElementById('kontak');
       if (!lokasiSection) return;
@@ -433,7 +432,187 @@
       });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    const backgroundImages = [
+      "image/alun-alun-tegal.jpeg",
+      "image/balaikota.jpeg",
+      "image/masjid agung.jpeg",
+      "image/taman pancasila.jpeg",
+      "image/stasiun.jpeg",
+      "image/water ledeng.jpeg"
+    ];
+
+    let currentBgIndex = 0;
+    const welcomeSec = document.getElementById('welcomeSection');
+    const heroDashboard = document.querySelector('.hero-observatorium');
+
+    setInterval(() => {
+      currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
+      let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
+      if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
+      if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
+    }, 3000);
+
+    function enterWebsite() {
+      const mainContent = document.getElementById('mainWebsiteContent');
+      if(!welcomeSec || !mainContent) return;
+      welcomeSec.style.opacity = '0';
+      welcomeSec.style.transform = 'scale(1.04)';
+      setTimeout(() => {
+        welcomeSec.style.display = 'none';
+        mainContent.style.display = 'block';
+        triggerHeroAnimation();
+        setTimeout(() => {
+          mainContent.style.opacity = '1';
+          window.scrollTo(0, 0);
+        }, 50);
+      }, 500);
+    }
+
+    function returnToWelcome() {
+      const mainContent = document.getElementById('mainWebsiteContent');
+      if(!welcomeSec || !mainContent) return;
+      mainContent.style.opacity = '0';
+      setTimeout(() => {
+        mainContent.style.display = 'none';
+        welcomeSec.style.display = 'flex';
+        welcomeSec.style.opacity = '1';
+        welcomeSec.style.transform = 'scale(1)';
+        window.scrollTo(0, 0);
+      }, 500);
+    }
+
+    // --- ENGINE UTAMA CHATBOT (SITY) ---
+    function getTimeNow() {
+      const d = new Date();
+      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+    }
+
+    function toggleChatWindow() {
+      const chatWin = document.getElementById('chatWindow');
+      if (!chatWin) return;
+      if (chatWin.style.display === 'flex') {
+        chatWin.style.display = 'none';
+      } else {
+        chatWin.style.display = 'flex';
+      }
+    }
+
+    async function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const chatBody = document.getElementById('chatBody');
+      if (!chatInput || !chatBody) return;
+
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      // 1. Tampilkan pesan pengirim
+      const userMsgHtml = `
+        <div class="tg-msg tg-msg-user">
+          ${message}
+          <div class="tg-time">${getTimeNow()}</div>
+        </div>
+      `;
+      chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
+
+      chatInput.value = '';
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      // 2. Indikator Loading
+      const loadingId = 'loading-' + Date.now();
+      const loadingHtml = `
+        <div class="tg-msg tg-msg-bot" id="${loadingId}">
+          <i>🤖 Sity sedang mengetik...</i>
+          <div class="tg-time">${getTimeNow()}</div>
+        </div>
+      `;
+      chatBody.insertAdjacentHTML('beforeend', loadingHtml);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      try {
+        // 3. Kirim ke Webhook n8n
+        const response = await fetch('http://localhost:5678/webhook/chat-smartcity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+        document.getElementById(loadingId)?.remove();
+
+        // 4. Balasan AI n8n
+        let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
+        if (Array.isArray(data) && data.length > 0) {
+          aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
+        } else if (typeof data === 'object') {
+          aiReply = data.output || data.text || data.message || data.response || JSON.stringify(data);
+        }
+
+        const botMsgHtml = `
+          <div class="tg-msg tg-msg-bot">
+            <b>🤖 Sity Smartcity Bot</b><br>
+            ${aiReply}
+            <div class="tg-time">${getTimeNow()}</div>
+          </div>
+        `;
+        chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+      } catch (err) {
+        console.error("Error chatbot:", err);
+        document.getElementById(loadingId)?.remove();
+
+        const errorMsgHtml = `
+          <div class="tg-msg tg-msg-bot" style="background:#fee2e2; color:#991b1b;">
+            <b>🤖 Sity Smartcity Bot</b><br>
+            Gagal terhubung ke server AI Chatbot. Pastikan workflow n8n statusnya Active/Publish.
+            <div class="tg-time">${getTimeNow()}</div>
+          </div>
+        `;
+        chatBody.insertAdjacentHTML('beforeend', errorMsgHtml);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    }
+
+    function fetchPublicEnvironmentData() {
+      fetch('/api/public-environment')
+        .then(response => response.json())
+        .then(result => {
+          if (result.status === 'success') {
+            let d = result.data;
+            if(document.getElementById('temp-value')) document.getElementById('temp-value').innerText = d.temperature + ' °C';
+            if(document.getElementById('humidity-value')) document.getElementById('humidity-value').innerText = d.humidity + ' %';
+            if(document.getElementById('aqi-value')) document.getElementById('aqi-value').innerText = d.air_quality + ' AQI';
+            if(document.getElementById('rain-value')) document.getElementById('rain-value').innerText = d.rain_status;
+            if(document.getElementById('water-value')) document.getElementById('water-value').innerText = d.water_level + ' cm';
+          }
+        })
+        .catch(error => console.error('Gagal memuat data monitoring:', error));
+    }
+
+    // INISIALISASI EVENT LISTENER UTAMA
+    document.addEventListener("DOMContentLoaded", () => {
+      const sendBtn = document.getElementById('sendBtn');
+      const chatInput = document.getElementById('chatInput');
+      const initTime = document.getElementById('initialTime');
+
+      if (initTime) initTime.innerText = getTimeNow();
+
+      if (sendBtn) {
+        sendBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          sendMessage();
+        });
+      }
+
+      if (chatInput) {
+        chatInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+      }
+
       const navLinks = document.querySelectorAll('#navbarNav .nav-link[href^="#"]');
       const sections = document.querySelectorAll('#mainWebsiteContent section[id]');
 
@@ -504,151 +683,10 @@
       }, { root: null, rootMargin: '-90px 0px -30% 0px', threshold: 0.15 });
 
       sections.forEach(section => observer.observe(section));
-    });
 
-    const backgroundImages = [
-      "image/alun-alun-tegal.jpeg",
-      "image/balaikota.jpeg",
-      "image/masjid agung.jpeg",
-      "image/taman pancasila.jpeg",
-      "image/stasiun.jpeg",
-      "image/water ledeng.jpeg"
-    ];
-
-    let currentBgIndex = 0;
-    const welcomeSec = document.getElementById('welcomeSection');
-    const heroDashboard = document.querySelector('.hero-observatorium');
-
-    setInterval(() => {
-      currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
-      let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
-      if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
-      if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
-    }, 3000);
-
-    function enterWebsite() {
-      const mainContent = document.getElementById('mainWebsiteContent');
-      welcomeSec.style.opacity = '0';
-      welcomeSec.style.transform = 'scale(1.04)';
-      setTimeout(() => {
-        welcomeSec.style.display = 'none';
-        mainContent.style.display = 'block';
-        triggerHeroAnimation();
-        setTimeout(() => {
-          mainContent.style.opacity = '1';
-          window.scrollTo(0, 0);
-        }, 50);
-      }, 500);
-    }
-
-    function returnToWelcome() {
-      const mainContent = document.getElementById('mainWebsiteContent');
-      mainContent.style.opacity = '0';
-      setTimeout(() => {
-        mainContent.style.display = 'none';
-        welcomeSec.style.display = 'flex';
-        welcomeSec.style.opacity = '1';
-        welcomeSec.style.transform = 'scale(1)';
-        window.scrollTo(0, 0);
-      }, 500);
-    }
-
-    function getTimeNow() {
-      const d = new Date();
-      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-    }
-
-    function toggleChatWindow() {
-      const chatWin = document.getElementById('chatWindow');
-      chatWin.style.display = (chatWin.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function toggleKeyboardMenu() {
-      const panel = document.getElementById('keyboardMenuPanel');
-      panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
-    }
-
-    function fetchPublicEnvironmentData() {
-      fetch('/api/public-environment')
-        .then(response => response.json())
-        .then(result => {
-          if (result.status === 'success') {
-            let d = result.data;
-            if(document.getElementById('temp-value')) document.getElementById('temp-value').innerText = d.temperature + ' °C';
-            if(document.getElementById('humidity-value')) document.getElementById('humidity-value').innerText = d.humidity + ' %';
-            if(document.getElementById('aqi-value')) document.getElementById('aqi-value').innerText = d.air_quality + ' AQI';
-            if(document.getElementById('rain-value')) document.getElementById('rain-value').innerText = d.rain_status;
-            if(document.getElementById('water-value')) document.getElementById('water-value').innerText = d.water_level + ' cm';
-          }
-        })
-        .catch(error => console.error('Gagal memuat data monitoring:', error));
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const initTime = document.getElementById('initialTime');
-      if (initTime) initTime.innerText = getTimeNow();
       fetchPublicEnvironmentData();
       setInterval(fetchPublicEnvironmentData, 5000);
     });
-
-    function resetBot() {
-      const chatBody = document.getElementById('chatBody');
-      chatBody.innerHTML = `
-        <div class="tg-msg tg-msg-bot">
-          <b>🤖 Sity Smartcity Bot</b><br>
-          Sesi diulang! Klik tombol <b>Pilih Pertanyaan</b> di bawah untuk menampilkan menu layanan.
-          <div class="tg-time">${getTimeNow()}</div>
-        </div>
-      `;
-      document.getElementById('keyboardMenuPanel').style.display = 'none';
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    function sendPreset(key, questionText) {
-      const chatBody = document.getElementById('chatBody');
-      document.getElementById('keyboardMenuPanel').style.display = 'none';
-
-      const userMsgHtml = `
-        <div class="tg-msg tg-msg-user">
-          ${questionText}
-          <div class="tg-time">${getTimeNow()}</div>
-        </div>
-      `;
-      chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
-      chatBody.scrollTop = chatBody.scrollHeight;
-
-      let botResponse = "";
-      switch(key) {
-        case 'Suhu Udara':
-          botResponse = "🌡️ <b>TELEMETRI SUHU UDARA</b><br>Suhu ambien Alun-Alun Kota Tegal saat ini mengikuti data real-time database.<br><i>Status: Terhubung dengan server backend.</i>";
-          break;
-        case 'Kualitas Udara':
-          botResponse = "💨 <b>SENSOR MQ135 KUALITAS UDARA</b><br>Data kualitas udara disinkronkan langsung dari sensor mikrokontroler.<br><i>Status: Stabil.</i>";
-          break;
-        case 'Deteksi Hujan':
-          botResponse = "🌧️ <b>SENSOR PRESIPITASI HUJAN</b><br>Status pelat pembaca cuaca aktif memantau kondisi sekitar.<br><i>Status: Normal.</i>";
-          break;
-        case 'Kelembaban Udara':
-          botResponse = "💧 <b>KELEMBABAN RELATIF (RH)</b><br>Kelembaban udara diperbarui otomatis via database sistem.<br><i>Status: Terpantau stabil.</i>";
-          break;
-        case 'Info Kawasan':
-          botResponse = "📍 <b>DAFTAR ZONA OBSERVASIONAL</b><br>1. <b>Rumput Sintetis</b> (Plaza Sentral)<br>2. <b>Jalan Pancasila</b> (Koridor Heritage)<br>3. <b>Masjid Agung Tegal</b> (Kawasan Religi)<br>4. <b>Saluran Sungai</b> (Titik Hidro)";
-          break;
-        default:
-          botResponse = "Menghubungkan ke broker MQTT...";
-      }
-
-      setTimeout(() => {
-        const botMsgHtml = `
-          <div class="tg-msg tg-msg-bot">
-            ${botResponse}
-            <div class="tg-time">${getTimeNow()}</div>
-          </div>
-        `;
-        chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
-        chatBody.scrollTop = chatBody.scrollHeight;
-      }, 350);
-    }
   </script>
 </body>
 </html>
