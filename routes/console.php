@@ -10,13 +10,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// ===== JADWAL AUTO-DESTROY DATA SENSOR =====
-// Dijalankan setiap hari Senin pukul 01:00 pagi
-Schedule::call(function () {
-    // Menghapus data riwayat yang umurnya sudah lebih dari 7 hari,
-    // TAPI mengecualikan data yang masuk pada hari Minggu (DAYOFWEEK != 1 di MySQL).
-    // Jadi hari Senin-Sabtu minggu lalu terhapus, hari Minggu tetap aman!
-    EnvironmentLog::where('created_at', '<', Carbon::now()->subDays(7))
-                  ->whereRaw('DAYOFWEEK(created_at) != 1')
-                  ->delete();
-})->weeklyOn(1, '01:00');
+// ===== JADWAL REKAP PDF & AUTO-RESET MINGGUAN =====
+// Dijalankan otomatis setiap hari Minggu pukul 23:59
+// Akan merangkum data jadi PDF, menyimpan arsip ke database, lalu mereset tabel.
+Schedule::command('report:generate-weekly')->weeklyOn(0, '23:59');
