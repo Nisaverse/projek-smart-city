@@ -6,11 +6,13 @@ use Illuminate\Console\Command;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use App\Services\IoTStateManager;
+use App\Models\EnvironmentLog;
 
 class ListenMqtt extends Command
 {
-    protected $signature = 'mqtt:listen {--topic=smartcity/#}';
-    protected $description = 'Listen to MQTT messages from ESP32 devices';
+    // Menggunakan wildcard aethersense/# agar menangkap semua chip ID ESP32-S3 secara otomatis
+    protected $signature = 'mqtt:listen {--topic=aethersense/#}';
+    protected $description = 'Listen to MQTT messages from AetherSense ESP32-S3 devices';
 
     private $stateManager;
 
@@ -18,54 +20,43 @@ class ListenMqtt extends Command
     {
         $this->stateManager = $stateManager;
 
-        $this->info('🚀 Starting MQTT Listener...');
-        $this->info('📡 Broker: HiveMQ Cloud (Production Ready)');
+        $this->info('🚀 Starting AetherSense MQTT Listener...');
+        $this->info('📡 Broker: broker.hivemq.com (Public Port 1883)');
         $this->info('📥 Topic: ' . $this->option('topic'));
         $this->info('Press Ctrl+C to stop');
         $this->newLine();
 
-        $server = '06a04c55a35e4c5fb899a805966b04eb.s1.eu.hivemq.cloud';
-        $port = 8883;
-        $clientId = 'laravel_smartcity_' . uniqid();
-        $username = 'smartcity_user';
-        $password = '12345678';
+        // Menggunakan broker publik yang sama persis dengan kodingan ESP32 Arduino kamu
+        $server = 'broker.hivemq.com';
+        $port = 1883;
+        $clientId = 'laravel_aethersense_' . uniqid();
+        $username = null;
+        $password = null;
 
         try {
             // 1. Initialize MQTT Client
             $mqtt = new MqttClient($server, $port, $clientId);
 
-            // 2. Setup Connection Settings dengan TLS
-            $connectionSettings = (new ConnectionSettings())
-                ->setUsername($username)
-                ->setPassword($password)
-                ->setUseTls(true)
-                ->setTlsSelfSignedAllowed(true);
+            // 2. Setup Connection Settings (Tanpa TLS karena port 1883 standar)
+            $connectionSettings = new ConnectionSettings();
 
-            $this->info('🔐 Connecting with TLS...');
+            $this->info('🔐 Connecting to HiveMQ Public Broker...');
             $mqtt->connect($connectionSettings, true);
-            $this->info('✅ Connected to HiveMQ Cloud broker');
+            $this->info('✅ Connected to broker successfully!');
 
-            // 3. Subscribe (SINTAKS VERSI 2.x YANG BENAR)
+            // 3. Subscribe
             $topic = $this->option('topic');
             $this->info("📋 Subscribing to: {$topic}");
 
-            // Subscribe dengan cara sederhana
-$mqtt->subscribe($topic, function (string $topic, string $message) {
-    $this->info("📨 MESSAGE RECEIVED!");
-    $this->info("   Topic: {$topic}");
-    $this->info("   Message: {$message}");
-    
-    // Panggil processMessage
-    $this->processMessage($topic, $message);
-}, 0);
+            $mqtt->subscribe($topic, function (string $topic, string $message) {
+                // Panggil processMessage untuk mengurai data
+                $this->processMessage($topic, $message);
+            }, 0);
 
-$this->info("✅ Subscribed and waiting for messages...");
-
-            $this->info('✅ Successfully subscribed!');
-            $this->info('⏳ Waiting for messages... (Press Ctrl+C to stop)');
+            $this->info('✅ Successfully subscribed and listening for sensor telemetry...');
             $this->newLine();
 
-            // 4. Loop (loop(true) sudah blocking, tidak perlu while(true))
+            // 4. Loop
             $mqtt->loop(true);
 
         } catch (\Exception $e) {
@@ -79,100 +70,50 @@ $this->info("✅ Subscribed and waiting for messages...");
     public function processMessage($topic, $message)
     {
         $timestamp = now()->format('Y-m-d H:i:s');
-        $this->info("🎯 Processing message...");
         $this->info("📨 [$timestamp] Topic: $topic");
-        $this->info("   Message: $message");
 
         $data = json_decode($message, true);
         $isJson = (json_last_error() === JSON_ERROR_NONE);
 
         if (!$isJson) {
-            $this->warn("   ⚠️ Plain text message (not JSON)");
-            $data = ['raw_value' => $message];
+            $this->warn("   ⚠️ Pesan bukan format JSON yang valid");
+            return;
         }
 
-        if (str_contains($topic, '/lamp/') || str_contains($topic, 'lamp') || str_contains($topic, 'led')) {
-            $this->handleLampMessage($topic, $data);
-        } elseif (str_contains($topic, '/waste/') || str_contains($topic, 'waste') || str_contains($topic, 'bin')) {
-            $this->handleWasteMessage($topic, $data);
-        } elseif (str_contains($topic, '/parking/') || str_contains($topic, 'parking') || str_contains($topic, 'slot')) {
-            $this->handleParkingMessage($topic, $data);
+        // Cek apakah ini pesan telemetri dari sensor lingkungan AetherSense
+        if (str_contains($topic, 'telemetry') || isset($data['temperature_c']) || isset($data['water_level_cm'])) {
+            $this->handleEnvironmentMessage($topic, $data);
         } else {
-            $this->info("   📊 Received data: " . json_encode($data));
+            $this->info("   📊 Received other data: " . json_encode($data));
         }
 
         $this->newLine();
     }
 
-    private function handleLampMessage($topic, $data)
-{
-    $lampId = null;
-    
-    if (preg_match('/lamp_(\d+)/', $topic, $matches)) {
-        $lampId = 'lamp_' . $matches[1];
-    } elseif (isset($data['lamp_id'])) {
-        $lampId = $data['lamp_id'];
-    } else {
-        $lampId = 'lamp_1';
-    }
-
-    $updateData = [];
-    if (isset($data['status'])) $updateData['status'] = (int)$data['status'];
-    if (isset($data['brightness'])) $updateData['brightness'] = (int)$data['brightness'];
-    if (isset($data['power'])) $updateData['power'] = (float)$data['power'];
-
-    if (!empty($updateData)) {
-        $this->info("   💡 Updating lamp: $lampId");
-        $this->stateManager->updateLamp($lampId, $updateData);
-        $this->info("   ✅ Lamp updated successfully");
-    } else {
-        $this->warn("   ⚠️ No valid lamp data to update");
-    }
-
-    // ✅ TAMBAHKAN BAGIAN INI UNTUK MENANGKAP DATA SENSOR CAHAYA
-    if (isset($data['light_level']) || isset($data['sensor_light_level'])) {
-        $lightLevel = $data['light_level'] ?? $data['sensor_light_level'];
-        $this->info("   🌞 Updating light level: {$lightLevel}%");
-        $this->stateManager->setSensorLightLevel((float)$lightLevel);
-        $this->info("   ✅ Light level updated successfully");
-    }
-}
-
-    private function handleWasteMessage($topic, $data)
+    // 👉 MENANGKAP DATA TELEMETRI ESP32-S3 DAN MENYIMPANNYA KE DATABASE MYSQL
+    private function handleEnvironmentMessage($topic, $data)
     {
-        $this->info("   🗑️ Received waste data: " . json_encode($data));
-        
-        $binId = null;
-        if (preg_match('/bin[_ ]?(\d+)/i', $topic, $matches)) {
-            $binId = 'bin_' . $matches[1];
-        } elseif (isset($data['bin_id'])) {
-            $binId = $data['bin_id'];
+        $this->info("   🌡️ Memproses data lingkungan & banjir ESP32-S3...");
+
+        try {
+            // Menyesuaikan kunci JSON persis dengan yang dikirim oleh skrip Arduino ESP32 kamu
+            $temp       = $data['temperature_c'] ?? 28.5;
+            $humidity   = $data['humidity_percent'] ?? 65.0;
+            $airQuality = $data['mq135_raw'] ?? 40;
+            $rainStatus = $data['rain_status'] ?? 'Kering';
+            $waterLevel = $data['water_level_cm'] ?? 0.0;
+
+            EnvironmentLog::create([
+                'temperature' => $temp,
+                'humidity'    => $humidity,
+                'air_quality' => $airQuality,
+                'rain_status' => $rainStatus,
+                'water_level' => $waterLevel,
+            ]);
+
+            $this->info("   ✅ SUCCESS: Data tersimpan ke MySQL! [Suhu: {$temp}°C, Lembap: {$humidity}%, Air: {$waterLevel}cm, Hujan: {$rainStatus}]");
+        } catch (\Exception $e) {
+            $this->error("   ❌ Gagal menyimpan ke database: " . $e->getMessage());
         }
-
-        if (isset($data['level']) || isset($data['fill_level'])) {
-            $level = $data['level'] ?? $data['fill_level'];
-            $this->info("   📊 Bin $binId level: {$level}%");
-        }
-
-        $this->info("   ✅ Waste data processed");
-    }
-
-    private function handleParkingMessage($topic, $data)
-    {
-        $this->info("   🅿️ Received parking data: " . json_encode($data));
-        
-        $zone = null;
-        if (preg_match('/zone_([ab])/i', $topic, $matches)) {
-            $zone = 'zone_' . strtolower($matches[1]);
-        } elseif (isset($data['zone'])) {
-            $zone = $data['zone'];
-        }
-
-        if (isset($data['occupied']) && $zone) {
-            $occupied = (int)$data['occupied'];
-            $this->info("   📊 $zone occupied: $occupied");
-        }
-
-        $this->info("   ✅ Parking data processed");
     }
 }

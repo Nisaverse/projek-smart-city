@@ -147,36 +147,42 @@
             </div>
         </div>
 
-       <!-- KOLOM KANAN: LOG MONITORING TERAKHIR -->
-<div class="col-lg-4 align-self-start">
-    <div class="dashboard-white-card" style="display: block !important; height: auto !important;">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Riwayat Terakhir</h5>
-            <a href="#" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.8rem;">Lihat Semua</a>
-        </div>
+        <!-- KOLOM KANAN: LOG MONITORING TERAKHIR -->
+        <div class="col-lg-4 align-self-start">
+            <div class="dashboard-white-card" style="display: block !important; height: auto !important;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold m-0" style="color: #0f172a; font-size: 1.1rem;">Riwayat Terakhir</h5>
+                    <a href="#" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.8rem;">Lihat Semua</a>
+                </div>
 
-        <div class="dashboard-inner-box p-3" style="height: auto !important; min-height: unset !important;">
-            <div class="d-flex flex-column gap-2" id="envLogContainer">
-                
-                <!-- Log Item -->
-                <div class="p-3 bg-white border rounded-3 shadow-sm">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="fw-bold text-dark" style="font-size: 0.85rem;">Zona Utama Kota</span>
-                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Terbaru</span>
+                <div class="dashboard-inner-box p-3" style="height: auto !important; min-height: unset !important;">
+                    <div class="d-flex flex-column gap-2" id="envLogContainer">
+                        
+                        <!-- Log Item -->
+                        <div class="p-3 bg-white border rounded-3 shadow-sm">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-dark" style="font-size: 0.85rem;">Zona Utama Kota</span>
+                                <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Terbaru</span>
+                            </div>
+                            <div class="text-secondary fw-medium" style="font-size: 0.75rem; line-height: 1.4;">
+                                Suhu: 31.5°C | Air: 135.5cm | AQI: 48
+                            </div>
+                            <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">Pukul 11:26:32</small>
+                        </div>
                     </div>
-                    <div class="text-secondary fw-medium" style="font-size: 0.75rem; line-height: 1.4;">
-                        Suhu: 31.5°C | Air: 135.5cm | AQI: 48
-                    </div>
-                    <small class="text-muted d-block mt-2" style="font-size: 0.7rem;">Pukul 11:26:32</small>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 @endsection
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Tambahkan Library MQTT.js via CDN agar browser bisa menangkap pesan MQTT -->
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+
 <script>
     const ctx = document.getElementById('envMultiChart')?.getContext('2d');
     let envChart;
@@ -205,6 +211,7 @@
         });
     }
 
+    // 1. AMBIL DATA DARI DATABASE UNTUK TAMPILAN KARTU & GRAFIK
     function fetchEnvironmentData() {
         fetch('/api/environment')
             .then(res => res.json())
@@ -217,7 +224,6 @@
                     const waterLevel = data.water_level;
                     const timeStr = data.timestamp;
 
-                    // Update Nilai di Kartu
                     document.getElementById('envTemp').textContent = temp + ' °C';
                     document.getElementById('envHumidity').textContent = hum + ' %';
                     document.getElementById('envAqi').textContent = aqi + ' AQI';
@@ -227,20 +233,17 @@
                     document.getElementById('envIotStatus').textContent = 'Online';
                     document.getElementById('envIotDesc').textContent = 'Terhubung';
 
-                    // Kualitas Udara Badge Status
                     const aqiStatus = document.getElementById('envAqiStatus');
                     if (aqi <= 50) {
                         aqiStatus.textContent = 'Baik';
-                        aqiStatus.className = ' text-dark px-2 py-1 rounded-pill';
+                        aqiStatus.className = 'text-dark px-2 py-1 rounded-pill';
                     } else {
                         aqiStatus.textContent = 'Kurang Sehat';
-                        aqiStatus.className = ' text-dark px-2 py-1 rounded-pill';
+                        aqiStatus.className = 'text-dark px-2 py-1 rounded-pill';
                     }
 
-                    // Status Hujan Desc
                     document.getElementById('envRainDesc').textContent = rainStatus.toLowerCase().includes('hujan') ? 'Presipitasi Terdeteksi' : 'Tidak Presipitasi';
 
-                    // Status Air Sungai Badge
                     const waterBadge = document.getElementById('envWaterStatus');
                     if (waterLevel > 200) {
                         waterBadge.textContent = 'Bahaya (Banjir)';
@@ -253,7 +256,6 @@
                         waterBadge.className = 'text-dark px-2 py-1 rounded-pill';
                     }
 
-                    // Update Riwayat Terakhir / Log
                     const logContainer = document.getElementById('envLogContainer');
                     if (logContainer) {
                         logContainer.innerHTML = `
@@ -270,7 +272,6 @@
                         `;
                     }
 
-                    // Update Grafik Real-Time
                     if (envChart) {
                         envChart.data.labels.push(timeStr);
                         envChart.data.datasets[0].data.push(temp);
@@ -284,7 +285,6 @@
                         envChart.update();
                     }
                 } else {
-                    // Jika Database Kosong / Belum Ada Data
                     document.getElementById('envTemp').textContent = '-- °C';
                     document.getElementById('envHumidity').textContent = '-- %';
                     document.getElementById('envAqi').textContent = '-- AQI';
@@ -296,9 +296,64 @@
             }).catch(() => {});
     }
 
+    // 2. KONEKSI MQTT DI BROWSER & JEMBATAN KE DATABASE
     document.addEventListener('DOMContentLoaded', () => {
         fetchEnvironmentData();
         setInterval(fetchEnvironmentData, 5000);
+
+        // Menghubungkan ke broker HiveMQ Cloud via WebSocket
+        if (typeof mqtt !== 'undefined') {
+            const mqttClient = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
+                clientId: 'admin_dashboard_' + Math.random().toString(16).substring(2, 8)
+            });
+
+            mqttClient.on('connect', function () {
+                console.log("✅ Admin terhubung ke MQTT Broker!");
+                // Subscribe ke topic telemetri alat ESP32 kamu
+                mqttClient.subscribe('aethersense/+/telemetry', function (err) {
+                    if (!err) {
+                        console.log("📋 Berhasil subscribe ke topic aethersense/+/telemetry");
+                    }
+                });
+            });
+
+            mqttClient.on('message', function (topic, message) {
+                let payloadStr = message.toString();
+                console.log("📨 Pesan MQTT Masuk:", payloadStr);
+
+                try {
+                    let data = JSON.parse(payloadStr);
+
+                    // 👉 KIRIM DATA OTOMATIS KE BACKEND LARAVEL AGAR MASUK KE DATABASE
+                    fetch('/api/environment/store', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                        },
+                        body: JSON.stringify({
+                            temperature: data.temperature || 0,
+                            humidity: data.humidity || 0,
+                            air_quality: data.air_quality || 40,
+                            rain_status: data.rain_status || 'Cerah',
+                            water_level: data.water_level || 100
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        console.log("💾 Data MQTT sukses masuk database MySQL:", res);
+                        // Langsung panggil ulang fetch data agar grafik & kartu langsung terupdate
+                        fetchEnvironmentData();
+                    })
+                    .catch(err => {
+                        console.error("❌ Gagal menyimpan data ke database:", err);
+                    });
+
+                } catch (e) {
+                    console.error("⚠️ Format pesan bukan JSON:", e);
+                }
+            });
+        }
     });
 </script>
 @endpush
