@@ -511,7 +511,7 @@
 
       try {
         // 3. Kirim ke Webhook n8n
-        const response = await fetch('https://prediction-lunch-catering-electoral.trycloudflare.com/webhook/chat-smartcity', {
+        const response = await fetch('https://encouraged-system-infinite-allows.trycloudflare.com/webhook/chat-smartcity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'
           },
