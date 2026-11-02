@@ -511,9 +511,11 @@
 
       try {
         // 3. Kirim ke Webhook n8n
-        const response = await fetch('http://localhost:5678/webhook/chat-smartcity', {
+        const response = await fetch('https://itchy-loops-give.loca.lt/webhook/chat-smartcity', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 
+          'Bypass-Tunnel-Reminder': 'true'
+          },
           body: JSON.stringify({ message: message })
         });
 
