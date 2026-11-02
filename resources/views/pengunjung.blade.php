@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Memaksa lebar browser HP agar merender tampilan layaknya laptop/desktop -->
+  <meta name="viewport" content="width=1200">
   <title>Tegal EcoSense - Observatorium Iklim Mikro Alun-Alun</title>
 
   <!-- Bootstrap 5 CSS & FontAwesome -->
@@ -15,7 +16,9 @@
       background-color: #0b1329;
       color: #1a1a1a;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
+      /* Mengunci lebar minimum agar tampilan mobile sama persis seperti desktop (bisa digeser horizontal) */
+      min-width: 1200px !important;
+      overflow-x: auto !important;
       margin: 0;
       padding: 0;
     }
@@ -141,7 +144,7 @@
 
     #mainWebsiteContent { display: none; opacity: 0; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-    /* --- ANIMASI ELEGANT PER SECTION (TANPA BLUR) --- */
+    /* --- ANIMASI ELEGANT PER SECTION --- */
     @keyframes heroBadgeGrow {
       from { opacity: 0; transform: scale(0.85); filter: blur(4px); }
       to { opacity: 1; transform: scale(1); filter: blur(0); }
@@ -190,16 +193,6 @@
       box-shadow: 0 20px 40px rgba(13, 110, 253, 0.12) !important;
     }
 
-    @keyframes kawasanZoomSmooth {
-      0% { opacity: 0; transform: scale(0.92); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    .animate-kawasan-zoom {
-      transform-origin: center center !important;
-      animation: kawasanZoomSmooth 1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-      will-change: opacity, transform;
-    }
-
     @keyframes layananSlideFromLeft {
       0% { opacity: 0; transform: translateX(-45px); }
       100% { opacity: 1; transform: translateX(0); }
@@ -217,7 +210,6 @@
       will-change: opacity, transform;
     }
 
-    /* --- ANIMASI KUSTOM BARU UNTUK LOKASI (SLIDE UP & FADE BERSIH TANPA BLUR) --- */
     @keyframes lokasiSlideUpSmooth {
       0% { opacity: 0; transform: translateY(40px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -372,20 +364,6 @@
       tentangSection.classList.remove('tentang-active');
       void tentangSection.offsetWidth;
       tentangSection.classList.add('tentang-active');
-    }
-
-    function triggerKawasanAnimation() {
-      const kawasanSection = document.getElementById('kawasan');
-      if (!kawasanSection) return;
-      const targetElements = kawasanSection.querySelectorAll('h1, h2, h3, h4, p, .lead, .card, .btn');
-      targetElements.forEach((el, index) => {
-        el.classList.remove('animate-kawasan-zoom');
-        el.style.animationDelay = '0s';
-        void el.offsetWidth;
-        const delay = (index * 0.08).toFixed(2);
-        el.style.animationDelay = `${delay}s`;
-        el.classList.add('animate-kawasan-zoom');
-      });
     }
 
     function triggerLayananAnimation() {
@@ -639,7 +617,6 @@
 
           if (targetId === 'beranda') triggerHeroAnimation();
           if (targetId === 'tentang') triggerTentangAnimation();
-          if (targetId === 'kawasan') triggerKawasanAnimation();
           if (targetId === 'layanan') triggerLayananAnimation();
           if (targetId === 'telemetri') triggerTelemetriAnimation();
           if (targetId === 'kontak') triggerLokasiAnimation();
@@ -671,7 +648,6 @@
           if (entry.isIntersecting) {
             setActiveMenu(targetId);
             if (targetId === 'tentang') entry.target.classList.add('tentang-active');
-            if (targetId === 'kawasan') triggerKawasanAnimation();
             if (targetId === 'layanan') triggerLayananAnimation();
             if (targetId === 'telemetri') triggerTelemetriAnimation();
             if (targetId === 'kontak') triggerLokasiAnimation();
