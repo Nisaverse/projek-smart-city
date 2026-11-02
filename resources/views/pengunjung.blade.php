@@ -283,8 +283,14 @@
     .chat-float-btn:hover { transform: scale(1.1); background-color: #229ED9; }
 
     .chat-window {
-      position: fixed; bottom: 95px; right: 25px; width: 375px; max-width: calc(100vw - 30px);
-      max-height: calc(100vh - 120px); height: 520px; background: #8FA2B5;
+      position: fixed; 
+      bottom: 95px; 
+      right: 25px; 
+      width: 375px; 
+      max-width: calc(100vw - 30px);
+      max-height: calc(100vh - 120px); 
+      height: 520px; 
+      background: #8FA2B5;
       background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
       background-size: 12px 12px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.25);
       display: none; flex-direction: column; z-index: 9999; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
@@ -329,9 +335,6 @@
 
     <!-- TENTANG -->
     @include('partials.tentang')
-
-    <!-- KAWASAN -->
-    @include('partials.kawasan')
 
     <!-- LAYANAN -->
     @include('partials.layanan')
