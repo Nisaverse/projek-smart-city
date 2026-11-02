@@ -11,16 +11,27 @@ use Illuminate\Support\Facades\Storage;
 class GenerateWeeklyReport extends Command
 {
     protected $signature = 'report:generate-weekly';
-    protected $description = 'Generate weekly environment PDF report, save to archive, and reset database records';
+    protected $description = 'Generate weekly environment PDF report (grouped by hourly average), save to archive, and reset database records';
 
     public function handle()
     {
-        // Naikkan batas memori PHP sementara agar tidak error saat merender data banyak
+        // Naikkan batas memori PHP sementara agar tidak error saat merender data
         ini_set('memory_limit', '1024M');
 
-        $this->info('📊 Mengambil data dari database...');
+        $this->info('📊 Mengambil dan meringkas data per jam dari database...');
 
-        $logs = EnvironmentLog::all();
+        // Meringkas data per jam (mengambil rata-rata) agar dalam sehari semalam ada 24 data
+        $logs = EnvironmentLog::select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %H:00:00') as created_at"),
+                DB::raw("AVG(temperature) as temperature"),
+                DB::raw("AVG(humidity) as humidity"),
+                DB::raw("AVG(air_quality) as air_quality"),
+                DB::raw("MAX(rain_status) as rain_status"),
+                DB::raw("AVG(water_level) as water_level")
+            )
+            ->groupBy('created_at')
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         if ($logs->isEmpty()) {
             $this->warn('⚠️ Tidak ada data untuk direkap saat ini.');
