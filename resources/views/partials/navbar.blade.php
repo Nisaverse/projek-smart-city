@@ -12,7 +12,6 @@
         <li class="nav-item"><a class="nav-link active" href="#beranda">Beranda</a></li>
         <li class="nav-item"><a class="nav-link" href="#telemetri">Parameter</a></li>
         <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
-        <li class="nav-item"><a class="nav-link" href="#kawasan">Kawasan</a></li>
         <li class="nav-item"><a class="nav-link" href="#layanan">Layanan</a></li>
         <li class="nav-item"><a class="nav-link" href="#kontak">Lokasi</a></li>
         <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
