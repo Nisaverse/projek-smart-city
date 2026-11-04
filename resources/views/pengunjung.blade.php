@@ -303,14 +303,17 @@
     .tg-btn-cmd { background: #F0F4F8; color: #517DA2; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .tg-btn-cmd:hover { background: #E2EBF3; }
 
-    /* --- CSS RESPONSIF MOBILE TERSUSUN KE BAWAH (NORMAL & NYAMAN) --- */
-    @media (max-width: 992px) {
-      /* Membuat kartu telemetri & grid turun ke bawah secara penuh */
-      .col-lg-is-5, .col-md-6, .col-lg-4, .col-lg-6 {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
+   /* --- PENGATURAN CHATBOT KHUSUS MOBILE (DIPERKECIL & PAS DI HP) --- */
+    @media (max-width: 768px) {
+      .chat-window {
+        width: 85vw !important;     /* Lebar diperkecil agar ada jarak di pinggir layar HP */
+        height: 52vh !important;    /* Tinggi dipangkas agar tidak terlalu panjang ke atas */
+        max-height: 380px !important; /* Batas maksimal tinggi jendela chat */
+        bottom: 80px !important;    /* Posisi dari bawah disesuaikan dengan tombol float */
+        right: 7.5vw !important;    /* Posisi agar berada tepat di tengah-tengah bawah */
+        border-radius: 16px !important;
       }
+    
       
       /* Mengatur ukuran font agar terbaca jelas tanpa kekecilan */
       body {
