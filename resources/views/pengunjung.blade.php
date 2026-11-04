@@ -262,7 +262,7 @@
       background: linear-gradient(90deg, #38bdf8, #818cf8);
     }
 
-    /* CHATBOT CSS */
+    /* CHATBOT CSS (DIPERBAIKI POSISI JAM & BUBBLE) */
     .chat-float-btn {
       position: fixed; bottom: 25px; right: 25px; background-color: #2AABEE; color: white;
       width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
@@ -289,11 +289,33 @@
     .tg-title { font-size: 0.95rem; font-weight: 700; line-height: 1.1; }
     .tg-status { font-size: 0.72rem; color: #B2D4F0; font-weight: 400; }
     .tg-chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-    .tg-msg { max-width: 82%; position: relative; font-size: 0.85rem; line-height: 1.4; padding: 8px 12px 20px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.15); word-wrap: break-word; }
+    
+    /* Perbaikan padding bawah bubble agar jam tidak keluar teks */
+    .tg-msg { 
+      max-width: 85%; 
+      position: relative; 
+      font-size: 0.85rem; 
+      line-height: 1.4; 
+      padding: 8px 12px 22px 12px; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15); 
+      word-wrap: break-word; 
+    }
     .tg-msg-bot { align-self: flex-start; background: #FFFFFF; color: #222222; border-radius: 12px 12px 12px 2px; }
     .tg-msg-user { align-self: flex-end; background: #EFFDDE; color: #111111; border-radius: 12px 12px 2px 12px; }
-    .tg-time { position: absolute; bottom: 3px; right: 8px; font-size: 0.65rem; color: #888888; display: flex; align-items: center; gap: 3px; }
+    
+    /* Perbaikan posisi jam agar pas di dalam bubble */
+    .tg-time { 
+      position: absolute; 
+      bottom: 4px; 
+      right: 10px; 
+      font-size: 0.65rem; 
+      color: #888888; 
+      display: flex; 
+      align-items: center; 
+      gap: 3px; 
+    }
     .tg-msg-user .tg-time { color: #559145; }
+
     .tg-keyboard-panel { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.08); animation: slideUp 0.2s ease-in-out; }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     .tg-inline-keyboard { display: grid; grid-template-columns: 1fr; gap: 6px; }
@@ -304,14 +326,36 @@
     .tg-btn-cmd { background: #F0F4F8; color: #517DA2; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .tg-btn-cmd:hover { background: #E2EBF3; }
 
+<<<<<<< HEAD
     /* --- CSS RESPONSIF MOBILE TERSUSUN KE BAWAH (NORMAL & NYAMAN) --- */
     @media (max-width: 992px) {
       /* Membuat kartu telemetri & grid turun ke bawah secara penuh */
+=======
+    /* --- GAYA WRAPPER CARD KELAS ADMIN KHUSUS HP --- */
+    @media (max-width: 992px) {
+      body {
+        background-color: #f1f5f9 !important;
+        padding: 12px !important;
+      }
+
+      #mainWebsiteContent {
+        background: #ffffff !important;
+        border-radius: 24px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+        padding: 15px !important;
+        margin: 0 auto !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        color: #1a1a1a !important;
+      }
+
+>>>>>>> 7d23273fbc7abfbbace9d2c2d02fac307222b557
       .col-lg-is-5, .col-md-6, .col-lg-4, .col-lg-6 {
         width: 100% !important;
         flex: 0 0 100% !important;
         max-width: 100% !important;
       }
+<<<<<<< HEAD
       
       /* Mengatur ukuran font agar terbaca jelas tanpa kekecilan */
       body {
@@ -361,6 +405,30 @@
         bottom: 0 !important;
         right: 0 !important;
         border-radius: 20px 20px 0 0 !important;
+=======
+
+      h1 { font-size: 1.8rem !important; }
+      h2 { font-size: 1.5rem !important; }
+      h3 { font-size: 1.25rem !important; }
+      p, .lead, span, div {
+        font-size: 1rem !important;
+        line-height: 1.6 !important;
+      }
+
+      .telemetri-card-navy {
+        margin-bottom: 15px !important;
+      }
+
+      /* Jendela chat di HP dikecilkan agar tidak terlalu menutupi layar penuh */
+      .chat-window {
+        width: 92vw !important;
+        max-width: 380px !important;
+        height: 70vh !important;
+        max-height: 480px !important;
+        bottom: 85px !important;
+        right: 4vw !important;
+        border-radius: 18px !important;
+>>>>>>> 7d23273fbc7abfbbace9d2c2d02fac307222b557
       }
     }
   </style>
@@ -565,12 +633,14 @@
       chatBody.scrollTop = chatBody.scrollHeight;
 
       try {
+<<<<<<< HEAD
         // 3. Kirim ke Webhook n8n
         const response = await fetch('https://efficient-porter-lady-charging.trycloudflare.com/webhook/chat-smartcity', {
+=======
+        const response = await fetch('http://localhost:5678/webhook/chat-smartcity', {
+>>>>>>> 7d23273fbc7abfbbace9d2c2d02fac307222b557
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 
-          'Bypass-Tunnel-Reminder': 'true'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: message })
         });
 
