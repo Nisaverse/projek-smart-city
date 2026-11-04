@@ -262,7 +262,7 @@
       background: linear-gradient(90deg, #38bdf8, #818cf8);
     }
 
-    /* CHATBOT CSS (DIPERBAIKI POSISI JAM & BUBBLE) */
+    /* --- CHATBOT CSS --- */
     .chat-float-btn {
       position: fixed; bottom: 25px; right: 25px; background-color: #2AABEE; color: white;
       width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
@@ -290,23 +290,22 @@
     .tg-status { font-size: 0.72rem; color: #B2D4F0; font-weight: 400; }
     .tg-chat-body { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
     
-    /* Perbaikan padding bawah bubble agar jam tidak keluar teks */
+    /* BUBBLE & POSISI JAM AGAR TIDAK KELUAR */
     .tg-msg { 
       max-width: 85%; 
       position: relative; 
       font-size: 0.85rem; 
       line-height: 1.4; 
-      padding: 8px 12px 22px 12px; 
+      padding: 8px 12px 24px 12px; 
       box-shadow: 0 1px 2px rgba(0,0,0,0.15); 
       word-wrap: break-word; 
     }
     .tg-msg-bot { align-self: flex-start; background: #FFFFFF; color: #222222; border-radius: 12px 12px 12px 2px; }
     .tg-msg-user { align-self: flex-end; background: #EFFDDE; color: #111111; border-radius: 12px 12px 2px 12px; }
     
-    /* Perbaikan posisi jam agar pas di dalam bubble */
     .tg-time { 
       position: absolute; 
-      bottom: 4px; 
+      bottom: 5px; 
       right: 10px; 
       font-size: 0.65rem; 
       color: #888888; 
@@ -326,51 +325,16 @@
     .tg-btn-cmd { background: #F0F4F8; color: #517DA2; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .tg-btn-cmd:hover { background: #E2EBF3; }
 
-    /* --- GAYA WRAPPER CARD KELAS ADMIN KHUSUS HP --- */
+    /* --- PENGATURAN UKURAN KHUSUS CHATBOT DI MOBILE --- */
     @media (max-width: 992px) {
-      body {
-        background-color: #f1f5f9 !important;
-        padding: 12px !important;
-      }
-
-      #mainWebsiteContent {
-        background: #ffffff !important;
-        border-radius: 24px !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
-        padding: 15px !important;
-        margin: 0 auto !important;
-        max-width: 100% !important;
-        overflow: hidden !important;
-        color: #1a1a1a !important;
-      }
-
-      .col-lg-is-5, .col-md-6, .col-lg-4, .col-lg-6 {
-        width: 100% !important;
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-      }
-
-      h1 { font-size: 1.8rem !important; }
-      h2 { font-size: 1.5rem !important; }
-      h3 { font-size: 1.25rem !important; }
-      p, .lead, span, div {
-        font-size: 1rem !important;
-        line-height: 1.6 !important;
-      }
-
-      .telemetri-card-navy {
-        margin-bottom: 15px !important;
-      }
-
-      /* Jendela chat di HP dikecilkan agar tidak terlalu menutupi layar penuh */
       .chat-window {
-        width: 92vw !important;
-        max-width: 380px !important;
-        height: 70vh !important;
-        max-height: 480px !important;
-        bottom: 85px !important;
-        right: 4vw !important;
+        width: 88vw !important;
+        height: 60vh !important;
+        max-height: 390px !important;
+        bottom: 80px !important;
+        right: 6vw !important;
         border-radius: 18px !important;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.35) !important;
       }
     }
   </style>
