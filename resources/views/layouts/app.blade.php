@@ -350,7 +350,7 @@
             <a href="{{ route('smart-temp') }}" 
                class="nav-item {{ request()->routeIs('smart-temp') ? 'active' : '' }}"
                @if(request()->routeIs('smart-temp')) onclick="event.preventDefault();" @endif>
-                <i class="fas fa-temperature-high"></i> Smart Temp
+                <i class="fas fa-temperature-high"></i> Smart Monitoring
             </a>
             
             <a href="{{ route('smart-parking') }}" 
