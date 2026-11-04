@@ -303,19 +303,21 @@
     .tg-btn-cmd { background: #F0F4F8; color: #517DA2; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .tg-btn-cmd:hover { background: #E2EBF3; }
 
-   /* --- PENGATURAN CHATBOT KHUSUS MOBILE (DIPERKECIL & PAS DI HP) --- */
+  /* --- PENGATURAN CHATBOT DI TENGAH LAYAR MOBILE --- */
     @media (max-width: 768px) {
       .chat-window {
-        width: 92vw !important;       /* Lebar pas di hampir seluruh layar HP dengan sedikit sisa margin */
-        height: 55vh !important;      /* Tinggi proporsional */
-        max-height: 420px !important; 
-        bottom: 85px !important;      /* Jarak dari bawah di atas tombol melayang */
-        left: 50% !important;         /* Posisikan titik acuan ke tengah layar */
-        right: auto !important;       
-        transform: translateX(-50%) !important; /* Tarik balik ke tengah secara akurat */
-        border-radius: 18px !important;
-      }
-    
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90vw !important;
+        height: 65vh !important;
+        max-height: 480px !important;
+        bottom: auto !important;
+        right: auto !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important;
+      }  
       
       /* Mengatur ukuran font agar terbaca jelas tanpa kekecilan */
       body {
