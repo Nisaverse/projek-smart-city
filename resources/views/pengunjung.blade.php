@@ -2,8 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <!-- Memaksa lebar browser HP agar merender tampilan layaknya laptop/desktop -->
-  <meta name="viewport" content="width=1200">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tegal EcoSense - Observatorium Iklim Mikro Alun-Alun</title>
 
   <!-- Bootstrap 5 CSS & FontAwesome -->
@@ -16,9 +15,7 @@
       background-color: #0b1329;
       color: #1a1a1a;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      /* Mengunci lebar minimum agar tampilan mobile sama persis seperti desktop (bisa digeser horizontal) */
-      min-width: 1200px !important;
-      overflow-x: auto !important;
+      overflow-x: hidden;
       margin: 0;
       padding: 0;
     }
@@ -306,6 +303,66 @@
     .tg-chat-footer { background: #FFFFFF; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #E0E0E0; }
     .tg-btn-cmd { background: #F0F4F8; color: #517DA2; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .tg-btn-cmd:hover { background: #E2EBF3; }
+
+    /* --- CSS RESPONSIF MOBILE TERSUSUN KE BAWAH (NORMAL & NYAMAN) --- */
+    @media (max-width: 992px) {
+      /* Membuat kartu telemetri & grid turun ke bawah secara penuh */
+      .col-lg-is-5, .col-md-6, .col-lg-4, .col-lg-6 {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+      }
+      
+      /* Mengatur ukuran font agar terbaca jelas tanpa kekecilan */
+      body {
+        font-size: 1.05rem !important;
+      }
+      h1 { font-size: 2rem !important; }
+      h2 { font-size: 1.65rem !important; }
+      h3 { font-size: 1.35rem !important; }
+      p, .lead, span, div {
+        font-size: 1.05rem !important;
+        line-height: 1.7 !important;
+      }
+
+      /* Padding section agar tidak terlalu mepet pinggir layar HP */
+      section, .container {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+
+      /* Welcome screen penyesuaian vertikal */
+      #welcomeSection {
+        padding: 20px 15px !important;
+        justify-content: space-around !important;
+        text-align: center;
+      }
+      .welcome-title {
+        font-size: 2.2rem !important;
+        line-height: 1.25 !important;
+      }
+      .welcome-desc {
+        font-size: 1rem !important;
+      }
+      .welcome-preview-container {
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+      }
+
+      /* Kartu telemetri dan jarak antar elemen */
+      .telemetri-card-navy {
+        margin-bottom: 16px !important;
+      }
+
+      /* Jendela chatbot memenuhi layar bawah dengan nyaman */
+      .chat-window {
+        width: 100vw !important;
+        height: 85vh !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        border-radius: 20px 20px 0 0 !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -376,7 +433,7 @@
         void el.offsetWidth;
         const delay = (index * 0.1).toFixed(2);
         el.style.animationDelay = `${delay}s`;
-        
+
         if (index % 2 === 0) {
           el.classList.add('animate-layanan-left');
         } else {
@@ -486,7 +543,6 @@
       const message = chatInput.value.trim();
       if (!message) return;
 
-      // 1. Tampilkan pesan pengirim
       const userMsgHtml = `
         <div class="tg-msg tg-msg-user">
           ${message}
@@ -498,7 +554,6 @@
       chatInput.value = '';
       chatBody.scrollTop = chatBody.scrollHeight;
 
-      // 2. Indikator Loading
       const loadingId = 'loading-' + Date.now();
       const loadingHtml = `
         <div class="tg-msg tg-msg-bot" id="${loadingId}">
@@ -511,9 +566,10 @@
 
       try {
         // 3. Kirim ke Webhook n8n
-        const response = await fetch('https://encouraged-system-infinite-allows.trycloudflare.com/webhook/chat-smartcity', {
+        const response = await fetch('https://efficient-porter-lady-charging.trycloudflare.com/webhook/chat-smartcity', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json'
+          headers: { 'Content-Type': 'application/json', 
+          'Bypass-Tunnel-Reminder': 'true'
           },
           body: JSON.stringify({ message: message })
         });
@@ -521,7 +577,6 @@
         const data = await response.json();
         document.getElementById(loadingId)?.remove();
 
-        // 4. Balasan AI n8n
         let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
         if (Array.isArray(data) && data.length > 0) {
           aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
@@ -571,7 +626,6 @@
         .catch(error => console.error('Gagal memuat data monitoring:', error));
     }
 
-    // INISIALISASI EVENT LISTENER UTAMA
     document.addEventListener("DOMContentLoaded", () => {
       const sendBtn = document.getElementById('sendBtn');
       const chatInput = document.getElementById('chatInput');
