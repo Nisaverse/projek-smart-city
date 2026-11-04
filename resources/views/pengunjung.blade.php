@@ -306,12 +306,14 @@
    /* --- PENGATURAN CHATBOT KHUSUS MOBILE (DIPERKECIL & PAS DI HP) --- */
     @media (max-width: 768px) {
       .chat-window {
-        width: 85vw !important;     /* Lebar diperkecil agar ada jarak di pinggir layar HP */
-        height: 52vh !important;    /* Tinggi dipangkas agar tidak terlalu panjang ke atas */
-        max-height: 380px !important; /* Batas maksimal tinggi jendela chat */
-        bottom: 80px !important;    /* Posisi dari bawah disesuaikan dengan tombol float */
-        right: 7.5vw !important;    /* Posisi agar berada tepat di tengah-tengah bawah */
-        border-radius: 16px !important;
+        width: 92vw !important;       /* Lebar pas di hampir seluruh layar HP dengan sedikit sisa margin */
+        height: 55vh !important;      /* Tinggi proporsional */
+        max-height: 420px !important; 
+        bottom: 85px !important;      /* Jarak dari bawah di atas tombol melayang */
+        left: 50% !important;         /* Posisikan titik acuan ke tengah layar */
+        right: auto !important;       
+        transform: translateX(-50%) !important; /* Tarik balik ke tengah secara akurat */
+        border-radius: 18px !important;
       }
     
       
