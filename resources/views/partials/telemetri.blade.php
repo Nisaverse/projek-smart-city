@@ -2,8 +2,8 @@
 <section id="telemetri" style="background: linear-gradient(135deg, #0b1329 0%, #1e3a8a 100%); color: #ffffff; padding-top: 5rem; padding-bottom: 7rem;">
   <div class="container-fluid px-4 px-lg-5 py-3">
     <div class="text-center mx-auto mb-5" style="max-width: 700px;">
-      <h6 class="text-info fw-bold text-uppercase" style="letter-spacing: 1.5px; font-size: 0.85rem;">Live Telemetri</h6>
-      <h2 class="fw-bold text-white mb-2">Parameter Lingkungan Saat Ini</h2>
+      <h6 class="text-info fw-bold text-uppercase" style="letter-spacing: 1.5px; font-size: 0.85rem;">Live Kondisi Lingkungan</h6>
+      <h2 class="fw-bold text-white mb-2">Kondisi Lingkungan Saat Ini</h2>
       <p class="text-light opacity-75">Pantauan langsung kondisi cuaca dan kualitas lingkungan kawasan Alun-Alun Kota Tegal untuk kenyamanan Anda.</p>
     </div>
 

@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <ul class="navbar-nav align-items-center">
         <li class="nav-item"><a class="nav-link active" href="#beranda">Beranda</a></li>
-        <li class="nav-item"><a class="nav-link" href="#telemetri">Parameter</a></li>
+        <li class="nav-item"><a class="nav-link" href="#telemetri">Kondisi Lingkungan</a></li>
         <li class="nav-item"><a class="nav-link" href="#tentang">Tentang</a></li>
         <li class="nav-item"><a class="nav-link" href="#layanan">Layanan</a></li>
         <li class="nav-item"><a class="nav-link" href="#kontak">Lokasi</a></li>
