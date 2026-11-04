@@ -263,28 +263,14 @@
     }
 
     /* CHATBOT CSS */
-   .chat-float-btn {
-      position: fixed !important; 
-      bottom: 25px !important; 
-      right: 25px !important; 
-      top: auto !important;
-      left: auto !important;
-      background-color: #2AABEE; 
-      color: white;
-      width: 60px; 
-      height: 60px; 
-      border-radius: 50%; 
-      display: flex; 
-      align-items: center;
-      justify-content: center; 
-      font-size: 1.6rem; 
-      box-shadow: 0 4px 20px rgba(42, 171, 238, 0.4);
-      cursor: pointer; 
-      z-index: 99999 !important; 
-      transition: transform 0.2s, background-color 0.2s;
+    .chat-float-btn {
+      position: fixed; bottom: 25px; right: 25px; background-color: #2AABEE; color: white;
+      width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 20px rgba(42, 171, 238, 0.4);
+      cursor: pointer; z-index: 1000; transition: transform 0.2s, background-color 0.2s;
     }
     .chat-float-btn:hover { transform: scale(1.1); background-color: #229ED9; }
-    
+
     .chat-window {
       position: fixed; 
       bottom: 95px; 
