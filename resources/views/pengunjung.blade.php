@@ -275,10 +275,9 @@
       position: fixed; 
       bottom: 95px; 
       right: 25px; 
-      width: 375px; 
+      width: 360px; /* Lebar sedikit dirampingkan agar elegan */
       max-width: calc(100vw - 30px);
-      max-height: calc(100vh - 120px); 
-      height: 520px; 
+      height: 460px; /* Tinggi dikurangi agar tidak terlalu menjulang ke atas */
       background: #8FA2B5;
       background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
       background-size: 12px 12px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.25);
