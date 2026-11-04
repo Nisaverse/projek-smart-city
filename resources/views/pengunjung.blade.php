@@ -565,7 +565,7 @@
       chatBody.scrollTop = chatBody.scrollHeight;
 
       try {
-        const response = await fetch('http://localhost:5678/webhook/chat-smartcity', {
+        const response = await fetch('https://efficient-porter-lady-charging.trycloudflare.com/webhook/chat-smartcity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: message })
