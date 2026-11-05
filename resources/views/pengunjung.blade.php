@@ -485,6 +485,12 @@
       "image/water ledeng.jpeg"
     ];
 
+    // PRELOAD GAMBAR AGAR TIDAK KEDIP HITAM
+    backgroundImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+
     let currentBgIndex = 0;
     const welcomeSec = document.getElementById('welcomeSection');
     const heroDashboard = document.querySelector('.hero-observatorium');
@@ -492,9 +498,10 @@
     setInterval(() => {
       currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
       let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
+      
       if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
       if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
-    }, 3000);
+    }, 4000); // Waktu diperpanjang sedikit jadi 4 detik agar lebih nyaman
 
     function enterWebsite() {
       const mainContent = document.getElementById('mainWebsiteContent');
