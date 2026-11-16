@@ -61,4 +61,4 @@ class GenerateWeeklyReport extends Command
         EnvironmentLog::truncate();
         $this->info('🧹 Database environment_histories berhasil di-reset menjadi kosong!');
     }
-}
+} 

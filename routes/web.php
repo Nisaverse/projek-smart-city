@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\IoTControlController; // <-- Jangan lupa import Controller kontrol ini
 
 // ===== HALAMAN PENGUNJUNG (PUBLIC - TANPA MIDDLEWARE) =====
 Route::get('/pengunjung', function () {
@@ -41,6 +42,12 @@ Route::middleware('admin')->group(function () {
     Route::get('/control', [DashboardController::class, 'control'])->name('control');
     Route::get('/control-center', [DashboardController::class, 'control'])->name('control-center');
 
+    // ===== TAMBAHAN: RUTE HAPUS ARSIP LAPORAN MINGGUAN (IKON TEMPAT SAMPAH) =====
+    Route::delete('/reports/{id}', [DashboardController::class, 'destroyReport'])->name('reports.destroy');
+
+    // ===== TAMBAHAN: RUTE KIRIM PERINTAH MQTT KONTROL =====
+    Route::post('/iot/control', [IoTControlController::class, 'sendCommand'])->name('iot.control');
+
     // ===== API ENDPOINTS (DATA) =====
     Route::get('/api/lamp', [DashboardController::class, 'apiLampData']);
     Route::get('/api/smart-lamp', [DashboardController::class, 'apiLampData']);
@@ -58,7 +65,6 @@ Route::middleware('admin')->group(function () {
     Route::post('/api/sensor-level', [DashboardController::class, 'setSensorLightLevel']);
 
     // ===== API ENDPOINTS (ESP INGESTION / PENERIMAAN DATA SENSOR) =====
-    // Rute POST ini disiapkan bagi perangkat/ESP untuk mengirim data setiap 5 menit
     Route::post('/api/environment/store', [DashboardController::class, 'storeEnvironmentData']);
 
     // ===== AUTO SETTINGS =====

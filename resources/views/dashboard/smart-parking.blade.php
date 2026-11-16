@@ -233,7 +233,7 @@
 
     const slotKeys = Object.keys(slotDataInfo);
 
-    function renderParkingUI(data) {
+    function renderParkingUI(apiData = []) {
         const gridContainer = document.getElementById('parkingSlotsGrid');
         const tableBody = document.getElementById('detailSlotTableBody');
         
@@ -242,18 +242,37 @@
 
         let availableCount = 0;
         let occupiedCount = 0;
+        let hasDataFromIoT = false;
 
-        // Penanganan fleksibel: mendukung format { slots: { P01: ... } } maupun format objek langsung
-        const slotsObj = data.slots || data;
-        const updateTime = data.timestamp || new Date().toLocaleTimeString('id-ID');
+        // Ubah format Array dari Cache/API ke Map Object agar gampang diakses
+        const dbSlotMap = {};
+        if (Array.isArray(apiData)) {
+            apiData.forEach(item => {
+                if (item.slot_code) {
+                    dbSlotMap[item.slot_code] = item;
+                }
+            });
+        } else if (typeof apiData === 'object' && apiData !== null) {
+            Object.assign(dbSlotMap, apiData.slots || apiData);
+        }
 
         slotKeys.forEach(slotId => {
-            const slotInfo = slotsObj[slotId] || { status: 'available' };
+            const slotInfo = dbSlotMap[slotId] || { status: 'available', updated_at: null };
             
+            // Format waktu update
+            let timeStr = 'Belum Update';
+            if (slotInfo.updated_at) {
+                hasDataFromIoT = true;
+                const d = new Date(slotInfo.updated_at);
+                timeStr = isNaN(d.getTime()) ? slotInfo.updated_at : d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+
             let badgeClass = 'status-available';
             let statusText = 'Available';
 
-            if (slotInfo.status === 'occupied') {
+            const rawStatus = String(slotInfo.status).toLowerCase();
+
+            if (rawStatus === 'occupied' || rawStatus === '1' || rawStatus === 'true' || slotInfo.status === true) {
                 badgeClass = 'status-occupied';
                 statusText = 'Occupied';
                 occupiedCount++;
@@ -270,18 +289,18 @@
                             <span class="slot-badge-status ${badgeClass}">${statusText}</span>
                         </div>
                         <div style="font-size: 0.72rem; color: #64748b;" class="text-truncate">
-                            <i class="fas fa-car me-1"></i> ${statusText}
+                            <i class="fas fa-car me-1"></i> ${slotDataInfo[slotId].name}
                         </div>
                     </div>
                 </div>
             `;
 
-            // Render ke Tabel Detail Slot Parkir
+            // Render ke Tabel Detail Slot Parkir (Diperbaiki tanpa typo tanda strip `-`)
             tableBody.innerHTML += `
                 <tr class="border-bottom">
-                    <td class="fw-bold text-dark">${slotId}</td>
+                    <td class="fw-bold text-dark">${slotId} <small class="fw-normal text-muted">${slotDataInfo[slotId].name}</small></td>
                     <td>${slotTextBadge(slotInfo.status)}</td>
-                    <td class="text-end text-dark opacity-75" style="font-size: 0.75rem;">${updateTime}</td>
+                    <td class="text-end text-dark opacity-75" style="font-size: 0.75rem;">${timeStr}</td>
                 </tr>
             `;
         });
@@ -300,9 +319,9 @@
         document.getElementById('barOccupied').style.width = pctOccupied + '%';
         document.getElementById('textOccupiedDesc').textContent = `Area terisi (${pctOccupied}%)`;
 
-        if (availableCount > 0 || occupiedCount > 0) {
+        if (hasDataFromIoT) {
             document.getElementById('iotMainStatus').textContent = 'Online';
-            document.getElementById('iotStatusText').textContent = 'Terhubung';
+            document.getElementById('iotStatusText').innerHTML = '<span class="text-success">● Terhubung</span>';
         } else {
             document.getElementById('iotMainStatus').textContent = '-';
             document.getElementById('iotStatusText').textContent = 'Menunggu data perangkat';
@@ -310,21 +329,24 @@
     }
 
     function slotTextBadge(status) {
-        if (status === 'occupied') return '<span class="text-danger fw-semibold">Occupied</span>';
-        return '<span class="text-success fw-semibold">Available</span>';
+        const rawStatus = String(status).toLowerCase();
+        if (rawStatus === 'occupied' || rawStatus === '1' || rawStatus === 'true' || status === true) {
+            return '<span class="text-danger fw-semibold" style="background: rgba(239, 68, 68, 0.15); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Occupied</span>';
+        }
+        return '<span class="text-success fw-semibold" style="background: rgba(16, 185, 129, 0.15); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Available</span>';
     }
 
     function fetchParkingDataFromDB() {
         fetch('/api/parking')
             .then(res => res.json())
             .then(data => renderParkingUI(data))
-            .catch(() => renderParkingUI({}));
+            .catch(() => renderParkingUI([]));
     }
 
-    // Filter Pencarian Tabel Slot
+    // Filter Pencarian Tabel Slot & Real-time Auto-Refresh
     document.addEventListener('DOMContentLoaded', () => {
         fetchParkingDataFromDB();
-        setInterval(fetchParkingDataFromDB, 3000);
+        setInterval(fetchParkingDataFromDB, 3000); // Ambil data tiap 3 detik
 
         const searchInput = document.getElementById('searchSlotInput');
         if (searchInput) {

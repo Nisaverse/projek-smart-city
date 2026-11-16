@@ -89,25 +89,21 @@
         transform: translateY(-2px);
     }
 
-    /* BORDER CARD SAAT AKTIF HANYA HIGHLIGHT NORMALLY */
     .interactive-item-card.is-active {
         border-color: #0b132b !important;
     }
 
-    /* JUDUL SEKTOR MENGGUNAKAN TEKS DARK NAVY */
     .text-navy-title {
         color: #0b132b !important;
         font-weight: 700;
         font-size: 0.95rem;
     }
 
-    /* ===== TOMBOL SWITCH ON OFF DENGAN WARNA DARK NAVY ===== */
     .form-check-input:checked {
         background-color: #1e3a8a !important;
         border-color: #0b132b !important;
     }
 
-    /* ===== DISABLED STATE (AUTOMATIC MODE) ===== */
     .disabled-control {
         opacity: 0.55;
         pointer-events: none;
@@ -264,11 +260,12 @@
 
         localStorage.setItem('iot_system_mode', mode);
 
-        fetch('/api/control/mode', {
+        // Kirim perubahan mode ke backend Laravel & MQTT
+        fetch('/iot/control', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ mode: mode })
-        }).catch(() => {});
+            body: JSON.stringify({ device: 'lighting_mode', sector: 'all', action: mode })
+        }).catch(err => console.error('Gagal kirim mode:', err));
     }
 
     function toggleRelay(relayId) {
@@ -291,11 +288,17 @@
         relayStates[relayId] = isChecked ? 1 : 0;
         localStorage.setItem('iot_relay_states', JSON.stringify(relayStates));
 
-        fetch('/api/control/relay', {
+        // Kirim perintah sakelar relay via MQTT lewat rute Laravel /iot/control
+        fetch('/iot/control', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ relay: relayId, state: isChecked ? 1 : 0 })
-        }).catch(() => {});
+            body: JSON.stringify({ device: 'lamp', sector: relayId, action: isChecked })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Respon Kontrol Relay:', data.message);
+        })
+        .catch(err => console.error('Gagal kirim perintah relay:', err));
     }
 
     document.addEventListener('DOMContentLoaded', () => {
