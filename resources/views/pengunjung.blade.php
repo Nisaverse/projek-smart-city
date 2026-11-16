@@ -141,7 +141,7 @@
 
     #mainWebsiteContent { display: none; opacity: 0; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
 
-    /* --- ANIMASI ELEGANT PER SECTION (TANPA BLUR) --- */
+    /* --- ANIMASI ELEGANT PER SECTION --- */
     @keyframes heroBadgeGrow {
       from { opacity: 0; transform: scale(0.85); filter: blur(4px); }
       to { opacity: 1; transform: scale(1); filter: blur(0); }
@@ -190,16 +190,6 @@
       box-shadow: 0 20px 40px rgba(13, 110, 253, 0.12) !important;
     }
 
-    @keyframes kawasanZoomSmooth {
-      0% { opacity: 0; transform: scale(0.92); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-    .animate-kawasan-zoom {
-      transform-origin: center center !important;
-      animation: kawasanZoomSmooth 1s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
-      will-change: opacity, transform;
-    }
-
     @keyframes layananSlideFromLeft {
       0% { opacity: 0; transform: translateX(-45px); }
       100% { opacity: 1; transform: translateX(0); }
@@ -217,7 +207,6 @@
       will-change: opacity, transform;
     }
 
-    /* --- ANIMASI KUSTOM BARU UNTUK LOKASI (SLIDE UP & FADE BERSIH TANPA BLUR) --- */
     @keyframes lokasiSlideUpSmooth {
       0% { opacity: 0; transform: translateY(40px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -286,10 +275,9 @@
       position: fixed; 
       bottom: 95px; 
       right: 25px; 
-      width: 375px; 
+      width: 360px; /* Lebar sedikit dirampingkan agar elegan */
       max-width: calc(100vw - 30px);
-      max-height: calc(100vh - 120px); 
-      height: 520px; 
+      height: 460px; /* Tinggi dikurangi agar tidak terlalu menjulang ke atas */
       background: #8FA2B5;
       background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
       background-size: 12px 12px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.25);
@@ -314,6 +302,73 @@
     .tg-chat-footer { background: #FFFFFF; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #E0E0E0; }
     .tg-btn-cmd { background: #F0F4F8; color: #517DA2; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .tg-btn-cmd:hover { background: #E2EBF3; }
+
+  /* --- PENGATURAN CHATBOT DI TENGAH LAYAR MOBILE --- */
+    @media (max-width: 768px) {
+      .chat-window {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 90vw !important;
+        height: 65vh !important;
+        max-height: 480px !important;
+        bottom: auto !important;
+        right: auto !important;
+        border-radius: 20px !important;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important;
+      }  
+      
+      /* Mengatur ukuran font agar terbaca jelas tanpa kekecilan */
+      body {
+        font-size: 1.05rem !important;
+      }
+      h1 { font-size: 2rem !important; }
+      h2 { font-size: 1.65rem !important; }
+      h3 { font-size: 1.35rem !important; }
+      p, .lead, span, div {
+        font-size: 1.05rem !important;
+        line-height: 1.7 !important;
+      }
+
+      /* Padding section agar tidak terlalu mepet pinggir layar HP */
+      section, .container {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+      }
+
+      /* Welcome screen penyesuaian vertikal */
+      #welcomeSection {
+        padding: 20px 15px !important;
+        justify-content: space-around !important;
+        text-align: center;
+      }
+      .welcome-title {
+        font-size: 2.2rem !important;
+        line-height: 1.25 !important;
+      }
+      .welcome-desc {
+        font-size: 1rem !important;
+      }
+      .welcome-preview-container {
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+      }
+
+      /* Kartu telemetri dan jarak antar elemen */
+      .telemetri-card-navy {
+        margin-bottom: 16px !important;
+      }
+
+      /* Jendela chatbot memenuhi layar bawah dengan nyaman */
+      .chat-window {
+        width: 100vw !important;
+        height: 85vh !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        border-radius: 20px 20px 0 0 !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -374,20 +429,6 @@
       tentangSection.classList.add('tentang-active');
     }
 
-    function triggerKawasanAnimation() {
-      const kawasanSection = document.getElementById('kawasan');
-      if (!kawasanSection) return;
-      const targetElements = kawasanSection.querySelectorAll('h1, h2, h3, h4, p, .lead, .card, .btn');
-      targetElements.forEach((el, index) => {
-        el.classList.remove('animate-kawasan-zoom');
-        el.style.animationDelay = '0s';
-        void el.offsetWidth;
-        const delay = (index * 0.08).toFixed(2);
-        el.style.animationDelay = `${delay}s`;
-        el.classList.add('animate-kawasan-zoom');
-      });
-    }
-
     function triggerLayananAnimation() {
       const layananSection = document.getElementById('layanan');
       if (!layananSection) return;
@@ -398,7 +439,7 @@
         void el.offsetWidth;
         const delay = (index * 0.1).toFixed(2);
         el.style.animationDelay = `${delay}s`;
-        
+
         if (index % 2 === 0) {
           el.classList.add('animate-layanan-left');
         } else {
@@ -444,6 +485,12 @@
       "image/water ledeng.jpeg"
     ];
 
+    // PRELOAD GAMBAR AGAR TIDAK KEDIP HITAM
+    backgroundImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+
     let currentBgIndex = 0;
     const welcomeSec = document.getElementById('welcomeSection');
     const heroDashboard = document.querySelector('.hero-observatorium');
@@ -451,9 +498,10 @@
     setInterval(() => {
       currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
       let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
+      
       if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
       if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
-    }, 3000);
+    }, 4000); // Waktu diperpanjang sedikit jadi 4 detik agar lebih nyaman
 
     function enterWebsite() {
       const mainContent = document.getElementById('mainWebsiteContent');
@@ -508,7 +556,6 @@
       const message = chatInput.value.trim();
       if (!message) return;
 
-      // 1. Tampilkan pesan pengirim
       const userMsgHtml = `
         <div class="tg-msg tg-msg-user">
           ${message}
@@ -520,7 +567,6 @@
       chatInput.value = '';
       chatBody.scrollTop = chatBody.scrollHeight;
 
-      // 2. Indikator Loading
       const loadingId = 'loading-' + Date.now();
       const loadingHtml = `
         <div class="tg-msg tg-msg-bot" id="${loadingId}">
@@ -532,8 +578,7 @@
       chatBody.scrollTop = chatBody.scrollHeight;
 
       try {
-        // 3. Kirim ke Webhook n8n
-        const response = await fetch('http://localhost:5678/webhook/chat-smartcity', {
+        const response = await fetch('https://inherited-consistently-mac-associated.trycloudflare.com/webhook/chat-smartcity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: message })
@@ -542,7 +587,6 @@
         const data = await response.json();
         document.getElementById(loadingId)?.remove();
 
-        // 4. Balasan AI n8n
         let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
         if (Array.isArray(data) && data.length > 0) {
           aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
@@ -592,7 +636,6 @@
         .catch(error => console.error('Gagal memuat data monitoring:', error));
     }
 
-    // INISIALISASI EVENT LISTENER UTAMA
     document.addEventListener("DOMContentLoaded", () => {
       const sendBtn = document.getElementById('sendBtn');
       const chatInput = document.getElementById('chatInput');
@@ -638,7 +681,6 @@
 
           if (targetId === 'beranda') triggerHeroAnimation();
           if (targetId === 'tentang') triggerTentangAnimation();
-          if (targetId === 'kawasan') triggerKawasanAnimation();
           if (targetId === 'layanan') triggerLayananAnimation();
           if (targetId === 'telemetri') triggerTelemetriAnimation();
           if (targetId === 'kontak') triggerLokasiAnimation();
@@ -670,7 +712,6 @@
           if (entry.isIntersecting) {
             setActiveMenu(targetId);
             if (targetId === 'tentang') entry.target.classList.add('tentang-active');
-            if (targetId === 'kawasan') triggerKawasanAnimation();
             if (targetId === 'layanan') triggerLayananAnimation();
             if (targetId === 'telemetri') triggerTelemetriAnimation();
             if (targetId === 'kontak') triggerLokasiAnimation();
