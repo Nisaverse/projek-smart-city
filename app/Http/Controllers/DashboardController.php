@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Services\IoTStateManager;
 use App\Models\EnvironmentLog;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -43,24 +45,51 @@ class DashboardController extends Controller
         return view('dashboard.control');
     }
 
-    // ===== API ENDPOINTS (GET DATA) =====
+    // ===== API ENDPOINTS (GET DATA REAL-TIME) =====
 
-    public function apiLampData()
+  public function apiLampData()
     {
-        return response()->json($this->stateManager->getLampData());
+        // Ambil data langsung dari Cache yang diisi oleh ListenMqtt.php
+        return response()->json([
+            'L01' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L01', ['sector_code' => 'L01', 'status' => 'inactive']),
+            'L02' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L02', ['sector_code' => 'L02', 'status' => 'inactive']),
+            'L03' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L03', ['sector_code' => 'L03', 'status' => 'inactive']),
+            'L04' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L04', ['sector_code' => 'L04', 'status' => 'inactive']),
+        ]);
     }
 
-    // Melayani data Suhu & Kelembapan (DHT Sensor)
+    public function apiParkingData()
+    {
+        return response()->json($this->stateManager->getParkingData());
+    }
+
+    // Melayani data Suhu & Kelembapan (DHT Sensor & Monitoring)
     public function apiEnvironmentData()
     {
-        if (method_exists($this->stateManager, 'getEnvironmentData')) {
-            return response()->json($this->stateManager->getEnvironmentData());
-        }
+        try {
+            $latest = EnvironmentLog::orderBy('id', 'desc')->first();
 
-        // Fallback jika method belum dibuat di IoTStateManager
+            if ($latest) {
+                return response()->json([
+                    'has_data'    => true, // <-- Kunci penting agar diterima oleh frontend temp.blade.php
+                    'temperature' => (float)$latest->temperature,
+                    'humidity'    => (float)$latest->humidity,
+                    'air_quality' => (int)($latest->air_quality ?? 0),
+                    'rain_status' => $latest->rain_status ?? 'Cerah',
+                    'water_level' => (float)($latest->water_level ?? 0),
+                    'timestamp'   => $latest->created_at->format('H:i:s')
+                ]);
+            }
+        } catch (\Exception $e) {}
+
+        // Fallback jika database masih kosong
         return response()->json([
-            'temperature' => 29.5,
-            'humidity'    => 65.0,
+            'has_data'    => false,
+            'temperature' => '--',
+            'humidity'    => '--',
+            'air_quality' => '--',
+            'rain_status' => 'Menunggu data',
+            'water_level' => '--',
             'timestamp'   => now()->format('H:i:s')
         ]);
     }
@@ -99,16 +128,10 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function apiParkingData()
-    {
-        return response()->json($this->stateManager->getParkingData());
-    }
-
     public function apiDashboardData()
     {
         $summary = $this->stateManager->getDashboardSummary();
 
-        // Menggabungkan data suhu & kelembapan ke dalam summary dashboard
         if (!isset($summary['temperature'])) {
             $envData = method_exists($this->stateManager, 'getEnvironmentData')
                 ? $this->stateManager->getEnvironmentData()
@@ -121,15 +144,9 @@ class DashboardController extends Controller
         return response()->json($summary);
     }
 
-    // ===== API ESP INGESTION (PENERIMAAN DATA SENSOR) =====
-
-    /**
-     * Menerima kiriman data dari ESP (misal setiap 5 menit sekali).
-     * Logika Filter: Hanya menyimpan ke database jika interval data terakhir sudah >= 1 jam (60 menit).
-     */
+    // ===== API ESP INGESTION (PENERIMAAN DATA SENSOR LINGKUNGAN) =====
     public function storeEnvironmentData(Request $request)
     {
-        // Validasi payload dari ESP
         $validated = $request->validate([
             'temperature' => 'required|numeric',
             'humidity'    => 'required|numeric',
@@ -139,25 +156,18 @@ class DashboardController extends Controller
         ]);
 
         $now = Carbon::now();
-
-        // Cek log data terakhir di database
         $latestLog = EnvironmentLog::latest('created_at')->first();
         $shouldStore = false;
 
         if (!$latestLog) {
-            // Jika database masih kosong, izinkan penyimpanan pertama
             $shouldStore = true;
         } else {
-            // Hitung selisih waktu dalam menit
             $diffInMinutes = $latestLog->created_at->diffInMinutes($now);
-            
-            // Jika selisih waktu sudah mencapai 60 menit (1 jam) atau lebih
             if ($diffInMinutes >= 60) {
                 $shouldStore = true;
             }
         }
 
-        // Simpan ke database jika memenuhi interval 1 jam
         if ($shouldStore) {
             EnvironmentLog::create([
                 'temperature' => $validated['temperature'],
@@ -169,7 +179,6 @@ class DashboardController extends Controller
             ]);
         }
 
-        // Update state secara real-time di memori/cache agar grafik & UI langsung diperbarui
         if (method_exists($this->stateManager, 'updateEnvironmentData')) {
             $this->stateManager->updateEnvironmentData($validated);
         }
@@ -182,6 +191,24 @@ class DashboardController extends Controller
                 : 'Data diterima untuk monitoring real-time, tetapi tidak disimpan (belum 1 jam).',
             'timestamp' => $now->format('Y-m-d H:i:s')
         ]);
+    }
+
+    // ===== HAPUS ARSIP LAPORAN MINGGUAN =====
+    public function destroyReport($id)
+    {
+        $report = DB::table('weekly_reports')->where('id', $id)->first();
+
+        if ($report) {
+            // Hapus file fisik PDF dari storage public jika ada
+            if ($report->file_path && Storage::disk('public')->exists($report->file_path)) {
+                Storage::disk('public')->delete($report->file_path);
+            }
+
+            // Hapus data dari tabel database weekly_reports
+            DB::table('weekly_reports')->where('id', $id)->delete();
+        }
+
+        return redirect()->back()->with('success', 'Arsip laporan berhasil dihapus.');
     }
 
     // ===== API ENDPOINTS (CONTROL) =====
@@ -245,7 +272,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Toggle Auto Schedule ON/OFF
     public function toggleAutoSchedule(Request $request)
     {
         $validated = $request->validate([
@@ -260,7 +286,6 @@ class DashboardController extends Controller
         ]);
     }
 
-    // Toggle Auto Sensor ON/OFF
     public function toggleAutoSensor(Request $request)
     {
         $validated = $request->validate([

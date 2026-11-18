@@ -1,5 +1,5 @@
 <!-- Tombol Floating Chatbot -->
-<div class="chat-float-btn" onclick="toggleChatWindow()" title="Chat Sity Smart City Bot">
+<div class="chat-float-btn" onclick="toggleChatWindow()" title="Chatbot SmartCity">
   <i class="fa-solid fa-headset"></i>
 </div>
 

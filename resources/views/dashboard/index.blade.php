@@ -93,16 +93,16 @@
         -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
         border: 1px solid rgba(255, 255, 255, 0.25) !important;
         border-radius: 16px !important;
-        padding: 12px 16px !important; /* Padding atas-bawah ditipisin */
+        padding: 12px 16px !important;
         color: #ffffff !important;
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
-        max-width: 270px !important; /* Lebar kotak diperkecil jadi lebih ramping */
+        max-width: 270px !important;
         margin-left: auto;
     }
 
     .banner-glass-divider {
         border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-        margin: 6px 0 !important; /* Jarak garis pemisah dideketin */
+        margin: 6px 0 !important;
     }
 
     .banner-glass-card h4, 
@@ -114,11 +114,6 @@
     .banner-glass-card .text-muted,
     .banner-glass-card small {
         color: rgba(255, 255, 255, 0.8) !important;
-    }
-
-    .banner-glass-divider {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-        margin: 12px 0;
     }
 
     .animate-banner-content {
@@ -436,16 +431,26 @@
         L04: { name: 'Sektor Barat' }
     };
 
-    function renderLampGrid(data = {}) {
+    function renderLampGrid(apiData = []) {
         const grid = document.getElementById('dashLampGrid');
         if (!grid) return;
         
         grid.innerHTML = '';
         let activeCount = 0;
 
+        const dbMap = {};
+        if (Array.isArray(apiData)) {
+            apiData.forEach(item => {
+                if (item.sector_code) dbMap[item.sector_code] = item;
+            });
+        } else if (typeof apiData === 'object' && apiData !== null) {
+            Object.assign(dbMap, apiData);
+        }
+
         Object.keys(sectorDetails).forEach(secId => {
-            const sectorInfo = data[secId] || { status: 'inactive' };
-            const isActive = sectorInfo.status === 'active' || sectorInfo.status === 1 || sectorInfo.status === true;
+            const sectorInfo = dbMap[secId] || { status: 'inactive' };
+            const rawStatus = String(sectorInfo.status).toLowerCase();
+            const isActive = (rawStatus === 'active' || rawStatus === 'on' || rawStatus === '1' || sectorInfo.status === true);
 
             let badgeClass = 'status-inactive';
             let statusText = 'Inactive';
@@ -484,18 +489,27 @@
         }
     }
 
-    function renderParkingGrid(apiResponse = {}) {
+    function renderParkingGrid(apiData = []) {
         const grid = document.getElementById('dashParkingGrid');
         if (!grid) return;
 
         grid.innerHTML = '';
         let availableCount = 0;
         const slots = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
-        const slotsData = apiResponse.slots || apiResponse;
+        
+        const dbSlotMap = {};
+        if (Array.isArray(apiData)) {
+            apiData.forEach(item => {
+                if (item.slot_code) dbSlotMap[item.slot_code] = item;
+            });
+        } else if (typeof apiData === 'object' && apiData !== null) {
+            Object.assign(dbSlotMap, apiData.slots || apiData);
+        }
 
         slots.forEach(slotId => {
-            const slotInfo = slotsData[slotId] || { status: 'available' };
-            const isOccupied = slotInfo.status === 'occupied';
+            const slotInfo = dbSlotMap[slotId] || { status: 'available' };
+            const rawStatus = String(slotInfo.status).toLowerCase();
+            const isOccupied = (rawStatus === 'occupied' || rawStatus === '1' || slotInfo.status === true);
 
             let badgeClass = 'status-available';
             let statusText = 'Available';
@@ -532,37 +546,35 @@
         fetch('/api/parking')
             .then(res => res.json())
             .then(data => renderParkingGrid(data))
-            .catch(() => renderParkingGrid({}));
+            .catch(() => renderParkingGrid([]));
 
         // 2. Fetch Smart Lamp
-        fetch('/api/lamp')
+        fetch('/api/smart-lamp')
             .then(res => res.json())
             .then(data => renderLampGrid(data))
             .catch(() => {
-                fetch('/api/smart-lamp')
+                fetch('/api/lamp')
                     .then(res => res.json())
                     .then(data => renderLampGrid(data))
-                    .catch(() => renderLampGrid({}));
+                    .catch(() => renderLampGrid([]));
             });
 
         // 3. Fetch Smart Environment / Temperature & Update Chart + Banner Glass
         fetch('/api/environment')
             .then(res => res.json())
             .then(data => {
-                if (data && data.has_data === true) {
-                    const temp = data.temperature;
-                    const hum = data.humidity;
+                if (data) {
+                    const temp = data.temperature ?? 28.5;
+                    const hum = data.humidity ?? 65.0;
                     const aqi = data.air_quality ?? 48;
-                    const rainStatus = data.rain_status ?? 'Cerah';
-                    const waterLevel = data.water_level ?? 120;
+                    const rainStatus = data.rain_status ?? 'Kering';
+                    const waterLevel = data.water_level ?? 0.0;
                     const timeStr = data.timestamp || new Date().toLocaleTimeString('id-ID');
 
-                    // Update Top Card Summary
                     document.getElementById('dashTempSummary').textContent = temp + ' °C';
                     document.getElementById('dashTempStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
                     document.getElementById('dashTempStatusBadge').textContent = 'Online';
 
-                    // Update Banner Glass Card (Transparan)
                     if (document.getElementById('bannerAqi')) document.getElementById('bannerAqi').textContent = aqi + ' AQI';
                     if (document.getElementById('bannerHumidity')) document.getElementById('bannerHumidity').textContent = hum + ' %';
                     if (document.getElementById('bannerRain')) document.getElementById('bannerRain').textContent = rainStatus;
@@ -570,7 +582,6 @@
                         document.getElementById('bannerRainDesc').textContent = rainStatus.toLowerCase().includes('hujan') ? 'Presipitasi Terdeteksi' : 'Tidak Presipitasi';
                     }
 
-                    // Update Grafik Real-Time
                     if (dashTempChart) {
                         dashTempChart.data.labels.push(timeStr);
                         dashTempChart.data.datasets[0].data.push(temp);
@@ -588,10 +599,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        renderParkingGrid({});
-        renderLampGrid({});
+        renderParkingGrid([]);
+        renderLampGrid([]);
         fetchDashboardData();
-        setInterval(fetchDashboardData, 5000);
+        setInterval(fetchDashboardData, 3000);
     });
 </script>
 @endpush
