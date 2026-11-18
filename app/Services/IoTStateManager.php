@@ -156,7 +156,6 @@ class IoTStateManager
         $this->saveState();
     }
 
-    // TAMBAHKAN INI SUPAYA ERROR MERAH DI CONTROLLER HILANG
     public function updateEnvironmentData(array $data)
     {
         if (!isset($this->state['environment'])) {
@@ -257,7 +256,7 @@ class IoTStateManager
         }
 
         return [
-            'total_slots' => count($slotKeys), // Diperbaiki dari count(names: ...)
+            'total_slots' => count($slotKeys),
             'occupied'    => $occupiedCount,
             'available'   => $availableCount,
             'slots'       => $slots,
@@ -316,6 +315,7 @@ class IoTStateManager
         if ($controlMode === 'auto_schedule' && ($settings['auto_schedule_enabled'] ?? false)) {
             $currentHour = (int)now()->format('H');
             $currentMinute = (int)now()->format('i');
+            
             $currentTime = ($currentHour * 60) + $currentMinute;
             
             $onTimeMinutes = ($settings['schedule_on_hour'] * 60) + $settings['schedule_on_minute'];

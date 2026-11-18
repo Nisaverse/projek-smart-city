@@ -155,8 +155,8 @@
 
                 <!-- Keterangan Legend -->
                 <div class="d-flex align-items-center gap-4 mt-4 pt-3 border-top" style="font-size: 0.8rem; color: #334155;">
-                    <div><span class="badge rounded-pill bg-warning me-1">&nbsp;</span> Active (Menyala)</div>
-                    <div><span class="badge rounded-pill bg-secondary me-1">&nbsp;</span> Inactive (Padam)</div>
+                    <div><span class="badge rounded-pill bg-warning me-1">&nbsp;</span> On (Menyala)</div>
+                    <div><span class="badge rounded-pill bg-secondary me-1">&nbsp;</span> Off (Padam)</div>
                 </div>
             </div>
         </div>
@@ -214,7 +214,7 @@
 
     const sectorKeys = Object.keys(sectorDataInfo);
 
-    function renderLampUI(apiData = []) {
+    function renderLampUI(apiData = {}) {
         const gridContainer = document.getElementById('lampSectorsGrid');
         const tableBody = document.getElementById('detailSectorTableBody');
         
@@ -225,22 +225,9 @@
         let inactiveCount = 0;
         let hasDataFromIoT = false;
 
-        // Ubah format Array/Object dari API/Cache ke Map Object agar gampang diakses
-        const dbSectorMap = {};
-        if (Array.isArray(apiData)) {
-            apiData.forEach(item => {
-                if (item.sector_code) {
-                    dbSectorMap[item.sector_code] = item;
-                }
-            });
-        } else if (typeof apiData === 'object' && apiData !== null) {
-            Object.assign(dbSectorMap, apiData);
-        }
-
         sectorKeys.forEach(sectorId => {
-            const sectorInfo = dbSectorMap[sectorId] || { status: 'inactive', updated_at: null };
+            const sectorInfo = apiData[sectorId] || { status: 'off', updated_at: null };
             
-            // Format waktu update
             let timeStr = 'Belum Update';
             if (sectorInfo.updated_at) {
                 hasDataFromIoT = true;
@@ -250,21 +237,21 @@
 
             let statusClass = 'is-inactive';
             let badgeClass = 'status-inactive';
-            let statusText = 'Inactive';
+            let statusText = 'Off';
 
             const rawStatus = String(sectorInfo.status).toLowerCase();
 
-            // Pengecekan status 'active' / 'on' / 1 / true
-            if (rawStatus === 'active' || rawStatus === 'on' || rawStatus === '1' || rawStatus === 'true' || sectorInfo.status === true) {
+            // Cek apakah 'on' atau aktif
+            if (rawStatus === 'on' || rawStatus === 'active' || rawStatus === '1' || rawStatus === 'true' || sectorInfo.status === true) {
                 statusClass = 'is-active';
                 badgeClass = 'status-active';
-                statusText = 'Active';
+                statusText = 'On';
                 activeCount++;
             } else {
                 inactiveCount++;
             }
 
-            // Render ke Grid Kartu Sektor Lampu
+            // Render ke Grid Kartu Sektor Lampu (Sudah disesuaikan jadi On/Off)
             gridContainer.innerHTML += `
                 <div class="col-md-6">
                     <div class="sector-box ${statusClass}">
@@ -274,13 +261,13 @@
                         </div>
                         <h6 class="fw-bold mb-1" style="font-size: 0.95rem; color: #0f172a;">${sectorDataInfo[sectorId].name}</h6>
                         <div style="font-size: 0.8rem; color: #475569;" class="mt-2">
-                            Status: ${statusText === 'Active' ? 'Menyala' : 'Padam'}
+                            Status: ${statusText === 'On' ? 'Menyala (On)' : 'Padam (Off)'}
                         </div>
                     </div>
                 </div>
             `;
 
-            // Render ke Tabel Detail Sektor Lampu (Typo tanda strip '-' sudah dibersihkan)
+            // Render ke Tabel Detail Sektor Lampu
             tableBody.innerHTML += `
                 <tr class="border-bottom">
                     <td class="fw-bold text-dark">${sectorId} <small class="fw-normal text-muted">${sectorDataInfo[sectorId].name}</small></td>
@@ -315,23 +302,31 @@
 
     function sectorTextBadge(status) {
         const rawStatus = String(status).toLowerCase();
-        if (rawStatus === 'active' || rawStatus === 'on' || rawStatus === '1' || rawStatus === 'true' || status === true) {
-            return '<span class="text-dark fw-semibold" style="background: #fef08a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Active</span>';
+        if (rawStatus === 'on' || rawStatus === 'active' || rawStatus === '1' || rawStatus === 'true' || status === true) {
+            return '<span class="text-dark fw-semibold" style="background: #fef08a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">On</span>';
         }
-        return '<span class="text-secondary fw-semibold" style="background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Inactive</span>';
+        return '<span class="text-secondary fw-semibold" style="background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Off</span>';
     }
 
-    function fetchLampDataFromDB() {
-        fetch('/api/smart-lamp')
+   function fetchLampDataFromDB() {
+        // Tambahkan parameter ?t=... + angka random agar browser tidak menyimpan cache lama
+        fetch('/api/smart-lamp?t=' + new Date().getTime())
             .then(res => res.json())
-            .then(data => renderLampUI(data))
-            .catch(() => renderLampUI([]));
+            .then(data => {
+                console.log("Data Lampu diterima dari API:", data); // Untuk debugging di F12 Console
+                renderLampUI(data);
+            })
+            .catch(err => {
+                console.error("Gagal ambil data lampu:", err);
+                renderLampUI({});
+            });
     }
 
-    // Filter Pencarian & Real-time Auto-Refresh
+    // Pastikan interval berjalan stabil
     document.addEventListener('DOMContentLoaded', () => {
         fetchLampDataFromDB();
-        setInterval(fetchLampDataFromDB, 3000); // Ambil data tiap 3 detik
+        setInterval(fetchLampDataFromDB, 5000); // Ambil data baru tiap 5 detik
+    });
 
         const searchInput = document.getElementById('searchSectorInput');
         if (searchInput) {
@@ -344,6 +339,5 @@
                 });
             });
         }
-    });
 </script>
 @endpush

@@ -47,9 +47,15 @@ class DashboardController extends Controller
 
     // ===== API ENDPOINTS (GET DATA REAL-TIME) =====
 
-    public function apiLampData()
+  public function apiLampData()
     {
-        return response()->json($this->stateManager->getLampData());
+        // Ambil data langsung dari Cache yang diisi oleh ListenMqtt.php
+        return response()->json([
+            'L01' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L01', ['sector_code' => 'L01', 'status' => 'inactive']),
+            'L02' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L02', ['sector_code' => 'L02', 'status' => 'inactive']),
+            'L03' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L03', ['sector_code' => 'L03', 'status' => 'inactive']),
+            'L04' => \Illuminate\Support\Facades\Cache::get('smart_lamp_L04', ['sector_code' => 'L04', 'status' => 'inactive']),
+        ]);
     }
 
     public function apiParkingData()

@@ -71,17 +71,19 @@ class ListenMqtt extends Command
             return;
         }
 
-        if (str_contains($topic, 'telemetry') || isset($data['temperature_c']) || isset($data['water_level_cm']) || isset($data['jarak'])) {
+        // 1. 💡 KHUSUS LAMPU: Jalankan jika payload JSON memiliki data relays atau relay1
+        if (isset($data['relays']) || isset($data['relay1'])) {
+            $this->handleLampMessage($topic, $data);
+        }
+
+        // 2. 🌡️ KHUSUS LINGKUNGAN: Jalankan jika ada data temperature
+        if (str_contains($topic, 'telemetry') || isset($data['temperature_c'])) {
             $this->handleEnvironmentMessage($topic, $data);
         }
-        elseif (str_contains($topic, 'parking')) {
+
+        // 3. 🅿️ KHUSUS PARKIR: Jalankan jika topik mengandung kata parking
+        if (str_contains($topic, 'parking')) {
             $this->handleParkingMessage($topic, $data);
-        }
-        elseif (str_contains($topic, 'lamp')) {
-            $this->handleLampMessage($topic, $data);
-        } 
-        else {
-            $this->info("   📊 Received other data: " . json_encode($data));
         }
 
         $this->newLine();
@@ -98,11 +100,6 @@ class ListenMqtt extends Command
             $rainStatus = $data['rain_status'] ?? 'Kering';
             $waterLevel = $data['water_level_cm'] ?? $data['water_level'] ?? $data['jarak'] ?? 0.0;
 
-            // =========================================================================
-            // JALUR 1: KE WEBSITE (REAL-TIME TIAP 5 DETIK)
-            // Setiap ada MQTT masuk, Cache langsung di-update tanpa syarat waktu.
-            // Hasilnya: Website/Smart Monitoring gerak terus *live* tiap 5 detik.
-            // =========================================================================
             Cache::put('latest_environment_data', [
                 'temperature' => $temp,
                 'humidity'    => $humidity,
@@ -114,10 +111,6 @@ class ListenMqtt extends Command
 
             $this->info("   ⚡ JALUR 1 (WEB): Tampilan web diperbarui secara real-time ke Cache.");
 
-            // =========================================================================
-            // JALUR 2: KE DATABASE MYSQL (HANYA 1 JAM SEKALI)
-            // Kita cek waktu terakhir data masuk database. Kalau belum 1 jam, diabaikan!
-            // =========================================================================
             $lastLoggedTime = Cache::get('environment_last_logged_time');
 
             if (!$lastLoggedTime || now()->diffInMinutes($lastLoggedTime) >= 60) {
@@ -129,12 +122,9 @@ class ListenMqtt extends Command
                     'water_level' => $waterLevel,
                 ]);
 
-                // Update penanda waktu agar database istirahat dulu selama 1 jam ke depan
                 Cache::put('environment_last_logged_time', now(), now()->addHours(2));
 
-                $this->info("   💾 JALUR 2 (DATABASE): Rekap data berhasil disimpan ke MySQL (Masuk 1 jam sekali)!");
-            } else {
-                $this->info("   ⏳ JALUR 2 (DATABASE): Melewati penyimpanan database (Belum 1 jam sejak log terakhir).");
+                $this->info("   💾 JALUR 2 (DATABASE): Rekap data berhasil disimpan ke MySQL!");
             }
 
         } catch (\Exception $e) {
@@ -162,23 +152,42 @@ class ListenMqtt extends Command
         }
     }
 
-    private function handleLampMessage($topic, $data)
+  private function handleLampMessage($topic, $data)
     {
-        $this->info("   💡 Memproses data Smart Lamp...");
-        try {
-            $sectorCode = $data['sector_code'] ?? null;
-            $status     = $data['status'] ?? null;
+        $this->info("   💡 Menerima data JSON mentah untuk lampu:");
+        $this->line(json_encode($data)); 
 
-            if ($sectorCode && $status) {
-                Cache::put("smart_lamp_{$sectorCode}", [
-                    'sector_code' => $sectorCode,
-                    'status'      => $status,
-                    'updated_at'  => now()->format('Y-m-d H:i:s')
-                ], now()->addMinutes(10));
-                $this->info("   ⚡ LAMP: Sektor {$sectorCode} diperbarui jadi {$status}");
+        try {
+            $relays = $data['relays'] ?? $data;
+
+            $mapping = [
+                'relay1' => 'L01',
+                'relay2' => 'L02',
+                'relay3' => 'L03',
+                'relay4' => 'L04'
+            ];
+
+            foreach ($mapping as $relayKey => $sectorCode) {
+                $val = $relays[$relayKey] ?? ($data[$relayKey] ?? null);
+
+                // CETAK KE TERMINAL: Supaya kita tahu persis nilai dari ESP32 itu apa
+                $this->info("      -> Cek {$relayKey} ({$sectorCode}): " . var_export($val, true));
+
+                if ($val !== null) {
+                    // Paksa ubah ke boolean true jika nilainya true, 'true', 1, atau '1'
+                    $isOn = ($val === true || $val === 'true' || $val === 1 || $val === '1' || strtolower((string)$val) === 'on');
+                    $statusStr = $isOn ? 'on' : 'off';
+
+                    \Illuminate\Support\Facades\Cache::forget("smart_lamp_{$sectorCode}");
+                    \Illuminate\Support\Facades\Cache::put("smart_lamp_{$sectorCode}", [
+                        'sector_code' => $sectorCode,
+                        'status'      => $statusStr,
+                        'updated_at'  => now()->format('Y-m-d H:i:s')
+                    ], now()->addDay());
+                }
             }
         } catch (\Exception $e) {
-            $this->error("   ❌ Gagal memproses lampu: " . $e->getMessage());
+            $this->error("   ❌ Error: " . $e->getMessage());
         }
     }
 }
