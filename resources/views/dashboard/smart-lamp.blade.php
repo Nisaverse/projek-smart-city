@@ -155,8 +155,8 @@
 
                 <!-- Keterangan Legend -->
                 <div class="d-flex align-items-center gap-4 mt-4 pt-3 border-top" style="font-size: 0.8rem; color: #334155;">
-                    <div><span class="badge rounded-pill bg-warning me-1">&nbsp;</span> Active (Menyala)</div>
-                    <div><span class="badge rounded-pill bg-secondary me-1">&nbsp;</span> Inactive (Padam)</div>
+                    <div><span class="badge rounded-pill bg-warning me-1">&nbsp;</span> On (Menyala)</div>
+                    <div><span class="badge rounded-pill bg-secondary me-1">&nbsp;</span> Off (Padam)</div>
                 </div>
             </div>
         </div>
@@ -191,7 +191,7 @@
                     <h6 class="fw-bold m-0" style="color: #0f172a;">Aktivitas Terbaru</h6>
                     <a href="#" class="text-decoration-none text-primary" style="font-size: 0.8rem; font-weight: 600;">Lihat Semua</a>
                 </div>
-                <div class="text-center py-4 text-dark opacity-75">
+                <div class="text-center py-4 text-dark opacity-75" id="recentActivityBox">
                     <i class="fas fa-clock fa-2x mb-2 text-dark opacity-50"></i>
                     <p class="mb-0" style="font-size: 0.85rem; font-weight: 600;">Belum ada aktivitas</p>
                     <small style="font-size: 0.72rem;">Data aktivitas lampu akan muncul setelah perangkat IoT mengirimkan informasi.</small>
@@ -214,7 +214,7 @@
 
     const sectorKeys = Object.keys(sectorDataInfo);
 
-    function renderLampUI(data = {}) {
+    function renderLampUI(apiData = {}) {
         const gridContainer = document.getElementById('lampSectorsGrid');
         const tableBody = document.getElementById('detailSectorTableBody');
         
@@ -223,28 +223,35 @@
 
         let activeCount = 0;
         let inactiveCount = 0;
-
-        const updateTime = data.timestamp || new Date().toLocaleTimeString('id-ID');
+        let hasDataFromIoT = false;
 
         sectorKeys.forEach(sectorId => {
-            const sectorInfo = data[sectorId] || { status: 'inactive' };
-            const timeStr = sectorInfo.updated_at || updateTime;
+            const sectorInfo = apiData[sectorId] || { status: 'off', updated_at: null };
+            
+            let timeStr = 'Belum Update';
+            if (sectorInfo.updated_at) {
+                hasDataFromIoT = true;
+                const d = new Date(sectorInfo.updated_at);
+                timeStr = isNaN(d.getTime()) ? sectorInfo.updated_at : d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
 
             let statusClass = 'is-inactive';
             let badgeClass = 'status-inactive';
-            let statusText = 'Inactive';
+            let statusText = 'Off';
 
-            // Penanganan fleksibel untuk status 'active' (baik string maupun angka 1)
-            if (sectorInfo.status === 'active' || sectorInfo.status === 1 || sectorInfo.status === true) {
+            const rawStatus = String(sectorInfo.status).toLowerCase();
+
+            // Cek apakah 'on' atau aktif
+            if (rawStatus === 'on' || rawStatus === 'active' || rawStatus === '1' || rawStatus === 'true' || sectorInfo.status === true) {
                 statusClass = 'is-active';
                 badgeClass = 'status-active';
-                statusText = 'Active';
+                statusText = 'On';
                 activeCount++;
             } else {
                 inactiveCount++;
             }
 
-            // Render ke Grid Kartu Sektor Lampu
+            // Render ke Grid Kartu Sektor Lampu (Sudah disesuaikan jadi On/Off)
             gridContainer.innerHTML += `
                 <div class="col-md-6">
                     <div class="sector-box ${statusClass}">
@@ -254,7 +261,7 @@
                         </div>
                         <h6 class="fw-bold mb-1" style="font-size: 0.95rem; color: #0f172a;">${sectorDataInfo[sectorId].name}</h6>
                         <div style="font-size: 0.8rem; color: #475569;" class="mt-2">
-                            Status: ${statusText === 'Active' ? 'Menyala' : 'Padam'}
+                            Status: ${statusText === 'On' ? 'Menyala (On)' : 'Padam (Off)'}
                         </div>
                     </div>
                 </div>
@@ -263,7 +270,7 @@
             // Render ke Tabel Detail Sektor Lampu
             tableBody.innerHTML += `
                 <tr class="border-bottom">
-                    <td class="fw-bold text-dark">${sectorId}</td>
+                    <td class="fw-bold text-dark">${sectorId} <small class="fw-normal text-muted">${sectorDataInfo[sectorId].name}</small></td>
                     <td>${sectorTextBadge(sectorInfo.status)}</td>
                     <td class="text-end text-dark opacity-75" style="font-size: 0.75rem;">${timeStr}</td>
                 </tr>
@@ -273,6 +280,7 @@
         // Update Kartu Statistik Atas
         document.getElementById('cardActiveCount').textContent = activeCount;
         document.getElementById('cardInactiveCount').textContent = inactiveCount;
+        document.getElementById('cardTotalSector').textContent = sectorKeys.length;
         
         const percentActive = Math.round((activeCount / sectorKeys.length) * 100);
         const percentInactive = Math.round((inactiveCount / sectorKeys.length) * 100);
@@ -283,9 +291,9 @@
         document.getElementById('barInactive').style.width = percentInactive + '%';
         document.getElementById('textInactiveDesc').textContent = `Sektor padam (${percentInactive}%)`;
 
-        if (activeCount > 0 || inactiveCount > 0) {
+        if (hasDataFromIoT) {
             document.getElementById('iotMainStatus').textContent = 'Online';
-            document.getElementById('iotStatusText').textContent = 'Terhubung';
+            document.getElementById('iotStatusText').innerHTML = '<span class="text-success">● Terhubung</span>';
         } else {
             document.getElementById('iotMainStatus').textContent = '-';
             document.getElementById('iotStatusText').textContent = 'Menunggu data perangkat';
@@ -293,23 +301,32 @@
     }
 
     function sectorTextBadge(status) {
-        if (status === 'active' || status === 1 || status === true) {
-            return '<span class="text-dark fw-semibold" style="background: #fef08a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Active</span>';
+        const rawStatus = String(status).toLowerCase();
+        if (rawStatus === 'on' || rawStatus === 'active' || rawStatus === '1' || rawStatus === 'true' || status === true) {
+            return '<span class="text-dark fw-semibold" style="background: #fef08a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">On</span>';
         }
-        return '<span class="text-secondary fw-semibold" style="background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Inactive</span>';
+        return '<span class="text-secondary fw-semibold" style="background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Off</span>';
     }
 
-    function fetchLampDataFromDB() {
-        fetch('/api/smart-lamp')
+   function fetchLampDataFromDB() {
+        // Tambahkan parameter ?t=... + angka random agar browser tidak menyimpan cache lama
+        fetch('/api/smart-lamp?t=' + new Date().getTime())
             .then(res => res.json())
-            .then(data => renderLampUI(data))
-            .catch(() => renderLampUI({}));
+            .then(data => {
+                console.log("Data Lampu diterima dari API:", data); // Untuk debugging di F12 Console
+                renderLampUI(data);
+            })
+            .catch(err => {
+                console.error("Gagal ambil data lampu:", err);
+                renderLampUI({});
+            });
     }
 
-    // Filter Pencarian Tabel Sektor Lampu
+    // Pastikan interval berjalan stabil
     document.addEventListener('DOMContentLoaded', () => {
         fetchLampDataFromDB();
-        setInterval(fetchLampDataFromDB, 3000);
+        setInterval(fetchLampDataFromDB, 5000); // Ambil data baru tiap 5 detik
+    });
 
         const searchInput = document.getElementById('searchSectorInput');
         if (searchInput) {
@@ -322,6 +339,5 @@
                 });
             });
         }
-    });
 </script>
 @endpush

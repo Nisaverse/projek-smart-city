@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -25,43 +26,20 @@ class IoTStateManager
                 $this->state['lamps'] = $this->getDefaultState()['lamps'];
                 $this->saveState();
             }
-            if (!isset($this->state['waste']) || !is_array($this->state['waste'])) {
-                $this->state['waste'] = $this->getDefaultState()['waste'];
-                $this->saveState();
-            }
         } else {
             $this->state = $this->getDefaultState();
             $this->saveState();
         }
 
-        if (
-            !isset($this->state['parking']) ||
-            $this->state['parking']['total_slots'] != 8 ||
-            isset($this->state['parking']['zones']['zone_c']) ||
-            !isset($this->state['parking']['zones']['zone_b'])
-        ) {
+        if (!isset($this->state['parking'])) {
             $this->state['parking'] = [
-                'total_slots' => 8,
-                'occupied' => 4,
-                'zones' => [
-                    'zone_a' => ['total' => 4, 'occupied' => 2],
-                    'zone_b' => ['total' => 4, 'occupied' => 2],
-                ]
+                'total_slots' => 10,
             ];
             $this->saveState();
         }
 
         if (!isset($this->state['auto_settings'])) {
             $this->state['auto_settings'] = $this->getDefaultState()['auto_settings'];
-            $this->saveState();
-        }
-
-        if (!isset($this->state['auto_settings']['auto_schedule_enabled'])) {
-            $this->state['auto_settings']['auto_schedule_enabled'] = true;
-            $this->saveState();
-        }
-        if (!isset($this->state['auto_settings']['auto_sensor_enabled'])) {
-            $this->state['auto_settings']['auto_sensor_enabled'] = false;
             $this->saveState();
         }
     }
@@ -71,28 +49,13 @@ class IoTStateManager
         return [
             'updated_at' => now()->toIso8601String(),
             'lamps' => [
-                'lamp_1' => ['status' => 1, 'brightness' => 80, 'power' => 4.8, 'name' => 'Jl. Sudirman'],
-                'lamp_2' => ['status' => 0, 'brightness' => 51, 'power' => 3.1, 'name' => 'Jl. Thamrin'],
-                'lamp_3' => ['status' => 1, 'brightness' => 77, 'power' => 4.6, 'name' => 'Jl. Gatot Subroto'],
-                'lamp_4' => ['status' => 0, 'brightness' => 63, 'power' => 3.8, 'name' => 'Jl. Rasuna Said'],
-            ],
-            'waste' => [
-                'bin_1' => ['level' => 45, 'location' => 'Jl. Sudirman'],
-                'bin_2' => ['level' => 60, 'location' => 'Jl. Thamrin'],
-                'bin_3' => ['level' => 30, 'location' => 'Jl. Gatot Subroto'],
-                'bin_4' => ['level' => 70, 'location' => 'Jl. Rasuna Said'],
-            ],
-            'parking' => [
-                'total_slots' => 8,
-                'occupied' => 4,
-                'zones' => [
-                    'zone_a' => ['total' => 4, 'occupied' => 2],
-                    'zone_b' => ['total' => 4, 'occupied' => 2],
-                ]
+                'L01' => ['name' => 'Sektor Utara', 'status' => 'active', 'updated_at' => now()->format('H:i:s')],
+                'L02' => ['name' => 'Sektor Selatan', 'status' => 'inactive', 'updated_at' => now()->format('H:i:s')],
+                'L03' => ['name' => 'Sektor Timur', 'status' => 'active', 'updated_at' => now()->format('H:i:s')],
+                'L04' => ['name' => 'Sektor Barat', 'status' => 'inactive', 'updated_at' => now()->format('H:i:s')],
             ],
             'control_mode' => 'manual',
             'sensor_light_level' => 65,
-
             'auto_settings' => [
                 'schedule_on_hour' => 17,
                 'schedule_on_minute' => 30,
@@ -103,6 +66,17 @@ class IoTStateManager
                 'auto_sensor_enabled' => false,
             ],
         ];
+    }
+
+    public function saveState()
+    {
+        $this->state['updated_at'] = now()->toIso8601String();
+        Storage::put($this->stateFile, json_encode($this->state, JSON_PRETTY_PRINT));
+    }
+
+    public function getState()
+    {
+        return $this->state;
     }
 
     public function updateAutoSettings($settings)
@@ -152,17 +126,6 @@ class IoTStateManager
         return $this->state['auto_settings']['auto_sensor_enabled'];
     }
 
-    public function saveState()
-    {
-        $this->state['updated_at'] = now()->toIso8601String();
-        Storage::put($this->stateFile, json_encode($this->state, JSON_PRETTY_PRINT));
-    }
-
-    public function getState()
-    {
-        return $this->state;
-    }
-
     public function updateLamp($lampId, $data)
     {
         if (isset($this->state['lamps'][$lampId])) {
@@ -171,29 +134,13 @@ class IoTStateManager
                     $this->state['lamps'][$lampId][$key] = $value;
                 }
             }
-
-            if (isset($data['mode'])) {
-                if ($data['mode'] === 'AUTO') {
-                    $settings = $this->getAutoSettings();
-                    if (!($settings['auto_schedule_enabled'] ?? false) && !($settings['auto_sensor_enabled'] ?? false)) {
-                        $this->state['control_mode'] = 'manual';
-                        $this->setControlModeDB('manual');
-                    }
-                } elseif ($data['mode'] === 'MANUAL') {
-                    $this->state['control_mode'] = 'manual';
-                    $this->setControlModeDB('manual');
-                }
-            }
-            
-            if (!isset($data['power'])) {
-                $basePower = ($this->state['lamps'][$lampId]['brightness'] / 100) * 6;
-                $variation = rand(-3, 3) / 10;
-                $this->state['lamps'][$lampId]['power'] = round(max(0, $basePower + $variation), 1);
-            } else {
-                $this->state['lamps'][$lampId]['power'] = round(max(0, (float)$data['power']), 1);
-            }
-            
             $this->saveState();
+
+            Cache::put("smart_lamp_{$lampId}", [
+                'sector_code' => $lampId,
+                'status' => $this->state['lamps'][$lampId]['status'],
+                'updated_at' => now()->format('Y-m-d H:i:s')
+            ], now()->addMinutes(10));
         }
     }
 
@@ -201,18 +148,6 @@ class IoTStateManager
     {
         $this->state['control_mode'] = $mode;
         $this->saveState();
-        $this->setControlModeDB($mode);
-    }
-
-    private function setControlModeDB($mode)
-    {
-        try {
-            DB::table('control_settings')
-                ->updateOrInsert(
-                    ['setting_key' => 'control_mode'],
-                    ['setting_value' => $mode, 'updated_at' => now()]
-                );
-        } catch (\Exception $e) {}
     }
 
     public function setSensorLightLevel($level)
@@ -221,7 +156,6 @@ class IoTStateManager
         $this->saveState();
     }
 
-    // Tambahan method untuk update state lingkungan secara real-time
     public function updateEnvironmentData(array $data)
     {
         if (!isset($this->state['environment'])) {
@@ -234,7 +168,7 @@ class IoTStateManager
     public function getEnvironmentData()
     {
         try {
-            $latest = DB::table('environment_histories')->orderBy('id', 'desc')->first();
+            $latest = \App\Models\EnvironmentLog::latest('created_at')->first();
 
             if ($latest) {
                 return [
@@ -244,7 +178,7 @@ class IoTStateManager
                     'air_quality' => (int)($latest->air_quality ?? 0),
                     'rain_status' => $latest->rain_status ?? 'Cerah',
                     'water_level' => (float)($latest->water_level ?? 0),
-                    'timestamp'   => now()->format('H:i:s')
+                    'timestamp'   => $latest->created_at->format('H:i:s')
                 ];
             }
         } catch (\Exception $e) {}
@@ -262,123 +196,95 @@ class IoTStateManager
 
     public function getLampData()
     {
-        try {
-            $lamps = DB::table('smart_lamps')->get();
+        $sectorKeys = ['L01', 'L02', 'L03', 'L04'];
+        $result = [];
 
-            if ($lamps->isNotEmpty()) {
-                $result = [];
-                foreach ($lamps as $lamp) {
-                    $result[$lamp->sector_code] = [
-                        'name'       => $lamp->sector_name,
-                        'status'     => $lamp->status,
-                        'updated_at' => Carbon::parse($lamp->updated_at)->format('H:i:s')
-                    ];
-                }
-
-                $dbMode = 'manual';
-                $setting = DB::table('control_settings')->where('setting_key', 'control_mode')->first();
-                if ($setting) {
-                    $dbMode = $setting->setting_value;
-                }
-
-                $result['control_mode'] = $dbMode;
-                $result['timestamp']    = now()->format('H:i:s');
-
-                return $result;
+        foreach ($sectorKeys as $sectorId) {
+            $cachedData = Cache::get("smart_lamp_{$sectorId}");
+            
+            if ($cachedData) {
+                $result[$sectorId] = [
+                    'name'       => $this->state['lamps'][$sectorId]['name'] ?? "Sektor {$sectorId}",
+                    'status'     => $cachedData['status'],
+                    'updated_at' => $cachedData['updated_at']
+                ];
+            } else {
+                $result[$sectorId] = [
+                    'name'       => $this->state['lamps'][$sectorId]['name'] ?? "Sektor {$sectorId}",
+                    'status'     => 'inactive',
+                    'updated_at' => null
+                ];
             }
-        } catch (\Exception $e) {}
+        }
 
-        return [
-            'L01' => ['name' => 'Sektor Utara', 'status' => 'active', 'updated_at' => now()->format('H:i:s')],
-            'L02' => ['name' => 'Sektor Selatan', 'status' => 'inactive', 'updated_at' => now()->format('H:i:s')],
-            'L03' => ['name' => 'Sektor Timur', 'status' => 'active', 'updated_at' => now()->format('H:i:s')],
-            'L04' => ['name' => 'Sektor Barat', 'status' => 'inactive', 'updated_at' => now()->format('H:i:s')],
-            'control_mode' => 'manual',
-            'timestamp' => now()->format('H:i:s'),
-        ];
-    }
+        $result['control_mode'] = $this->state['control_mode'] ?? 'manual';
+        $result['timestamp']    = now()->format('H:i:s');
 
-    public function getWasteData()
-    {
-        $waste = $this->state['waste'] ?? $this->getDefaultState()['waste'];
-        return [
-            'bin_1' => ['level' => $waste['bin_1']['level'], 'status' => $waste['bin_1']['level'] > 80 ? 'Penuh' : 'Normal', 'location' => $waste['bin_1']['location']],
-            'bin_2' => ['level' => $waste['bin_2']['level'], 'status' => $waste['bin_2']['level'] > 80 ? 'Penuh' : 'Normal', 'location' => $waste['bin_2']['location']],
-            'bin_3' => ['level' => $waste['bin_3']['level'], 'status' => $waste['bin_3']['level'] > 80 ? 'Penuh' : 'Normal', 'location' => $waste['bin_3']['location']],
-            'bin_4' => ['level' => $waste['bin_4']['level'], 'status' => $waste['bin_4']['level'] > 80 ? 'Penuh' : 'Normal', 'location' => $waste['bin_4']['location']],
-            'timestamp' => now()->format('H:i:s'),
-        ];
+        return $result;
     }
 
     public function getParkingData()
     {
-        try {
-            $parkings = DB::table('smart_parkings')->get();
+        $slotKeys = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
+        $slots = [];
+        $occupiedCount = 0;
+        $availableCount = 0;
 
-            if ($parkings->isNotEmpty()) {
-                $totalSlots = $parkings->count();
-                $occupiedCount = $parkings->where('status', 'occupied')->count();
-                $availableCount = $totalSlots - $occupiedCount; // Diperbaiki dari baris terpotong
+        foreach ($slotKeys as $slotId) {
+            $cachedData = Cache::get("parking_slot_{$slotId}");
 
-                $slots = [];
-                foreach ($parkings as $p) {
-                    $slots[$p->slot_code] = [
-                        'status' => $p->status,
-                        'updated_at' => Carbon::parse($p->updated_at)->format('H:i:s'),
-                    ];
-                }
-
-                return [
-                    'total_slots' => $totalSlots,
-                    'occupied'    => $occupiedCount,
-                    'available'   => $availableCount,
-                    'slots'       => $slots,
-                    'timestamp'   => now()->format('H:i:s'),
+            if ($cachedData) {
+                $status = $cachedData['status'];
+                $slots[$slotId] = [
+                    'status'     => $status,
+                    'updated_at' => $cachedData['updated_at']
                 ];
+
+                $rawStatus = strtolower((string)$status);
+                if ($rawStatus === 'occupied' || $rawStatus === '1' || $rawStatus === 'true' || $status === true) {
+                    $occupiedCount++;
+                } else {
+                    $availableCount++;
+                }
+            } else {
+                $slots[$slotId] = [
+                    'status'     => 'available',
+                    'updated_at' => null
+                ];
+                $availableCount++;
             }
-        } catch (\Exception $e) {}
+        }
 
         return [
-            'total_slots' => 10,
-            'occupied' => 4,
-            'available' => 6,
-            'timestamp' => now()->format('H:i:s'),
+            'total_slots' => count($slotKeys),
+            'occupied'    => $occupiedCount,
+            'available'   => $availableCount,
+            'slots'       => $slots,
+            'timestamp'   => now()->format('H:i:s'),
         ];
     }
 
     public function getDashboardSummary()
     {
-        $waste = $this->state['waste'] ?? $this->getDefaultState()['waste'];
         $env = $this->getEnvironmentData();
-
-        $parkingTotal = 10;
-        $parkingOccupied = 4;
-        try {
-            $parkings = DB::table('smart_parkings')->get();
-            if ($parkings->isNotEmpty()) {
-                $parkingTotal = $parkings->count();
-                $parkingOccupied = $parkings->where('status', 'occupied')->count();
-            }
-        } catch (\Exception $e) {}
-        
-        $parkingAvailable = $parkingTotal - $parkingOccupied; // Diperbaiki dari baris terpotong
+        $parking = $this->getParkingData();
+        $lampData = $this->getLampData();
 
         $activeLamps = 0;
-        try {
-            $activeLamps = DB::table('smart_lamps')->where('status', 'active')->count();
-        } catch (\Exception $e) {}
-
-        $totalBins = count($waste);
-        $alerts = count(array_filter($waste, fn($b) => $b['level'] > 80));
+        foreach ($lampData as $key => $val) {
+            if ($key !== 'control_mode' && $key !== 'timestamp' && is_array($val)) {
+                $st = strtolower((string)($val['status'] ?? ''));
+                if ($st === 'active' || $st === 'on' || $st === '1' || $val['status'] === true) {
+                    $activeLamps++;
+                }
+            }
+        }
 
         return [
             'active_lamps'      => $activeLamps,
-            'total_bins'        => $totalBins,
-            'parking_available' => $parkingAvailable,
-            'parking_occupied'  => $parkingOccupied,
-            'parking_total'     => $parkingTotal,
-            'alerts'            => $alerts,
-            'avg_waste_level'   => round(array_sum(array_column($waste, 'level')) / 4),
+            'parking_available' => $parking['available'],
+            'parking_occupied'  => $parking['occupied'],
+            'parking_total'     => $parking['total_slots'],
             'temperature'       => $env['temperature'],
             'humidity'          => $env['humidity'],
         ];
@@ -393,10 +299,13 @@ class IoTStateManager
         if ($controlMode === 'auto_sensor' && ($settings['auto_sensor_enabled'] ?? false)) {
             $isDark = $lightLevel < $settings['sensor_threshold'];
             
-            foreach ($this->state['lamps'] as &$lamp) {
-                $lamp['status'] = $isDark ? 1 : 0;
-                $lamp['brightness'] = $isDark ? 90 : 0;
-                $lamp['power'] = round(($lamp['brightness'] / 100) * 6, 1);
+            foreach ($this->state['lamps'] as $lampId => &$lamp) {
+                $lamp['status'] = $isDark ? 'active' : 'inactive';
+                Cache::put("smart_lamp_{$lampId}", [
+                    'sector_code' => $lampId,
+                    'status' => $lamp['status'],
+                    'updated_at' => now()->format('Y-m-d H:i:s')
+                ], now()->addMinutes(10));
             }
             
             $this->saveState();
@@ -406,7 +315,8 @@ class IoTStateManager
         if ($controlMode === 'auto_schedule' && ($settings['auto_schedule_enabled'] ?? false)) {
             $currentHour = (int)now()->format('H');
             $currentMinute = (int)now()->format('i');
-            $currentTime = ($currentHour * 60) + $currentMinute; // Diperbaiki dari baris terpotong
+            
+            $currentTime = ($currentHour * 60) + $currentMinute;
             
             $onTimeMinutes = ($settings['schedule_on_hour'] * 60) + $settings['schedule_on_minute'];
             $offTimeMinutes = ($settings['schedule_off_hour'] * 60) + $settings['schedule_off_minute'];
@@ -418,10 +328,13 @@ class IoTStateManager
                 $isNightTime = ($currentTime >= $onTimeMinutes) && ($currentTime < $offTimeMinutes);
             }
             
-            foreach ($this->state['lamps'] as &$lamp) {
-                $lamp['status'] = $isNightTime ? 1 : 0;
-                $lamp['brightness'] = $isNightTime ? 85 : 0;
-                $lamp['power'] = round(($lamp['brightness'] / 100) * 6, 1);
+            foreach ($this->state['lamps'] as $lampId => &$lamp) {
+                $lamp['status'] = $isNightTime ? 'active' : 'inactive';
+                Cache::put("smart_lamp_{$lampId}", [
+                    'sector_code' => $lampId,
+                    'status' => $lamp['status'],
+                    'updated_at' => now()->format('Y-m-d H:i:s')
+                ], now()->addMinutes(10));
             }
             
             $this->saveState();

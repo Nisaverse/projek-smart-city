@@ -7,10 +7,10 @@ use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 use App\Services\IoTStateManager;
 use App\Models\EnvironmentLog;
+use Illuminate\Support\Facades\Cache;
 
 class ListenMqtt extends Command
 {
-    // Menggunakan wildcard aethersense/# agar menangkap semua chip ID ESP32-S3 secara otomatis
     protected $signature = 'mqtt:listen {--topic=aethersense/#}';
     protected $description = 'Listen to MQTT messages from AetherSense ESP32-S3 devices';
 
@@ -26,37 +26,28 @@ class ListenMqtt extends Command
         $this->info('Press Ctrl+C to stop');
         $this->newLine();
 
-        // Menggunakan broker publik yang sama persis dengan kodingan ESP32 Arduino kamu
         $server = 'broker.hivemq.com';
         $port = 1883;
         $clientId = 'laravel_aethersense_' . uniqid();
-        $username = null;
-        $password = null;
 
         try {
-            // 1. Initialize MQTT Client
             $mqtt = new MqttClient($server, $port, $clientId);
-
-            // 2. Setup Connection Settings (Tanpa TLS karena port 1883 standar)
             $connectionSettings = new ConnectionSettings();
 
             $this->info('🔐 Connecting to HiveMQ Public Broker...');
             $mqtt->connect($connectionSettings, true);
             $this->info('✅ Connected to broker successfully!');
 
-            // 3. Subscribe
             $topic = $this->option('topic');
             $this->info("📋 Subscribing to: {$topic}");
 
             $mqtt->subscribe($topic, function (string $topic, string $message) {
-                // Panggil processMessage untuk mengurai data
                 $this->processMessage($topic, $message);
             }, 0);
 
             $this->info('✅ Successfully subscribed and listening for sensor telemetry...');
             $this->newLine();
 
-            // 4. Loop
             $mqtt->loop(true);
 
         } catch (\Exception $e) {
@@ -70,7 +61,7 @@ class ListenMqtt extends Command
     public function processMessage($topic, $message)
     {
         $timestamp = now()->format('Y-m-d H:i:s');
-        $this->info("📨 [$timestamp] Topic: $topic");
+        $this->info("📨 [$timestamp] Topic: $topic | Message: $message");
 
         $data = json_decode($message, true);
         $isJson = (json_last_error() === JSON_ERROR_NONE);
@@ -80,40 +71,123 @@ class ListenMqtt extends Command
             return;
         }
 
-        // Cek apakah ini pesan telemetri dari sensor lingkungan AetherSense
-        if (str_contains($topic, 'telemetry') || isset($data['temperature_c']) || isset($data['water_level_cm'])) {
+        // 1. 💡 KHUSUS LAMPU: Jalankan jika payload JSON memiliki data relays atau relay1
+        if (isset($data['relays']) || isset($data['relay1'])) {
+            $this->handleLampMessage($topic, $data);
+        }
+
+        // 2. 🌡️ KHUSUS LINGKUNGAN: Jalankan jika ada data temperature
+        if (str_contains($topic, 'telemetry') || isset($data['temperature_c'])) {
             $this->handleEnvironmentMessage($topic, $data);
-        } else {
-            $this->info("   📊 Received other data: " . json_encode($data));
+        }
+
+        // 3. 🅿️ KHUSUS PARKIR: Jalankan jika topik mengandung kata parking
+        if (str_contains($topic, 'parking')) {
+            $this->handleParkingMessage($topic, $data);
         }
 
         $this->newLine();
     }
 
-    // 👉 MENANGKAP DATA TELEMETRI ESP32-S3 DAN MENYIMPANNYA KE DATABASE MYSQL
     private function handleEnvironmentMessage($topic, $data)
     {
-        $this->info("   🌡️ Memproses data lingkungan & banjir ESP32-S3...");
+        $this->info("   🌡️ Memproses data lingkungan ESP32-S3...");
 
         try {
-            // Menyesuaikan kunci JSON persis dengan yang dikirim oleh skrip Arduino ESP32 kamu
             $temp       = $data['temperature_c'] ?? 28.5;
             $humidity   = $data['humidity_percent'] ?? 65.0;
             $airQuality = $data['mq135_raw'] ?? 40;
             $rainStatus = $data['rain_status'] ?? 'Kering';
-            $waterLevel = $data['water_level_cm'] ?? 0.0;
+            $waterLevel = $data['water_level_cm'] ?? $data['water_level'] ?? $data['jarak'] ?? 0.0;
 
-            EnvironmentLog::create([
+            Cache::put('latest_environment_data', [
                 'temperature' => $temp,
                 'humidity'    => $humidity,
                 'air_quality' => $airQuality,
                 'rain_status' => $rainStatus,
                 'water_level' => $waterLevel,
-            ]);
+                'updated_at'  => now()->format('Y-m-d H:i:s')
+            ], now()->addMinutes(10));
 
-            $this->info("   ✅ SUCCESS: Data tersimpan ke MySQL! [Suhu: {$temp}°C, Lembap: {$humidity}%, Air: {$waterLevel}cm, Hujan: {$rainStatus}]");
+            $this->info("   ⚡ JALUR 1 (WEB): Tampilan web diperbarui secara real-time ke Cache.");
+
+            $lastLoggedTime = Cache::get('environment_last_logged_time');
+
+            if (!$lastLoggedTime || now()->diffInMinutes($lastLoggedTime) >= 60) {
+                EnvironmentLog::create([
+                    'temperature' => $temp,
+                    'humidity'    => $humidity,
+                    'air_quality' => $airQuality,
+                    'rain_status' => $rainStatus,
+                    'water_level' => $waterLevel,
+                ]);
+
+                Cache::put('environment_last_logged_time', now(), now()->addHours(2));
+
+                $this->info("   💾 JALUR 2 (DATABASE): Rekap data berhasil disimpan ke MySQL!");
+            }
+
         } catch (\Exception $e) {
-            $this->error("   ❌ Gagal menyimpan ke database: " . $e->getMessage());
+            $this->error("   ❌ Gagal memproses data lingkungan: " . $e->getMessage());
+        }
+    }
+
+    private function handleParkingMessage($topic, $data)
+    {
+        $this->info("   🅿️ Memproses data Smart Parking...");
+        try {
+            $slotCode = $data['slot_code'] ?? null;
+            $status   = $data['status'] ?? null;
+
+            if ($slotCode && $status) {
+                Cache::put("parking_slot_{$slotCode}", [
+                    'slot_code' => $slotCode,
+                    'status'    => $status,
+                    'updated_at'=> now()->format('Y-m-d H:i:s')
+                ], now()->addMinutes(10));
+                $this->info("   ⚡ PARKING: Slot {$slotCode} diperbarui jadi {$status}");
+            }
+        } catch (\Exception $e) {
+            $this->error("   ❌ Gagal memproses parkir: " . $e->getMessage());
+        }
+    }
+
+  private function handleLampMessage($topic, $data)
+    {
+        $this->info("   💡 Menerima data JSON mentah untuk lampu:");
+        $this->line(json_encode($data)); 
+
+        try {
+            $relays = $data['relays'] ?? $data;
+
+            $mapping = [
+                'relay1' => 'L01',
+                'relay2' => 'L02',
+                'relay3' => 'L03',
+                'relay4' => 'L04'
+            ];
+
+            foreach ($mapping as $relayKey => $sectorCode) {
+                $val = $relays[$relayKey] ?? ($data[$relayKey] ?? null);
+
+                // CETAK KE TERMINAL: Supaya kita tahu persis nilai dari ESP32 itu apa
+                $this->info("      -> Cek {$relayKey} ({$sectorCode}): " . var_export($val, true));
+
+                if ($val !== null) {
+                    // Paksa ubah ke boolean true jika nilainya true, 'true', 1, atau '1'
+                    $isOn = ($val === true || $val === 'true' || $val === 1 || $val === '1' || strtolower((string)$val) === 'on');
+                    $statusStr = $isOn ? 'on' : 'off';
+
+                    \Illuminate\Support\Facades\Cache::forget("smart_lamp_{$sectorCode}");
+                    \Illuminate\Support\Facades\Cache::put("smart_lamp_{$sectorCode}", [
+                        'sector_code' => $sectorCode,
+                        'status'      => $statusStr,
+                        'updated_at'  => now()->format('Y-m-d H:i:s')
+                    ], now()->addDay());
+                }
+            }
+        } catch (\Exception $e) {
+            $this->error("   ❌ Error: " . $e->getMessage());
         }
     }
 }
