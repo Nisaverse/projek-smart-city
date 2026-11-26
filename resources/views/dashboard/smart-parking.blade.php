@@ -138,10 +138,10 @@
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Status IoT</div>
-                    <h3 class="fw-bold mb-1 text-dark" id="iotMainStatus">-</h3>
+                    <h3 class="fw-bold mb-1 text-danger" id="iotMainStatus">Offline</h3>
                 </div>
                 <div style="font-size: 0.8rem;" class="text-dark fw-bold mt-2">
-                    <span id="iotStatusText">Menunggu data perangkat</span>
+                    <span id="iotStatusText"><span class="text-danger">● Terputus</span></span>
                 </div>
             </div>
         </div>
@@ -197,19 +197,6 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Aktivitas Terbaru -->
-            <div class="parking-white-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold m-0" style="color: #0f172a;">Aktivitas Terbaru</h6>
-                    <a href="#" class="text-decoration-none text-primary" style="font-size: 0.8rem; font-weight: 600;">Lihat Semua</a>
-                </div>
-                <div class="text-center py-4 text-dark opacity-75">
-                    <i class="fas fa-clock fa-2x mb-2 text-dark opacity-50"></i>
-                    <p class="mb-0" style="font-size: 0.85rem; font-weight: 600;">Belum ada aktivitas</p>
-                    <small style="font-size: 0.72rem;">Data aktivitas parkir akan muncul setelah perangkat IoT mengirimkan informasi.</small>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -233,46 +220,64 @@
 
     const slotKeys = Object.keys(slotDataInfo);
 
-    function renderParkingUI(apiData = []) {
+    function applySlotFilter() {
+        const searchInput = document.getElementById('searchSlotInput');
+        if (!searchInput) return;
+        const filter = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll('#detailSlotTableBody tr');
+        rows.forEach(row => {
+            const slotText = row.cells[0]?.textContent.toLowerCase() || '';
+            row.style.display = slotText.includes(filter) ? '' : 'none';
+        });
+    }
+
+    function renderParkingUI(apiData = {}) {
         const gridContainer = document.getElementById('parkingSlotsGrid');
         const tableBody = document.getElementById('detailSlotTableBody');
-        
+
         gridContainer.innerHTML = '';
         tableBody.innerHTML = '';
 
         let availableCount = 0;
         let occupiedCount = 0;
-        let hasDataFromIoT = false;
 
-        // Ubah format Array dari Cache/API ke Map Object agar gampang diakses
         const dbSlotMap = {};
-        if (Array.isArray(apiData)) {
-            apiData.forEach(item => {
-                if (item.slot_code) {
+        const rawSlots = (apiData && typeof apiData === 'object' && !Array.isArray(apiData))
+            ? (apiData.slots || apiData)
+            : apiData;
+
+        if (Array.isArray(rawSlots)) {
+            rawSlots.forEach(item => {
+                if (item && item.slot_code) {
                     dbSlotMap[item.slot_code] = item;
                 }
             });
-        } else if (typeof apiData === 'object' && apiData !== null) {
-            Object.assign(dbSlotMap, apiData.slots || apiData);
+        } else if (rawSlots && typeof rawSlots === 'object') {
+            Object.keys(rawSlots).forEach(key => {
+                if (key !== 'summary' && key !== 'iot_status' && key !== 'is_online') {
+                    dbSlotMap[key] = rawSlots[key];
+                }
+            });
         }
 
         slotKeys.forEach(slotId => {
             const slotInfo = dbSlotMap[slotId] || { status: 'available', updated_at: null };
-            
-            // Format waktu update
+
             let timeStr = 'Belum Update';
             if (slotInfo.updated_at) {
-                hasDataFromIoT = true;
-                const d = new Date(slotInfo.updated_at);
-                timeStr = isNaN(d.getTime()) ? slotInfo.updated_at : d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const d = new Date(String(slotInfo.updated_at).replace(' ', 'T'));
+                timeStr = isNaN(d.getTime())
+                    ? slotInfo.updated_at
+                    : d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             }
+
+            const rawStatus = String(slotInfo.status).toLowerCase();
+            const isOccupied = (rawStatus === 'occupied' || rawStatus === '1' || rawStatus === 'true' || slotInfo.status === true);
 
             let badgeClass = 'status-available';
             let statusText = 'Available';
 
-            const rawStatus = String(slotInfo.status).toLowerCase();
-
-            if (rawStatus === 'occupied' || rawStatus === '1' || rawStatus === 'true' || slotInfo.status === true) {
+            if (isOccupied) {
                 badgeClass = 'status-occupied';
                 statusText = 'Occupied';
                 occupiedCount++;
@@ -280,7 +285,6 @@
                 availableCount++;
             }
 
-            // Render ke Grid Card Slot Parkir
             gridContainer.innerHTML += `
                 <div class="col-6 col-sm-4 col-custom-5">
                     <div class="slot-box">
@@ -295,7 +299,6 @@
                 </div>
             `;
 
-            // Render ke Tabel Detail Slot Parkir (Diperbaiki tanpa typo tanda strip `-`)
             tableBody.innerHTML += `
                 <tr class="border-bottom">
                     <td class="fw-bold text-dark">${slotId} <small class="fw-normal text-muted">${slotDataInfo[slotId].name}</small></td>
@@ -305,13 +308,13 @@
             `;
         });
 
-        // Update Ringkasan Angka Statistik
-        document.getElementById('cardTotalSlot').textContent = slotKeys.length;
+        const totalCount = slotKeys.length;
+        document.getElementById('cardTotalSlot').textContent = totalCount;
         document.getElementById('cardAvailableCount').textContent = availableCount;
         document.getElementById('cardOccupiedCount').textContent = occupiedCount;
-        
-        const pctAvailable = Math.round((availableCount / slotKeys.length) * 100);
-        const pctOccupied = Math.round((occupiedCount / slotKeys.length) * 100);
+
+        const pctAvailable = totalCount > 0 ? Math.round((availableCount / totalCount) * 100) : 0;
+        const pctOccupied = totalCount > 0 ? Math.round((occupiedCount / totalCount) * 100) : 0;
 
         document.getElementById('barAvailable').style.width = pctAvailable + '%';
         document.getElementById('textAvailableDesc').textContent = `Area kosong (${pctAvailable}%)`;
@@ -319,13 +322,23 @@
         document.getElementById('barOccupied').style.width = pctOccupied + '%';
         document.getElementById('textOccupiedDesc').textContent = `Area terisi (${pctOccupied}%)`;
 
-        if (hasDataFromIoT) {
-            document.getElementById('iotMainStatus').textContent = 'Online';
-            document.getElementById('iotStatusText').innerHTML = '<span class="text-success">● Terhubung</span>';
+        const isOnline = Boolean(apiData && apiData.is_online) || String((apiData && apiData.iot_status) || '').toLowerCase() === 'online';
+        const iotMainEl = document.getElementById('iotMainStatus');
+        const iotSubEl = document.getElementById('iotStatusText');
+
+        if (isOnline) {
+            iotMainEl.textContent = 'Online';
+            iotMainEl.classList.remove('text-danger');
+            iotMainEl.classList.add('text-dark');
+            iotSubEl.innerHTML = '<span class="text-success">● Terhubung</span>';
         } else {
-            document.getElementById('iotMainStatus').textContent = '-';
-            document.getElementById('iotStatusText').textContent = 'Menunggu data perangkat';
+            iotMainEl.textContent = 'Offline';
+            iotMainEl.classList.remove('text-dark');
+            iotMainEl.classList.add('text-danger');
+            iotSubEl.innerHTML = '<span class="text-danger">● Terputus / Tidak ada data</span>';
         }
+
+        applySlotFilter();
     }
 
     function slotTextBadge(status) {
@@ -337,27 +350,19 @@
     }
 
     function fetchParkingDataFromDB() {
-        fetch('/api/parking')
+        fetch('/api/parking?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => renderParkingUI(data))
-            .catch(() => renderParkingUI([]));
+            .catch(() => renderParkingUI({ is_online: false, iot_status: 'Offline' }));
     }
 
-    // Filter Pencarian Tabel Slot & Real-time Auto-Refresh
     document.addEventListener('DOMContentLoaded', () => {
         fetchParkingDataFromDB();
-        setInterval(fetchParkingDataFromDB, 3000); // Ambil data tiap 3 detik
+        setInterval(fetchParkingDataFromDB, 3000);
 
         const searchInput = document.getElementById('searchSlotInput');
         if (searchInput) {
-            searchInput.addEventListener('input', function () {
-                const filter = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#detailSlotTableBody tr');
-                rows.forEach(row => {
-                    const slotText = row.cells[0].textContent.toLowerCase();
-                    row.style.display = slotText.includes(filter) ? '' : 'none';
-                });
-            });
+            searchInput.addEventListener('input', applySlotFilter);
         }
     });
 </script>

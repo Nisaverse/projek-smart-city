@@ -125,10 +125,10 @@
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Status IoT</div>
-                    <h3 class="fw-bold mb-1 text-dark" id="iotMainStatus">-</h3>
+                    <h3 class="fw-bold mb-1 text-dark" id="iotMainStatus">Offline</h3>
                 </div>
                 <div style="font-size: 0.8rem;" class="text-dark fw-bold mt-2">
-                    <span id="iotStatusText">Menunggu data perangkat</span>
+                    <span id="iotStatusText"><span class="text-danger">● Terputus</span></span>
                 </div>
             </div>
         </div>
@@ -184,19 +184,6 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Aktivitas Terbaru -->
-            <div class="lamp-white-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold m-0" style="color: #0f172a;">Aktivitas Terbaru</h6>
-                    <a href="#" class="text-decoration-none text-primary" style="font-size: 0.8rem; font-weight: 600;">Lihat Semua</a>
-                </div>
-                <div class="text-center py-4 text-dark opacity-75" id="recentActivityBox">
-                    <i class="fas fa-clock fa-2x mb-2 text-dark opacity-50"></i>
-                    <p class="mb-0" style="font-size: 0.85rem; font-weight: 600;">Belum ada aktivitas</p>
-                    <small style="font-size: 0.72rem;">Data aktivitas lampu akan muncul setelah perangkat IoT mengirimkan informasi.</small>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -217,22 +204,22 @@
     function renderLampUI(apiData = {}) {
         const gridContainer = document.getElementById('lampSectorsGrid');
         const tableBody = document.getElementById('detailSectorTableBody');
-        
+
         gridContainer.innerHTML = '';
         tableBody.innerHTML = '';
 
         let activeCount = 0;
         let inactiveCount = 0;
-        let hasDataFromIoT = false;
 
         sectorKeys.forEach(sectorId => {
             const sectorInfo = apiData[sectorId] || { status: 'off', updated_at: null };
-            
+
             let timeStr = 'Belum Update';
             if (sectorInfo.updated_at) {
-                hasDataFromIoT = true;
                 const d = new Date(sectorInfo.updated_at);
-                timeStr = isNaN(d.getTime()) ? sectorInfo.updated_at : d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                timeStr = isNaN(d.getTime())
+                    ? sectorInfo.updated_at
+                    : d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             }
 
             let statusClass = 'is-inactive';
@@ -241,7 +228,6 @@
 
             const rawStatus = String(sectorInfo.status).toLowerCase();
 
-            // Cek apakah 'on' atau aktif
             if (rawStatus === 'on' || rawStatus === 'active' || rawStatus === '1' || rawStatus === 'true' || sectorInfo.status === true) {
                 statusClass = 'is-active';
                 badgeClass = 'status-active';
@@ -251,7 +237,6 @@
                 inactiveCount++;
             }
 
-            // Render ke Grid Kartu Sektor Lampu (Sudah disesuaikan jadi On/Off)
             gridContainer.innerHTML += `
                 <div class="col-md-6">
                     <div class="sector-box ${statusClass}">
@@ -267,7 +252,6 @@
                 </div>
             `;
 
-            // Render ke Tabel Detail Sektor Lampu
             tableBody.innerHTML += `
                 <tr class="border-bottom">
                     <td class="fw-bold text-dark">${sectorId} <small class="fw-normal text-muted">${sectorDataInfo[sectorId].name}</small></td>
@@ -277,11 +261,10 @@
             `;
         });
 
-        // Update Kartu Statistik Atas
         document.getElementById('cardActiveCount').textContent = activeCount;
         document.getElementById('cardInactiveCount').textContent = inactiveCount;
         document.getElementById('cardTotalSector').textContent = sectorKeys.length;
-        
+
         const percentActive = Math.round((activeCount / sectorKeys.length) * 100);
         const percentInactive = Math.round((inactiveCount / sectorKeys.length) * 100);
 
@@ -291,12 +274,20 @@
         document.getElementById('barInactive').style.width = percentInactive + '%';
         document.getElementById('textInactiveDesc').textContent = `Sektor padam (${percentInactive}%)`;
 
-        if (hasDataFromIoT) {
-            document.getElementById('iotMainStatus').textContent = 'Online';
-            document.getElementById('iotStatusText').innerHTML = '<span class="text-success">● Terhubung</span>';
+        const isOnline = Boolean(apiData.is_online) || String(apiData.iot_status || '').toLowerCase() === 'online';
+        const iotMainEl = document.getElementById('iotMainStatus');
+        const iotSubEl = document.getElementById('iotStatusText');
+
+        if (isOnline) {
+            iotMainEl.textContent = 'Online';
+            iotMainEl.classList.remove('text-danger');
+            iotMainEl.classList.add('text-dark');
+            iotSubEl.innerHTML = '<span class="text-success">● Terhubung</span>';
         } else {
-            document.getElementById('iotMainStatus').textContent = '-';
-            document.getElementById('iotStatusText').textContent = 'Menunggu data perangkat';
+            iotMainEl.textContent = 'Offline';
+            iotMainEl.classList.remove('text-dark');
+            iotMainEl.classList.add('text-danger');
+            iotSubEl.innerHTML = '<span class="text-danger">● Terputus / Tidak ada data</span>';
         }
     }
 
@@ -308,25 +299,21 @@
         return '<span class="text-secondary fw-semibold" style="background: #e2e8f0; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem;">Off</span>';
     }
 
-   function fetchLampDataFromDB() {
-        // Tambahkan parameter ?t=... + angka random agar browser tidak menyimpan cache lama
-        fetch('/api/smart-lamp?t=' + new Date().getTime())
+    function fetchLampDataFromDB() {
+        fetch('/api/smart-lamp?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
-                console.log("Data Lampu diterima dari API:", data); // Untuk debugging di F12 Console
                 renderLampUI(data);
             })
             .catch(err => {
                 console.error("Gagal ambil data lampu:", err);
-                renderLampUI({});
+                renderLampUI({ is_online: false, iot_status: 'Offline' });
             });
     }
 
-    // Pastikan interval berjalan stabil
     document.addEventListener('DOMContentLoaded', () => {
         fetchLampDataFromDB();
-        setInterval(fetchLampDataFromDB, 5000); // Ambil data baru tiap 5 detik
-    });
+        setInterval(fetchLampDataFromDB, 5000);
 
         const searchInput = document.getElementById('searchSectorInput');
         if (searchInput) {
@@ -339,5 +326,6 @@
                 });
             });
         }
+    });
 </script>
 @endpush

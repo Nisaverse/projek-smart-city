@@ -271,11 +271,6 @@
     }
     .chat-float-btn:hover { transform: scale(1.1); background-color: #229ED9; }
 
-    body:has(#welcomeSection:not([style*="display: none"])) .chat-float-btn,
-    body:has(#welcomeSection:not([style*="display: none"])) .chat-window {
-      display: none !important;
-    }
-
     .chat-window {
       position: fixed;
       bottom: 95px;
@@ -370,9 +365,8 @@
                   <i class="fa-solid fa-temperature-half fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Suhu sekitar</span>
-                <span id="badge-temp" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Suhu saat ini</span>
               </div>
             </div>
           </div>
@@ -389,9 +383,8 @@
                   <i class="fa-solid fa-droplet fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-info me-2" style="font-size: 0.55rem;"></i> Kelembaban relatif</span>
-                <span id="badge-humidity" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-info me-2" style="font-size: 0.55rem;"></i> Kelembaban saat ini</span>
               </div>
             </div>
           </div>
@@ -408,9 +401,8 @@
                   <i class="fa-solid fa-wind fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Kondisi Baik & Sehat</span>
-                <span id="badge-aqi" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Kualitas udara saat ini</span>
               </div>
             </div>
           </div>
@@ -427,9 +419,8 @@
                   <i class="fa-solid fa-cloud-rain fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-light me-2" style="font-size: 0.55rem;"></i> Presipitasi Terdeteksi</span>
-                <span id="badge-rain" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-light me-2" style="font-size: 0.55rem;"></i> Status hujan saat ini</span>
               </div>
             </div>
           </div>
@@ -446,9 +437,8 @@
                   <i class="fa-solid fa-water fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Aman Terkendali</span>
-                <span id="badge-water" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-info me-2" style="font-size: 0.55rem;"></i> Tinggi air sungai saat ini</span>
               </div>
             </div>
           </div>
@@ -465,9 +455,8 @@
                   <i class="fa-solid fa-lightbulb fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Sektor lampu menyala</span>
-                <span id="badge-lamp" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Sektor lampu aktif saat ini</span>
               </div>
             </div>
           </div>
@@ -484,9 +473,8 @@
                   <i class="fa-solid fa-square-parking fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-primary me-2" style="font-size: 0.55rem;"></i> Total 10 slot parkir</span>
-                <span id="badge-parking" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-primary me-2" style="font-size: 0.55rem;"></i> Slot parkir tersedia saat ini</span>
               </div>
             </div>
           </div>
@@ -611,7 +599,7 @@
 
     setInterval(() => {
       currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
-      let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
+      const newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
 
       if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
       if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
@@ -657,11 +645,7 @@
     function toggleChatWindow() {
       const chatWin = document.getElementById('chatWindow');
       if (!chatWin) return;
-      if (chatWin.style.display === 'flex') {
-        chatWin.style.display = 'none';
-      } else {
-        chatWin.style.display = 'flex';
-      }
+      chatWin.style.display = chatWin.style.display === 'flex' ? 'none' : 'flex';
     }
 
     async function sendMessage() {
@@ -706,7 +690,7 @@
         let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
         if (Array.isArray(data) && data.length > 0) {
           aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
-        } else if (typeof data === 'object') {
+        } else if (typeof data === 'object' && data !== null) {
           aiReply = data.output || data.text || data.message || data.response || JSON.stringify(data);
         }
 
@@ -736,37 +720,61 @@
       }
     }
 
+    function hasValidNumber(val) {
+      return val !== undefined && val !== null && val !== '' && val !== '--' && !Number.isNaN(Number(val));
+    }
+
     function fetchPublicEnvironmentData() {
-      fetch('/api/public-environment')
+      fetch('/api/public-environment', { cache: 'no-store' })
         .then(response => response.json())
         .then(result => {
-          if (result.status === 'success') {
-            let d = result.data;
-            if (document.getElementById('temp-value')) document.getElementById('temp-value').innerText = d.temperature + ' °C';
-            if (document.getElementById('humidity-value')) document.getElementById('humidity-value').innerText = d.humidity + ' %';
-            if (document.getElementById('aqi-value')) document.getElementById('aqi-value').innerText = d.air_quality + ' AQI';
-            if (document.getElementById('rain-value')) document.getElementById('rain-value').innerText = d.rain_status;
-            if (document.getElementById('water-value')) document.getElementById('water-value').innerText = d.water_level + ' cm';
+          if (result.status === 'success' && result.data) {
+            const d = result.data;
 
-            // Smart Lamp: jumlah sektor lampu yang aktif
-            if (document.getElementById('smart-lamp-value')) {
-              if (typeof d.smart_lamp === 'number' || typeof d.active_lamp_sectors === 'number') {
-                const aktif = d.smart_lamp ?? d.active_lamp_sectors;
-                const totalSektor = d.total_lamp_sectors || 4;
-                document.getElementById('smart-lamp-value').innerText = `${aktif} / ${totalSektor} Sektor Aktif`;
-              } else {
-                document.getElementById('smart-lamp-value').innerText = d.smart_lamp || '3 / 4 Sektor Aktif';
+            const tempEl = document.getElementById('temp-value');
+            const humEl  = document.getElementById('humidity-value');
+            const aqiEl  = document.getElementById('aqi-value');
+            const rainEl = document.getElementById('rain-value');
+            const watEl  = document.getElementById('water-value');
+            const lampEl = document.getElementById('smart-lamp-value');
+            const parkEl = document.getElementById('smart-parking-value');
+
+            if (tempEl && hasValidNumber(d.temperature)) {
+              tempEl.innerText = `${Number(d.temperature).toFixed(1)} °C`;
+            }
+            if (humEl && hasValidNumber(d.humidity)) {
+              humEl.innerText = `${Math.round(Number(d.humidity))} %`;
+            }
+            if (aqiEl && hasValidNumber(d.air_quality)) {
+              aqiEl.innerText = `${Number(d.air_quality)} AQI`;
+            }
+            if (rainEl && d.rain_status) {
+              rainEl.innerText = d.rain_status;
+            }
+            if (watEl && hasValidNumber(d.water_level)) {
+              watEl.innerText = `${Number(d.water_level)} cm`;
+            }
+
+            // Smart Lamp: jumlah sektor lampu yang aktif dari backend admin
+            if (lampEl) {
+              const aktif = d.lamps_active ?? d.smart_lamp ?? d.active_lamp_sectors;
+              const totalSektor = d.lamps_total ?? d.total_lamp_sectors ?? 4;
+              if (hasValidNumber(aktif)) {
+                lampEl.innerText = `${aktif} / ${totalSektor} Sektor Aktif`;
+              } else if (typeof aktif === 'string' && aktif.trim() !== '') {
+                lampEl.innerText = aktif;
               }
             }
 
-            // Smart Parking: kapasitas 10 slot
-            if (document.getElementById('smart-parking-value')) {
-              const maxSlot = 10;
-              if (typeof d.smart_parking === 'number') {
-                const slotKosong = Math.min(Math.max(d.smart_parking, 0), maxSlot);
-                document.getElementById('smart-parking-value').innerText = `${slotKosong} / ${maxSlot} Slot Kosong`;
-              } else {
-                document.getElementById('smart-parking-value').innerText = d.smart_parking || '10 Slot';
+            // Smart Parking: slot tersedia dari kapasitas parkir
+            if (parkEl) {
+              const maxSlot = hasValidNumber(d.parking_total) ? Number(d.parking_total) : 10;
+              const availRaw = d.parking_avail ?? d.smart_parking;
+              if (hasValidNumber(availRaw)) {
+                const slotKosong = Math.min(Math.max(Number(availRaw), 0), maxSlot);
+                parkEl.innerText = `${slotKosong} / ${maxSlot} Slot Kosong`;
+              } else if (typeof availRaw === 'string' && availRaw.trim() !== '') {
+                parkEl.innerText = availRaw;
               }
             }
           }
