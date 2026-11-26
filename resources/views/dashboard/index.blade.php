@@ -215,11 +215,11 @@
                             <i class="fas fa-wind text-info" style="font-size: 0.9rem;"></i>
                             <span class="fw-semibold" style="font-size: 0.78rem;">Kualitas Udara</span>
                         </div>
-                        <span class="badge bg-success text-white px-2 py-0.5 rounded-pill" style="font-size: 0.6rem;">Online</span>
+                        <span class="badge bg-secondary text-white px-2 py-0.5 rounded-pill banner-env-badge" style="font-size: 0.6rem;">Offline</span>
                     </div>
-                    <h5 class="fw-bold mb-0 mt-1" style="font-size: 1.15rem;" id="bannerAqi">48 AQI</h5>
+                    <h5 class="fw-bold mb-0 mt-1" style="font-size: 1.15rem;" id="bannerAqi">-- AQI</h5>
                     <div class="mt-0.5">
-                        <span class="text-white px-2 py-0.5 rounded-pill" style="font-size: 0.72rem;" id="bannerAqiStatus">Baik</span>
+                        <span class="text-white px-2 py-0.5 rounded-pill" style="font-size: 0.72rem;" id="bannerAqiStatus">-</span>
                     </div>
 
                     <div class="banner-glass-divider"></div>
@@ -230,9 +230,9 @@
                             <i class="fas fa-tint text-primary" style="font-size: 1.1rem;"></i>
                             <span class="fw-semibold" style="font-size: 0.85rem;">Kelembapan</span>
                         </div>
-                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Online</span>
+                        <span class="badge bg-secondary text-white px-2 py-1 rounded-pill banner-env-badge" style="font-size: 0.65rem;">Offline</span>
                     </div>
-                    <h4 class="fw-bold mb-0" style="font-size: 1.4rem;" id="bannerHumidity">70 %</h4>
+                    <h4 class="fw-bold mb-0" style="font-size: 1.4rem;" id="bannerHumidity">-- %</h4>
                     <small style="font-size: 0.72rem;">Kelembapan relatif</small>
 
                     <div class="banner-glass-divider"></div>
@@ -243,10 +243,10 @@
                             <i class="fas fa-cloud-showers-heavy text-info" style="font-size: 1.1rem;"></i>
                             <span class="fw-semibold" style="font-size: 0.85rem;">Status Hujan</span>
                         </div>
-                        <span class="badge bg-success text-white px-2 py-1 rounded-pill" style="font-size: 0.65rem;">Online</span>
+                        <span class="badge bg-secondary text-white px-2 py-1 rounded-pill banner-env-badge" style="font-size: 0.65rem;">Offline</span>
                     </div>
-                    <h4 class="fw-bold mb-0" style="font-size: 1.3rem;" id="bannerRain">Hujan Ringan</h4>
-                    <small style="font-size: 0.72rem;" id="bannerRainDesc">Presipitasi Terdeteksi</small>
+                    <h4 class="fw-bold mb-0" style="font-size: 1.3rem;" id="bannerRain">Menunggu</h4>
+                    <small style="font-size: 0.72rem;" id="bannerRainDesc">Belum ada data</small>
 
                 </div>
             </div>
@@ -431,10 +431,33 @@
         L04: { name: 'Sektor Barat' }
     };
 
-    function renderLampGrid(apiData = []) {
+    function applyModuleBadge(badgeEl, isOnline) {
+        if (!badgeEl) return;
+        if (isOnline) {
+            badgeEl.className = 'badge bg-success text-white px-3 py-1 rounded-pill';
+            badgeEl.textContent = 'Online';
+        } else {
+            badgeEl.className = 'badge bg-secondary text-white px-3 py-1 rounded-pill';
+            badgeEl.textContent = 'Offline';
+        }
+    }
+
+    function applyBannerEnvBadges(isOnline) {
+        document.querySelectorAll('.banner-env-badge').forEach(el => {
+            if (isOnline) {
+                el.className = 'badge bg-success text-white px-2 py-0.5 rounded-pill banner-env-badge';
+                el.textContent = 'Online';
+            } else {
+                el.className = 'badge bg-secondary text-white px-2 py-0.5 rounded-pill banner-env-badge';
+                el.textContent = 'Offline';
+            }
+        });
+    }
+
+    function renderLampGrid(apiData = {}) {
         const grid = document.getElementById('dashLampGrid');
         if (!grid) return;
-        
+
         grid.innerHTML = '';
         let activeCount = 0;
 
@@ -444,7 +467,11 @@
                 if (item.sector_code) dbMap[item.sector_code] = item;
             });
         } else if (typeof apiData === 'object' && apiData !== null) {
-            Object.assign(dbMap, apiData);
+            Object.keys(apiData).forEach(key => {
+                if (key !== 'iot_status' && key !== 'is_online') {
+                    dbMap[key] = apiData[key];
+                }
+            });
         }
 
         Object.keys(sectorDetails).forEach(secId => {
@@ -480,23 +507,18 @@
         });
 
         document.getElementById('dashLampSummary').textContent = activeCount + ' Sektor';
-        if (activeCount > 0) {
-            document.getElementById('dashLampStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
-            document.getElementById('dashLampStatusBadge').textContent = 'Online';
-        } else {
-            document.getElementById('dashLampStatusBadge').className = 'badge bg-secondary text-white px-3 py-1 rounded-pill';
-            document.getElementById('dashLampStatusBadge').textContent = 'Offline';
-        }
+        const isOnline = Boolean(apiData && apiData.is_online) || String((apiData && apiData.iot_status) || '').toLowerCase() === 'online';
+        applyModuleBadge(document.getElementById('dashLampStatusBadge'), isOnline);
     }
 
-    function renderParkingGrid(apiData = []) {
+    function renderParkingGrid(apiData = {}) {
         const grid = document.getElementById('dashParkingGrid');
         if (!grid) return;
 
         grid.innerHTML = '';
         let availableCount = 0;
         const slots = ['P01', 'P02', 'P03', 'P04', 'P05', 'P06', 'P07', 'P08', 'P09', 'P10'];
-        
+
         const dbSlotMap = {};
         if (Array.isArray(apiData)) {
             apiData.forEach(item => {
@@ -537,70 +559,95 @@
         });
 
         document.getElementById('dashParkingSummary').textContent = availableCount + ' / 10';
-        document.getElementById('dashParkingStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
-        document.getElementById('dashParkingStatusBadge').textContent = 'Online';
+        const isOnline = Boolean(apiData && apiData.is_online) || String((apiData && apiData.iot_status) || '').toLowerCase() === 'online';
+        applyModuleBadge(document.getElementById('dashParkingStatusBadge'), isOnline);
     }
 
     function fetchDashboardData() {
         // 1. Fetch Smart Parking
-        fetch('/api/parking')
+        fetch('/api/parking?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => renderParkingGrid(data))
-            .catch(() => renderParkingGrid([]));
+            .catch(() => renderParkingGrid({ is_online: false, iot_status: 'Offline' }));
 
         // 2. Fetch Smart Lamp
-        fetch('/api/smart-lamp')
+        fetch('/api/smart-lamp?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => renderLampGrid(data))
-            .catch(() => {
-                fetch('/api/lamp')
-                    .then(res => res.json())
-                    .then(data => renderLampGrid(data))
-                    .catch(() => renderLampGrid([]));
-            });
+            .catch(() => renderLampGrid({ is_online: false, iot_status: 'Offline' }));
 
         // 3. Fetch Smart Environment / Temperature & Update Chart + Banner Glass
-        fetch('/api/environment')
+        fetch('/api/environment?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data) {
-                    const temp = data.temperature ?? 28.5;
-                    const hum = data.humidity ?? 65.0;
-                    const aqi = data.air_quality ?? 48;
-                    const rainStatus = data.rain_status ?? 'Kering';
-                    const waterLevel = data.water_level ?? 0.0;
-                    const timeStr = data.timestamp || new Date().toLocaleTimeString('id-ID');
+                    const isOnline = Boolean(data.is_online) || String(data.iot_status || '').toLowerCase() === 'online';
+                    applyModuleBadge(document.getElementById('dashTempStatusBadge'), isOnline);
+                    applyBannerEnvBadges(isOnline);
 
-                    document.getElementById('dashTempSummary').textContent = temp + ' °C';
-                    document.getElementById('dashTempStatusBadge').className = 'badge bg-success text-white px-3 py-1 rounded-pill';
-                    document.getElementById('dashTempStatusBadge').textContent = 'Online';
+                    if (data.has_data) {
+                        const temp = data.temperature ?? '--';
+                        const hum = data.humidity ?? '--';
+                        const aqi = data.air_quality ?? '--';
+                        const rainStatus = data.rain_status ?? 'Kering';
+                        const waterLevel = data.water_level ?? 0;
+                        const timeStr = data.timestamp || new Date().toLocaleTimeString('id-ID');
 
-                    if (document.getElementById('bannerAqi')) document.getElementById('bannerAqi').textContent = aqi + ' AQI';
-                    if (document.getElementById('bannerHumidity')) document.getElementById('bannerHumidity').textContent = hum + ' %';
-                    if (document.getElementById('bannerRain')) document.getElementById('bannerRain').textContent = rainStatus;
-                    if (document.getElementById('bannerRainDesc')) {
-                        document.getElementById('bannerRainDesc').textContent = rainStatus.toLowerCase().includes('hujan') ? 'Presipitasi Terdeteksi' : 'Tidak Presipitasi';
-                    }
+                        document.getElementById('dashTempSummary').textContent = temp + ' °C';
 
-                    if (dashTempChart) {
-                        dashTempChart.data.labels.push(timeStr);
-                        dashTempChart.data.datasets[0].data.push(temp);
-                        dashTempChart.data.datasets[1].data.push(hum);
-                        dashTempChart.data.datasets[2].data.push(waterLevel);
+                        const bannerAqiEl = document.getElementById('bannerAqi');
+                        const bannerAqiStatusEl = document.getElementById('bannerAqiStatus');
+                        const bannerHumEl = document.getElementById('bannerHumidity');
+                        const bannerRainEl = document.getElementById('bannerRain');
+                        const bannerRainDescEl = document.getElementById('bannerRainDesc');
 
-                        if (dashTempChart.data.labels.length > maxDataPoints) {
-                            dashTempChart.data.labels.shift();
-                            dashTempChart.data.datasets.forEach(ds => ds.data.shift());
+                        if (bannerAqiEl) bannerAqiEl.textContent = aqi + ' AQI';
+                        if (bannerAqiStatusEl) {
+                            const aqiNum = Number(aqi);
+                            if (aqi === '--' || Number.isNaN(aqiNum)) {
+                                bannerAqiStatusEl.textContent = '-';
+                                bannerAqiStatusEl.className = 'text-white px-2 py-0.5 rounded-pill';
+                            } else if (aqiNum <= 50) {
+                                bannerAqiStatusEl.textContent = 'Baik';
+                                bannerAqiStatusEl.className = 'text-white px-2 py-0.5 rounded-pill';
+                            } else {
+                                bannerAqiStatusEl.textContent = 'Kurang Sehat';
+                                bannerAqiStatusEl.className = 'text-warning px-2 py-0.5 rounded-pill';
+                            }
                         }
-                        dashTempChart.update();
+
+                        if (bannerHumEl) bannerHumEl.textContent = hum + ' %';
+                        if (bannerRainEl) bannerRainEl.textContent = rainStatus;
+                        if (bannerRainDescEl) {
+                            bannerRainDescEl.textContent = String(rainStatus).toLowerCase().includes('hujan')
+                                ? 'Presipitasi Terdeteksi'
+                                : 'Tidak Presipitasi';
+                        }
+
+                        if (dashTempChart && isOnline) {
+                            dashTempChart.data.labels.push(timeStr);
+                            dashTempChart.data.datasets[0].data.push(temp);
+                            dashTempChart.data.datasets[1].data.push(hum);
+                            dashTempChart.data.datasets[2].data.push(waterLevel);
+
+                            if (dashTempChart.data.labels.length > maxDataPoints) {
+                                dashTempChart.data.labels.shift();
+                                dashTempChart.data.datasets.forEach(ds => ds.data.shift());
+                            }
+                            dashTempChart.update();
+                        }
                     }
                 }
-            }).catch(() => {});
+            })
+            .catch(() => {
+                applyModuleBadge(document.getElementById('dashTempStatusBadge'), false);
+                applyBannerEnvBadges(false);
+            });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        renderParkingGrid([]);
-        renderLampGrid([]);
+        renderParkingGrid({ is_online: false, iot_status: 'Offline' });
+        renderLampGrid({ is_online: false, iot_status: 'Offline' });
         fetchDashboardData();
         setInterval(fetchDashboardData, 3000);
     });

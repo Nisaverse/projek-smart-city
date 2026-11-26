@@ -77,6 +77,53 @@ class DashboardController extends Controller
         return $timestamp->diffInSeconds(now()) <= $maxAgeSeconds;
     }
 
+    private function getLampOnlineState(): bool
+    {
+        $latestTime = null;
+        for ($i = 1; $i <= 4; $i++) {
+            $lamp = Cache::get('smart_lamp_L0' . $i);
+            if (is_array($lamp)) {
+                $dt = $this->parseTimestamp($lamp['updated_at'] ?? null);
+                if ($dt && (!$latestTime || $dt->greaterThan($latestTime))) {
+                    $latestTime = $dt;
+                }
+            }
+        }
+
+        return $this->isTimestampFresh($latestTime);
+    }
+
+    private function getParkingOnlineState(): bool
+    {
+        $summary = Cache::get('smart_parking_summary');
+        $summaryTime = is_array($summary) ? $this->parseTimestamp($summary['updated_at'] ?? null) : null;
+
+        $latestSlotTime = null;
+        for ($i = 1; $i <= 10; $i++) {
+            $code = 'P' . str_pad($i, 2, '0', STR_PAD_LEFT);
+            $slot = Cache::get("parking_slot_{$code}");
+            if (is_array($slot)) {
+                $dt = $this->parseTimestamp($slot['updated_at'] ?? null);
+                if ($dt && (!$latestSlotTime || $dt->greaterThan($latestSlotTime))) {
+                    $latestSlotTime = $dt;
+                }
+            }
+        }
+
+        return $this->isTimestampFresh($summaryTime ?? $latestSlotTime);
+    }
+
+    private function getEnvironmentOnlineState(): bool
+    {
+        $cached = Cache::get('latest_environment_data');
+        if (!is_array($cached) || empty($cached)) {
+            return false;
+        }
+
+        $cachedDt = $this->parseTimestamp($cached['updated_at'] ?? null);
+        return $this->isTimestampFresh($cachedDt);
+    }
+
     // ===== API ENDPOINTS (GET DATA REAL-TIME) =====
 
     public function apiLampData()
@@ -88,17 +135,7 @@ class DashboardController extends Controller
             'L04' => Cache::get('smart_lamp_L04', ['sector_code' => 'L04', 'status' => 'inactive']),
         ];
 
-        $latestTime = null;
-        foreach ($lamps as $lamp) {
-            if (is_array($lamp)) {
-                $dt = $this->parseTimestamp($lamp['updated_at'] ?? null);
-                if ($dt && (!$latestTime || $dt->greaterThan($latestTime))) {
-                    $latestTime = $dt;
-                }
-            }
-        }
-
-        $isOnline = $this->isTimestampFresh($latestTime);
+        $isOnline = $this->getLampOnlineState();
 
         return response()->json([
             'L01'        => $lamps['L01'],
@@ -121,8 +158,7 @@ class DashboardController extends Controller
         }
         $mode = $mode ?: 'manual';
 
-        $envTime = is_array($envCached) ? $this->parseTimestamp($envCached['updated_at'] ?? null) : null;
-        $isOnline = $this->isTimestampFresh($envTime);
+        $isOnline = $this->getEnvironmentOnlineState();
 
         return response()->json([
             'mode'          => $mode,
@@ -148,7 +184,6 @@ class DashboardController extends Controller
 
         $slots = [];
         $hasSlotCache = false;
-        $latestSlotTime = null;
 
         for ($i = 1; $i <= 10; $i++) {
             $code = 'P' . str_pad($i, 2, '0', STR_PAD_LEFT);
@@ -157,12 +192,6 @@ class DashboardController extends Controller
             if ($cachedSlot) {
                 $slots[$code] = $cachedSlot;
                 $hasSlotCache = true;
-                if (is_array($cachedSlot)) {
-                    $dt = $this->parseTimestamp($cachedSlot['updated_at'] ?? null);
-                    if ($dt && (!$latestSlotTime || $dt->greaterThan($latestSlotTime))) {
-                        $latestSlotTime = $dt;
-                    }
-                }
             }
         }
 
@@ -190,9 +219,7 @@ class DashboardController extends Controller
             }
         }
 
-        $summaryTime = is_array($summary) ? $this->parseTimestamp($summary['updated_at'] ?? null) : null;
-        $effectiveTime = $summaryTime ?? $latestSlotTime;
-        $isOnline = $this->isTimestampFresh($effectiveTime);
+        $isOnline = $this->getParkingOnlineState();
 
         return response()->json([
             'summary'    => $summary ?? ($fallback['summary'] ?? null),
@@ -278,8 +305,7 @@ class DashboardController extends Controller
             : 0;
 
         if (is_array($cached) && !empty($cached)) {
-            $cachedDt = $this->parseTimestamp($cached['updated_at'] ?? null);
-            $isOnline = $this->isTimestampFresh($cachedDt);
+            $isOnline = $this->getEnvironmentOnlineState();
 
             return response()->json([
                 'status' => 'success',
@@ -347,6 +373,9 @@ class DashboardController extends Controller
     public function apiDashboardData()
     {
         $summary = $this->stateManager->getDashboardSummary();
+        if (!is_array($summary)) {
+            $summary = [];
+        }
 
         if (!isset($summary['temperature'])) {
             $envData = method_exists($this->stateManager, 'getEnvironmentData')
@@ -356,6 +385,19 @@ class DashboardController extends Controller
             $summary['temperature'] = $envData['temperature'] ?? 29.5;
             $summary['humidity']    = $envData['humidity'] ?? 65.0;
         }
+
+        $lampOnline = $this->getLampOnlineState();
+        $parkingOnline = $this->getParkingOnlineState();
+        $environmentOnline = $this->getEnvironmentOnlineState();
+
+        $summary['lamp_online']        = $lampOnline;
+        $summary['lamp_status']        = $lampOnline ? 'Online' : 'Offline';
+        $summary['parking_online']     = $parkingOnline;
+        $summary['parking_status']     = $parkingOnline ? 'Online' : 'Offline';
+        $summary['environment_online'] = $environmentOnline;
+        $summary['environment_status'] = $environmentOnline ? 'Online' : 'Offline';
+        $summary['iot_online']         = $lampOnline || $parkingOnline || $environmentOnline;
+        $summary['iot_status']         = $summary['iot_online'] ? 'Online' : 'Offline';
 
         return response()->json($summary);
     }
