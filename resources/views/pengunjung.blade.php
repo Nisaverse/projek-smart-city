@@ -271,11 +271,6 @@
     }
     .chat-float-btn:hover { transform: scale(1.1); background-color: #229ED9; }
 
-    body:has(#welcomeSection:not([style*="display: none"])) .chat-float-btn,
-    body:has(#welcomeSection:not([style*="display: none"])) .chat-window {
-      display: none !important;
-    }
-
     .chat-window {
       position: fixed;
       bottom: 95px;
@@ -370,9 +365,8 @@
                   <i class="fa-solid fa-temperature-half fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Suhu sekitar</span>
-                <span id="badge-temp" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Suhu saat ini</span>
               </div>
             </div>
           </div>
@@ -389,9 +383,8 @@
                   <i class="fa-solid fa-droplet fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-info me-2" style="font-size: 0.55rem;"></i> Kelembaban relatif</span>
-                <span id="badge-humidity" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-info me-2" style="font-size: 0.55rem;"></i> Kelembaban saat ini</span>
               </div>
             </div>
           </div>
@@ -408,9 +401,8 @@
                   <i class="fa-solid fa-wind fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Kondisi Baik & Sehat</span>
-                <span id="badge-aqi" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Kualitas udara saat ini</span>
               </div>
             </div>
           </div>
@@ -427,9 +419,8 @@
                   <i class="fa-solid fa-cloud-rain fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-light me-2" style="font-size: 0.55rem;"></i> Presipitasi Terdeteksi</span>
-                <span id="badge-rain" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-light me-2" style="font-size: 0.55rem;"></i> Status hujan saat ini</span>
               </div>
             </div>
           </div>
@@ -446,9 +437,8 @@
                   <i class="fa-solid fa-water fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Aman Terkendali</span>
-                <span id="badge-water" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-info me-2" style="font-size: 0.55rem;"></i> Tinggi air sungai saat ini</span>
               </div>
             </div>
           </div>
@@ -465,9 +455,8 @@
                   <i class="fa-solid fa-lightbulb fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Sektor lampu menyala</span>
-                <span id="badge-lamp" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Sektor lampu aktif saat ini</span>
               </div>
             </div>
           </div>
@@ -484,9 +473,8 @@
                   <i class="fa-solid fa-square-parking fs-5"></i>
                 </div>
               </div>
-              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-                <span><i class="fa-solid fa-circle-dot text-primary me-2" style="font-size: 0.55rem;"></i> Total 10 slot parkir</span>
-                <span id="badge-parking" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-primary me-2" style="font-size: 0.55rem;"></i> Slot parkir tersedia saat ini</span>
               </div>
             </div>
           </div>
@@ -516,377 +504,381 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- JAVASCRIPT KONTROL ANIMASI & ENGINE CHATBOT -->
-<script>
-  function setChatbotVisibility(isVisible) {
-    const chatBtn = document.querySelector('.chat-float-btn');
-    const chatWin = document.getElementById('chatWindow');
-    if (chatBtn) chatBtn.style.display = isVisible ? 'flex' : 'none';
-    if (!isVisible && chatWin) chatWin.style.display = 'none';
-  }
-
-  function triggerHeroAnimation() {
-    const badge = document.querySelector('.hero-pro-badge');
-    const title = document.querySelector('.hero-pro-title');
-    const desc = document.querySelector('.hero-pro-desc');
-    const btn = document.querySelector('.hero-pro-btn');
-    const elements = [badge, title, desc, btn];
-    elements.forEach(el => { if (el) el.style.animation = 'none'; });
-    void document.body.offsetHeight;
-    elements.forEach(el => { if (el) el.style.animation = ''; });
-  }
-
-  function triggerTentangAnimation() {
-    const tentangSection = document.getElementById('tentang');
-    if (!tentangSection) return;
-    tentangSection.classList.remove('tentang-active');
-    void tentangSection.offsetWidth;
-    tentangSection.classList.add('tentang-active');
-  }
-
-  function triggerLayananAnimation() {
-    const layananSection = document.getElementById('layanan');
-    if (!layananSection) return;
-    const targetElements = layananSection.querySelectorAll('h1, h2, h3, h4, p, .card');
-    targetElements.forEach((el, index) => {
-      el.classList.remove('animate-layanan-left', 'animate-layanan-right');
-      el.style.animationDelay = '0s';
-      void el.offsetWidth;
-      const delay = (index * 0.1).toFixed(2);
-      el.style.animationDelay = `${delay}s`;
-
-      if (index % 2 === 0) {
-        el.classList.add('animate-layanan-left');
-      } else {
-        el.classList.add('animate-layanan-right');
-      }
-    });
-  }
-
-  function triggerLokasiAnimation() {
-    const lokasiSection = document.getElementById('kontak');
-    if (!lokasiSection) return;
-    const elements = lokasiSection.querySelectorAll('h1, h2, h3, h4, p, .badge, .card, iframe');
-    elements.forEach((el, index) => {
-      el.classList.remove('animate-lokasi-up');
-      el.style.animationDelay = '0s';
-      void el.offsetWidth;
-      const delay = (index * 0.09).toFixed(2);
-      el.style.animationDelay = `${delay}s`;
-      el.classList.add('animate-lokasi-up');
-    });
-  }
-
-  function triggerTelemetriAnimation() {
-    const telemetriSection = document.getElementById('telemetri');
-    if (!telemetriSection) return;
-    const cards = telemetriSection.querySelectorAll('.card');
-    cards.forEach((card, index) => {
-      card.classList.remove('animate-telemetri-smooth');
-      card.style.animationDelay = '0s';
-      void card.offsetWidth;
-      const delay = (index * 0.12).toFixed(2);
-      card.style.animationDelay = `${delay}s`;
-      card.classList.add('animate-telemetri-smooth');
-    });
-  }
-
-  const backgroundImages = [
-    "image/alun-alun-tegal.jpeg",
-    "image/balaikota.jpeg",
-    "image/masjid agung.jpeg",
-    "image/taman pancasila.jpeg",
-    "image/stasiun.jpeg",
-    "image/water ledeng.jpeg"
-  ];
-
-  // PRELOAD GAMBAR AGAR TIDAK KEDIP HITAM
-  backgroundImages.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
-
-  let currentBgIndex = 0;
-  const welcomeSec = document.getElementById('welcomeSection');
-  const heroDashboard = document.querySelector('.hero-observatorium');
-
-  setInterval(() => {
-    currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
-    let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
-
-    if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
-    if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
-  }, 4000);
-
-  function enterWebsite() {
-    const mainContent = document.getElementById('mainWebsiteContent');
-    if (!welcomeSec || !mainContent) return;
-    welcomeSec.style.opacity = '0';
-    welcomeSec.style.transform = 'scale(1.04)';
-    setTimeout(() => {
-      welcomeSec.style.display = 'none';
-      mainContent.style.display = 'block';
-      setChatbotVisibility(true);
-      triggerHeroAnimation();
-      setTimeout(() => {
-        mainContent.style.opacity = '1';
-        window.scrollTo(0, 0);
-      }, 50);
-    }, 500);
-  }
-
-  function returnToWelcome() {
-    const mainContent = document.getElementById('mainWebsiteContent');
-    if (!welcomeSec || !mainContent) return;
-    setChatbotVisibility(false);
-    mainContent.style.opacity = '0';
-    setTimeout(() => {
-      mainContent.style.display = 'none';
-      welcomeSec.style.display = 'flex';
-      welcomeSec.style.opacity = '1';
-      welcomeSec.style.transform = 'scale(1)';
-      window.scrollTo(0, 0);
-    }, 500);
-  }
-
-  // --- ENGINE UTAMA CHATBOT (SITY) ---
-  function getTimeNow() {
-    const d = new Date();
-    return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-  }
-
-  function toggleChatWindow() {
-    const chatWin = document.getElementById('chatWindow');
-    if (!chatWin) return;
-    if (chatWin.style.display === 'flex') {
-      chatWin.style.display = 'none';
-    } else {
-      chatWin.style.display = 'flex';
+  <script>
+    function setChatbotVisibility(isVisible) {
+      const chatBtn = document.querySelector('.chat-float-btn');
+      const chatWin = document.getElementById('chatWindow');
+      if (chatBtn) chatBtn.style.display = isVisible ? 'flex' : 'none';
+      if (!isVisible && chatWin) chatWin.style.display = 'none';
     }
-  }
 
-  async function sendMessage() {
-    const chatInput = document.getElementById('chatInput');
-    const chatBody = document.getElementById('chatBody');
-    if (!chatInput || !chatBody) return;
-
-    const message = chatInput.value.trim();
-    if (!message) return;
-
-    const userMsgHtml = `
-      <div class="tg-msg tg-msg-user">
-        ${message}
-        <div class="tg-time">${getTimeNow()}</div>
-      </div>
-    `;
-    chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
-
-    chatInput.value = '';
-    chatBody.scrollTop = chatBody.scrollHeight;
-
-    const loadingId = 'loading-' + Date.now();
-    const loadingHtml = `
-      <div class="tg-msg tg-msg-bot" id="${loadingId}">
-        <i>🤖 Sity sedang mengetik...</i>
-        <div class="tg-time">${getTimeNow()}</div>
-      </div>
-    `;
-    chatBody.insertAdjacentHTML('beforeend', loadingHtml);
-    chatBody.scrollTop = chatBody.scrollHeight;
-
-    try {
-      const response = await fetch('https://publisher-gcc-prev-rings.trycloudflare.com/webhook/chat-smartcity', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message })
-      });
-
-      const data = await response.json();
-      document.getElementById(loadingId)?.remove();
-
-      let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
-      if (Array.isArray(data) && data.length > 0) {
-        aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
-      } else if (typeof data === 'object') {
-        aiReply = data.output || data.text || data.message || data.response || JSON.stringify(data);
-      }
-
-      const botMsgHtml = `
-        <div class="tg-msg tg-msg-bot">
-          <b>🤖 Sity Smartcity Bot</b><br>
-          ${aiReply}
-          <div class="tg-time">${getTimeNow()}</div>
-        </div>
-      `;
-      chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
-      chatBody.scrollTop = chatBody.scrollHeight;
-
-    } catch (err) {
-      console.error("Error chatbot:", err);
-      document.getElementById(loadingId)?.remove();
-
-      const errorMsgHtml = `
-        <div class="tg-msg tg-msg-bot" style="background:#fee2e2; color:#991b1b;">
-          <b>🤖 Sity Smartcity Bot</b><br>
-          Gagal terhubung ke server AI Chatbot. Pastikan workflow n8n statusnya Active/Publish.
-          <div class="tg-time">${getTimeNow()}</div>
-        </div>
-      `;
-      chatBody.insertAdjacentHTML('beforeend', errorMsgHtml);
-      chatBody.scrollTop = chatBody.scrollHeight;
+    function triggerHeroAnimation() {
+      const badge = document.querySelector('.hero-pro-badge');
+      const title = document.querySelector('.hero-pro-title');
+      const desc = document.querySelector('.hero-pro-desc');
+      const btn = document.querySelector('.hero-pro-btn');
+      const elements = [badge, title, desc, btn];
+      elements.forEach(el => { if (el) el.style.animation = 'none'; });
+      void document.body.offsetHeight;
+      elements.forEach(el => { if (el) el.style.animation = ''; });
     }
-  }
 
-  function fetchPublicEnvironmentData() {
-    fetch('/api/public-environment', { cache: 'no-store' })
-      .then(response => response.json())
-      .then(result => {
-        if (result.status === 'success' && result.data) {
-          const d = result.data;
+    function triggerTentangAnimation() {
+      const tentangSection = document.getElementById('tentang');
+      if (!tentangSection) return;
+      tentangSection.classList.remove('tentang-active');
+      void tentangSection.offsetWidth;
+      tentangSection.classList.add('tentang-active');
+    }
 
-          const tempEl = document.getElementById('temp-value');
-          const humEl  = document.getElementById('humidity-value');
-          const aqiEl  = document.getElementById('aqi-value');
-          const rainEl = document.getElementById('rain-value');
-          const watEl  = document.getElementById('water-value');
-          const lampEl = document.getElementById('smart-lamp-value');
-          const parkEl = document.getElementById('smart-parking-value');
+    function triggerLayananAnimation() {
+      const layananSection = document.getElementById('layanan');
+      if (!layananSection) return;
+      const targetElements = layananSection.querySelectorAll('h1, h2, h3, h4, p, .card');
+      targetElements.forEach((el, index) => {
+        el.classList.remove('animate-layanan-left', 'animate-layanan-right');
+        el.style.animationDelay = '0s';
+        void el.offsetWidth;
+        const delay = (index * 0.1).toFixed(2);
+        el.style.animationDelay = `${delay}s`;
 
-          if (tempEl && d.temperature !== '--' && d.temperature !== undefined) {
-            tempEl.innerText = `${Number(d.temperature).toFixed(1)} °C`;
-          }
-          if (humEl && d.humidity !== '--' && d.humidity !== undefined) {
-            humEl.innerText = `${Math.round(Number(d.humidity))} %`;
-          }
-          if (aqiEl && d.air_quality !== '--' && d.air_quality !== undefined) {
-            aqiEl.innerText = `${Number(d.air_quality)} AQI`;
-          }
-          if (rainEl && d.rain_status) {
-            rainEl.innerText = d.rain_status;
-          }
-          if (watEl && d.water_level !== '--' && d.water_level !== undefined) {
-            watEl.innerText = `${Number(d.water_level)} cm`;
-          }
-
-          // Smart Lamp: jumlah sektor lampu yang aktif dari backend admin
-          if (lampEl) {
-            const aktif = d.lamps_active ?? d.smart_lamp ?? d.active_lamp_sectors;
-            const totalSektor = d.lamps_total ?? d.total_lamp_sectors ?? 4;
-            if (aktif !== undefined && aktif !== null) {
-              lampEl.innerText = `${aktif} / ${totalSektor} Sektor Aktif`;
-            }
-          }
-
-          // Smart Parking: slot tersedia dari kapasitas parkir
-          if (parkEl) {
-            const maxSlot = Number(d.parking_total ?? 10);
-            const availRaw = d.parking_avail ?? d.smart_parking;
-            if (availRaw !== undefined && availRaw !== null && !Number.isNaN(Number(availRaw))) {
-              const slotKosong = Math.min(Math.max(Number(availRaw), 0), maxSlot);
-              parkEl.innerText = `${slotKosong} / ${maxSlot} Slot Kosong`;
-            }
-          }
+        if (index % 2 === 0) {
+          el.classList.add('animate-layanan-left');
+        } else {
+          el.classList.add('animate-layanan-right');
         }
-      })
-      .catch(error => console.error('Gagal memuat data monitoring:', error));
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    setChatbotVisibility(false);
-
-    const sendBtn = document.getElementById('sendBtn');
-    const chatInput = document.getElementById('chatInput');
-    const initTime = document.getElementById('initialTime');
-
-    if (initTime) initTime.innerText = getTimeNow();
-
-    if (sendBtn) {
-      sendBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        sendMessage();
       });
     }
 
-    if (chatInput) {
-      chatInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
+    function triggerLokasiAnimation() {
+      const lokasiSection = document.getElementById('kontak');
+      if (!lokasiSection) return;
+      const elements = lokasiSection.querySelectorAll('h1, h2, h3, h4, p, .badge, .card, iframe');
+      elements.forEach((el, index) => {
+        el.classList.remove('animate-lokasi-up');
+        el.style.animationDelay = '0s';
+        void el.offsetWidth;
+        const delay = (index * 0.09).toFixed(2);
+        el.style.animationDelay = `${delay}s`;
+        el.classList.add('animate-lokasi-up');
+      });
+    }
+
+    function triggerTelemetriAnimation() {
+      const telemetriSection = document.getElementById('telemetri');
+      if (!telemetriSection) return;
+      const cards = telemetriSection.querySelectorAll('.card');
+      cards.forEach((card, index) => {
+        card.classList.remove('animate-telemetri-smooth');
+        card.style.animationDelay = '0s';
+        void card.offsetWidth;
+        const delay = (index * 0.12).toFixed(2);
+        card.style.animationDelay = `${delay}s`;
+        card.classList.add('animate-telemetri-smooth');
+      });
+    }
+
+    const backgroundImages = [
+      "image/alun-alun-tegal.jpeg",
+      "image/balaikota.jpeg",
+      "image/masjid agung.jpeg",
+      "image/taman pancasila.jpeg",
+      "image/stasiun.jpeg",
+      "image/water ledeng.jpeg"
+    ];
+
+    // PRELOAD GAMBAR AGAR TIDAK KEDIP HITAM
+    backgroundImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+
+    let currentBgIndex = 0;
+    const welcomeSec = document.getElementById('welcomeSection');
+    const heroDashboard = document.querySelector('.hero-observatorium');
+
+    setInterval(() => {
+      currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
+      const newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
+
+      if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
+      if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
+    }, 4000);
+
+    function enterWebsite() {
+      const mainContent = document.getElementById('mainWebsiteContent');
+      if (!welcomeSec || !mainContent) return;
+      welcomeSec.style.opacity = '0';
+      welcomeSec.style.transform = 'scale(1.04)';
+      setTimeout(() => {
+        welcomeSec.style.display = 'none';
+        mainContent.style.display = 'block';
+        setChatbotVisibility(true);
+        triggerHeroAnimation();
+        setTimeout(() => {
+          mainContent.style.opacity = '1';
+          window.scrollTo(0, 0);
+        }, 50);
+      }, 500);
+    }
+
+    function returnToWelcome() {
+      const mainContent = document.getElementById('mainWebsiteContent');
+      if (!welcomeSec || !mainContent) return;
+      setChatbotVisibility(false);
+      mainContent.style.opacity = '0';
+      setTimeout(() => {
+        mainContent.style.display = 'none';
+        welcomeSec.style.display = 'flex';
+        welcomeSec.style.opacity = '1';
+        welcomeSec.style.transform = 'scale(1)';
+        window.scrollTo(0, 0);
+      }, 500);
+    }
+
+    // --- ENGINE UTAMA CHATBOT (SITY) ---
+    function getTimeNow() {
+      const d = new Date();
+      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+    }
+
+    function toggleChatWindow() {
+      const chatWin = document.getElementById('chatWindow');
+      if (!chatWin) return;
+      chatWin.style.display = chatWin.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    async function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const chatBody = document.getElementById('chatBody');
+      if (!chatInput || !chatBody) return;
+
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      const userMsgHtml = `
+        <div class="tg-msg tg-msg-user">
+          ${message}
+          <div class="tg-time">${getTimeNow()}</div>
+        </div>
+      `;
+      chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
+
+      chatInput.value = '';
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      const loadingId = 'loading-' + Date.now();
+      const loadingHtml = `
+        <div class="tg-msg tg-msg-bot" id="${loadingId}">
+          <i>🤖 Sity sedang mengetik...</i>
+          <div class="tg-time">${getTimeNow()}</div>
+        </div>
+      `;
+      chatBody.insertAdjacentHTML('beforeend', loadingHtml);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      try {
+        const response = await fetch('https://industry-routing-plaintiff-downtown.trycloudflare.com/webhook/chat-smartcity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message })
+        });
+
+        const data = await response.json();
+        document.getElementById(loadingId)?.remove();
+
+        let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
+        if (Array.isArray(data) && data.length > 0) {
+          aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
+        } else if (typeof data === 'object' && data !== null) {
+          aiReply = data.output || data.text || data.message || data.response || JSON.stringify(data);
+        }
+
+        const botMsgHtml = `
+          <div class="tg-msg tg-msg-bot">
+            <b>🤖 Sity Smartcity Bot</b><br>
+            ${aiReply}
+            <div class="tg-time">${getTimeNow()}</div>
+          </div>
+        `;
+        chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+      } catch (err) {
+        console.error("Error chatbot:", err);
+        document.getElementById(loadingId)?.remove();
+
+        const errorMsgHtml = `
+          <div class="tg-msg tg-msg-bot" style="background:#fee2e2; color:#991b1b;">
+            <b>🤖 Sity Smartcity Bot</b><br>
+            Gagal terhubung ke server AI Chatbot. Pastikan workflow n8n statusnya Active/Publish.
+            <div class="tg-time">${getTimeNow()}</div>
+          </div>
+        `;
+        chatBody.insertAdjacentHTML('beforeend', errorMsgHtml);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    }
+
+    function hasValidNumber(val) {
+      return val !== undefined && val !== null && val !== '' && val !== '--' && !Number.isNaN(Number(val));
+    }
+
+    function fetchPublicEnvironmentData() {
+      fetch('/api/public-environment', { cache: 'no-store' })
+        .then(response => response.json())
+        .then(result => {
+          if (result.status === 'success' && result.data) {
+            const d = result.data;
+
+            const tempEl = document.getElementById('temp-value');
+            const humEl  = document.getElementById('humidity-value');
+            const aqiEl  = document.getElementById('aqi-value');
+            const rainEl = document.getElementById('rain-value');
+            const watEl  = document.getElementById('water-value');
+            const lampEl = document.getElementById('smart-lamp-value');
+            const parkEl = document.getElementById('smart-parking-value');
+
+            if (tempEl && hasValidNumber(d.temperature)) {
+              tempEl.innerText = `${Number(d.temperature).toFixed(1)} °C`;
+            }
+            if (humEl && hasValidNumber(d.humidity)) {
+              humEl.innerText = `${Math.round(Number(d.humidity))} %`;
+            }
+            if (aqiEl && hasValidNumber(d.air_quality)) {
+              aqiEl.innerText = `${Number(d.air_quality)} AQI`;
+            }
+            if (rainEl && d.rain_status) {
+              rainEl.innerText = d.rain_status;
+            }
+            if (watEl && hasValidNumber(d.water_level)) {
+              watEl.innerText = `${Number(d.water_level)} cm`;
+            }
+
+            // Smart Lamp: jumlah sektor lampu yang aktif dari backend admin
+            if (lampEl) {
+              const aktif = d.lamps_active ?? d.smart_lamp ?? d.active_lamp_sectors;
+              const totalSektor = d.lamps_total ?? d.total_lamp_sectors ?? 4;
+              if (hasValidNumber(aktif)) {
+                lampEl.innerText = `${aktif} / ${totalSektor} Sektor Aktif`;
+              } else if (typeof aktif === 'string' && aktif.trim() !== '') {
+                lampEl.innerText = aktif;
+              }
+            }
+
+            // Smart Parking: slot tersedia dari kapasitas parkir
+            if (parkEl) {
+              const maxSlot = hasValidNumber(d.parking_total) ? Number(d.parking_total) : 10;
+              const availRaw = d.parking_avail ?? d.smart_parking;
+              if (hasValidNumber(availRaw)) {
+                const slotKosong = Math.min(Math.max(Number(availRaw), 0), maxSlot);
+                parkEl.innerText = `${slotKosong} / ${maxSlot} Slot Kosong`;
+              } else if (typeof availRaw === 'string' && availRaw.trim() !== '') {
+                parkEl.innerText = availRaw;
+              }
+            }
+          }
+        })
+        .catch(error => console.error('Gagal memuat data monitoring:', error));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setChatbotVisibility(false);
+
+      const sendBtn = document.getElementById('sendBtn');
+      const chatInput = document.getElementById('chatInput');
+      const initTime = document.getElementById('initialTime');
+
+      if (initTime) initTime.innerText = getTimeNow();
+
+      if (sendBtn) {
+        sendBtn.addEventListener('click', function(e) {
           e.preventDefault();
           sendMessage();
-        }
-      });
-    }
+        });
+      }
 
-    const navLinks = document.querySelectorAll('#navbarNav .nav-link[href^="#"]');
-    const sections = document.querySelectorAll('#mainWebsiteContent section[id]');
+      if (chatInput) {
+        chatInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+      }
 
-    function setActiveMenu(id) {
+      const navLinks = document.querySelectorAll('#navbarNav .nav-link[href^="#"]');
+      const sections = document.querySelectorAll('#mainWebsiteContent section[id]');
+
+      function setActiveMenu(id) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+
       navLinks.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
-      });
-    }
+        link.addEventListener('click', function (event) {
+          const targetId = this.getAttribute('href').substring(1);
+          const target = document.getElementById(targetId);
+          const navbar = document.querySelector('#mainWebsiteContent .navbar');
+          const navbarCollapse = document.getElementById('navbarNav');
 
-    navLinks.forEach(link => {
-      link.addEventListener('click', function (event) {
-        const targetId = this.getAttribute('href').substring(1);
-        const target = document.getElementById(targetId);
-        const navbar = document.querySelector('#mainWebsiteContent .navbar');
-        const navbarCollapse = document.getElementById('navbarNav');
-
-        if (!target || !navbar) return;
-        event.preventDefault();
-        setActiveMenu(targetId);
-
-        if (targetId === 'beranda') triggerHeroAnimation();
-        if (targetId === 'tentang') triggerTentangAnimation();
-        if (targetId === 'layanan') triggerLayananAnimation();
-        if (targetId === 'telemetri') triggerTelemetriAnimation();
-        if (targetId === 'kontak') triggerLokasiAnimation();
-
-        const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
-        const scrollToTarget = () => {
-          const navbarHeight = navbar.getBoundingClientRect().height;
-          const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
-          const scrollTop = Math.max(0, targetTop - navbarHeight);
-          window.scrollTo({ top: scrollTop, behavior: 'smooth' });
-        };
-
-        if (isMobile && navbarCollapse && navbarCollapse.classList.contains('show') && window.bootstrap) {
-          const collapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
-          collapse.hide();
-          navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
-        } else {
-          scrollToTarget();
-        }
-
-        history.pushState(null, '', '#' + targetId);
-      });
-    });
-
-    let isBerandaAnimated = true;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const targetId = entry.target.id;
-        if (entry.isIntersecting) {
+          if (!target || !navbar) return;
+          event.preventDefault();
           setActiveMenu(targetId);
-          if (targetId === 'tentang') entry.target.classList.add('tentang-active');
+
+          if (targetId === 'beranda') triggerHeroAnimation();
+          if (targetId === 'tentang') triggerTentangAnimation();
           if (targetId === 'layanan') triggerLayananAnimation();
           if (targetId === 'telemetri') triggerTelemetriAnimation();
           if (targetId === 'kontak') triggerLokasiAnimation();
-          if (targetId === 'beranda' && !isBerandaAnimated) {
-            triggerHeroAnimation();
-            isBerandaAnimated = true;
+
+          const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
+          const scrollToTarget = () => {
+            const navbarHeight = navbar.getBoundingClientRect().height;
+            const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
+            const scrollTop = Math.max(0, targetTop - navbarHeight);
+            window.scrollTo({ top: scrollTop, behavior: 'smooth' });
+          };
+
+          if (isMobile && navbarCollapse && navbarCollapse.classList.contains('show') && window.bootstrap) {
+            const collapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
+            collapse.hide();
+            navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
+          } else {
+            scrollToTarget();
           }
-        } else {
-          if (targetId === 'tentang') entry.target.classList.remove('tentang-active');
-          if (targetId === 'beranda') isBerandaAnimated = false;
-        }
+
+          history.pushState(null, '', '#' + targetId);
+        });
       });
-    }, { root: null, rootMargin: '-90px 0px -30% 0px', threshold: 0.15 });
 
-    sections.forEach(section => observer.observe(section));
+      let isBerandaAnimated = true;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const targetId = entry.target.id;
+          if (entry.isIntersecting) {
+            setActiveMenu(targetId);
+            if (targetId === 'tentang') entry.target.classList.add('tentang-active');
+            if (targetId === 'layanan') triggerLayananAnimation();
+            if (targetId === 'telemetri') triggerTelemetriAnimation();
+            if (targetId === 'kontak') triggerLokasiAnimation();
+            if (targetId === 'beranda' && !isBerandaAnimated) {
+              triggerHeroAnimation();
+              isBerandaAnimated = true;
+            }
+          } else {
+            if (targetId === 'tentang') entry.target.classList.remove('tentang-active');
+            if (targetId === 'beranda') isBerandaAnimated = false;
+          }
+        });
+      }, { root: null, rootMargin: '-90px 0px -30% 0px', threshold: 0.15 });
 
-    fetchPublicEnvironmentData();
-    setInterval(fetchPublicEnvironmentData, 5000);
-  });
-</script>
+      sections.forEach(section => observer.observe(section));
+
+      fetchPublicEnvironmentData();
+      setInterval(fetchPublicEnvironmentData, 5000);
+    });
+  </script>
 </body>
 </html>
