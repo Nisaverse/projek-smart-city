@@ -41,7 +41,7 @@
         font-weight: 600;
         padding: 16px 20px;
         border-radius: 14px;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         text-align: left;
         display: flex;
         align-items: center;
@@ -56,7 +56,6 @@
         box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
     }
 
-    /* MODE AKTIF MENGGUNAKAN DARK NAVY */
     .mode-btn.active-mode {
         background: linear-gradient(135deg, #0b132b 0%, #1e3a8a 100%) !important;
         color: #ffffff !important;
@@ -79,7 +78,7 @@
         border: 1px solid #e2e8f0;
         border-radius: 14px;
         padding: 16px;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
     }
 
@@ -108,7 +107,7 @@
         opacity: 0.55;
         pointer-events: none;
         filter: grayscale(30%);
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
     }
 </style>
 @endpush
@@ -135,7 +134,7 @@
                 <div class="control-inner-box mt-3">
                     <div class="d-flex flex-column gap-3">
                         <!-- Mode Otomatis -->
-                        <button type="button" class="mode-btn active-mode" id="btnModeAuto" onclick="setControlMode('auto')">
+                        <button type="button" class="mode-btn active-mode" id="btnModeAuto" onclick="setControlMode('auto', true)">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="mode-icon-box" style="width: 40px; height: 40px; background: rgba(11, 19, 43, 0.08); color: #0b132b; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                     <i class="fas fa-robot fa-lg"></i>
@@ -149,7 +148,7 @@
                         </button>
 
                         <!-- Mode Manual -->
-                        <button type="button" class="mode-btn" id="btnModeManual" onclick="setControlMode('manual')">
+                        <button type="button" class="mode-btn" id="btnModeManual" onclick="setControlMode('manual', true)">
                             <div class="d-flex align-items-center gap-3">
                                 <div class="mode-icon-box" style="width: 40px; height: 40px; background: rgba(245, 158, 11, 0.1); color: #d97706; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                     <i class="fas fa-hand-paper fa-lg"></i>
@@ -196,7 +195,7 @@
                                     <small class="text-muted" style="font-size: 0.75rem;">Status: <span id="relay{{ $i }}StatusText" class="fw-semibold text-danger">Mati (Off)</span></small>
                                 </div>
                                 <div class="form-check form-switch fs-4 m-0">
-                                    <input class="form-check-input relay-switch" type="checkbox" role="switch" id="relay{{ $i }}Switch" onchange="toggleRelay({{ $i }})">
+                                    <input class="form-check-input relay-switch" type="checkbox" role="switch" id="relay{{ $i }}Switch" onchange="toggleRelay({ $i }, true)">
                                 </div>
                             </div>
                         </div>
@@ -217,23 +216,33 @@
 
 @push('scripts')
 <script>
-    function setControlMode(mode) {
+    let lastUserActionAt = 0;
+
+    function normalizeMode(rawMode) {
+        if (!rawMode) return null;
+        const val = String(rawMode).toLowerCase();
+        if (val === 'manual') return 'manual';
+        if (val === 'auto' || val.startsWith('auto')) return 'auto';
+        return null;
+    }
+
+    function applyModeUI(mode) {
+        const normalized = normalizeMode(mode) || 'auto';
         document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active-mode'));
-        
+
         const btnAuto = document.getElementById('btnModeAuto');
         const btnManual = document.getElementById('btnModeManual');
         const iconAuto = document.getElementById('iconAuto');
         const iconManual = document.getElementById('iconManual');
         const label = document.getElementById('currentModeLabel');
         const badge = document.getElementById('modeStatusBadge');
+        const relaySwitches = document.querySelectorAll('.relay-switch');
+        const relaySection = document.getElementById('relayCardSection');
 
         iconAuto.className = "fas fa-circle text-muted fs-6";
         iconManual.className = "fas fa-circle text-muted fs-6";
 
-        const relaySwitches = document.querySelectorAll('.relay-switch');
-        const relaySection = document.getElementById('relayCardSection');
-
-        if (mode === 'auto') {
+        if (normalized === 'auto') {
             btnAuto.classList.add('active-mode');
             iconAuto.className = "fas fa-check-circle fs-5";
             if (label) label.textContent = 'Otomatis';
@@ -241,11 +250,9 @@
                 badge.className = 'badge bg-warning text-dark px-2 py-1';
                 badge.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
             }
-
             relaySwitches.forEach(sw => sw.disabled = true);
             relaySection.classList.add('disabled-control');
-
-        } else if (mode === 'manual') {
+        } else {
             btnManual.classList.add('active-mode');
             iconManual.className = "fas fa-check-circle fs-5";
             if (label) label.textContent = 'Manual';
@@ -253,68 +260,139 @@
                 badge.className = 'badge bg-success text-white px-2 py-1';
                 badge.innerHTML = '<i class="fas fa-lock-open me-1"></i> Aktif';
             }
-
             relaySwitches.forEach(sw => sw.disabled = false);
             relaySection.classList.remove('disabled-control');
         }
 
-        localStorage.setItem('iot_system_mode', mode);
-
-        // Kirim perubahan mode ke backend Laravel & MQTT
-        fetch('/iot/control', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ device: 'lighting_mode', sector: 'all', action: mode })
-        }).catch(err => console.error('Gagal kirim mode:', err));
+        localStorage.setItem('iot_system_mode', normalized);
     }
 
-    function toggleRelay(relayId) {
+    function applyRelayUI(relayId, isOn) {
         const sw = document.getElementById(`relay${relayId}Switch`);
         const statusText = document.getElementById(`relay${relayId}StatusText`);
         const box = document.getElementById(`relayBox${relayId}`);
-        const isChecked = sw.checked;
-        
-        if (isChecked) {
-            statusText.textContent = 'Menyala (On)';
-            statusText.className = 'fw-bold text-success';
-            if (box) box.classList.add('is-active');
-        } else {
-            statusText.textContent = 'Mati (Off)';
-            statusText.className = 'fw-semibold text-danger';
-            if (box) box.classList.remove('is-active');
+        const active = Boolean(isOn);
+
+        if (sw) sw.checked = active;
+        if (statusText) {
+            statusText.textContent = active ? 'Menyala (On)' : 'Mati (Off)';
+            statusText.className = active ? 'fw-bold text-success' : 'fw-semibold text-danger';
+        }
+        if (box) {
+            box.classList.toggle('is-active', active);
         }
 
         let relayStates = JSON.parse(localStorage.getItem('iot_relay_states')) || {};
-        relayStates[relayId] = isChecked ? 1 : 0;
+        relayStates[relayId] = active ? 1 : 0;
         localStorage.setItem('iot_relay_states', JSON.stringify(relayStates));
+    }
 
-        // Kirim perintah sakelar relay via MQTT lewat rute Laravel /iot/control
+    function setControlMode(mode, sendRequest = true) {
+        const normalized = normalizeMode(mode) || 'auto';
+        if (sendRequest) {
+            lastUserActionAt = Date.now();
+        }
+        applyModeUI(normalized);
+
+        if (!sendRequest) return;
+
         fetch('/iot/control', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ device: 'lamp', sector: relayId, action: isChecked })
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                device: 'lighting_mode',
+                sector: 'all',
+                action: normalized
+            })
+        }).catch(err => console.error('Gagal kirim mode:', err));
+    }
+
+    function toggleRelay(relayId, sendRequest = true) {
+        const sw = document.getElementById(`relay${relayId}Switch`);
+        const isChecked = sw ? sw.checked : false;
+
+        if (sendRequest) {
+            lastUserActionAt = Date.now();
+        }
+        applyRelayUI(relayId, isChecked);
+
+        if (!sendRequest) return;
+
+        fetch('/iot/control', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                device: 'lamp',
+                sector: relayId,
+                action: isChecked
+            })
         })
         .then(res => res.json())
         .then(data => {
-            console.log('Respon Kontrol Relay:', data.message);
+            if (data && data.message) {
+                console.log('Respon Kontrol Relay:', data.message);
+            }
         })
         .catch(err => console.error('Gagal kirim perintah relay:', err));
     }
 
+    async function syncControlStateFromServer() {
+        // Hindari menimpa status saat pengguna baru saja menekan tombol (< 2.5 detik)
+        if (Date.now() - lastUserActionAt < 2500) {
+            return;
+        }
+
+        try {
+            const [stateRes, lampsRes] = await Promise.all([
+                fetch('/api/control/state', { cache: 'no-store' }),
+                fetch('/api/lamps', { cache: 'no-store' })
+            ]);
+
+            if (stateRes.ok) {
+                const stateData = await stateRes.json();
+                const remoteMode = normalizeMode(stateData.lighting_mode || stateData.mode);
+                if (remoteMode) {
+                    applyModeUI(remoteMode);
+                }
+            }
+
+            if (lampsRes.ok) {
+                const lampsData = await lampsRes.json();
+                for (let i = 1; i <= 4; i++) {
+                    const code = 'L0' + i;
+                    const item = lampsData[code];
+                    if (item && typeof item.status === 'string') {
+                        const st = item.status.toLowerCase();
+                        if (st === 'on' || st === 'off') {
+                            applyRelayUI(i, st === 'on');
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            // Abaikan error jaringan sesaat saat polling
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const currentMode = localStorage.getItem('iot_system_mode') || 'auto';
-        setControlMode(currentMode);
+        applyModeUI(currentMode);
 
         const savedRelays = JSON.parse(localStorage.getItem('iot_relay_states')) || {};
         for (let i = 1; i <= 4; i++) {
             if (savedRelays[i] !== undefined) {
-                const sw = document.getElementById(`relay${i}Switch`);
-                if (sw) {
-                    sw.checked = savedRelays[i] === 1;
-                    toggleRelay(i);
-                }
+                applyRelayUI(i, savedRelays[i] === 1);
             }
         }
+
+        syncControlStateFromServer();
+        setInterval(syncControlStateFromServer, 2000);
     });
 </script>
 @endpush

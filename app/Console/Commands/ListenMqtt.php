@@ -8,6 +8,7 @@ use PhpMqtt\Client\ConnectionSettings;
 use App\Services\IoTStateManager;
 use App\Models\EnvironmentLog;
 use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 
 class ListenMqtt extends Command
 {
@@ -20,9 +21,9 @@ class ListenMqtt extends Command
     {
         $this->stateManager = $stateManager;
 
-        $this->info('🚀 Starting AetherSense MQTT Listener...');
-        $this->info('📡 Broker: broker.hivemq.com (Public Port 1883)');
-        $this->info('📥 Topic: ' . $this->option('topic'));
+        $this->info('Starting AetherSense MQTT Listener...');
+        $this->info('Broker: broker.hivemq.com (Public Port 1883)');
+        $this->info('Topic: ' . $this->option('topic'));
         $this->info('Press Ctrl+C to stop');
         $this->newLine();
 
@@ -34,24 +35,23 @@ class ListenMqtt extends Command
             $mqtt = new MqttClient($server, $port, $clientId);
             $connectionSettings = new ConnectionSettings();
 
-            $this->info('🔐 Connecting to HiveMQ Public Broker...');
+            $this->info('Connecting to HiveMQ Public Broker...');
             $mqtt->connect($connectionSettings, true);
-            $this->info('✅ Connected to broker successfully!');
+            $this->info('Connected to broker successfully!');
 
             $topic = $this->option('topic');
-            $this->info("📋 Subscribing to: {$topic}");
+            $this->info("Subscribing to: {$topic}");
 
             $mqtt->subscribe($topic, function (string $topic, string $message) {
                 $this->processMessage($topic, $message);
             }, 0);
 
-            $this->info('✅ Successfully subscribed and listening for sensor telemetry...');
+            $this->info('Successfully subscribed and listening for sensor telemetry...');
             $this->newLine();
 
             $mqtt->loop(true);
-
-        } catch (\Exception $e) {
-            $this->error('❌ Error: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->error('Error: ' . $e->getMessage());
             return 1;
         }
 
@@ -61,28 +61,29 @@ class ListenMqtt extends Command
     public function processMessage($topic, $message)
     {
         $timestamp = now()->format('Y-m-d H:i:s');
-        $this->info("📨 [$timestamp] Topic: $topic | Message: $message");
+        $this->info("[{$timestamp}] Topic: {$topic} | Message: {$message}");
 
         $data = json_decode($message, true);
-        $isJson = (json_last_error() === JSON_ERROR_NONE);
-
-        if (!$isJson) {
-            $this->warn("   ⚠️ Pesan bukan format JSON yang valid");
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            $this->warn("   Pesan bukan format JSON yang valid");
             return;
         }
 
-        // 1. 💡 KHUSUS LAMPU: Jalankan jika payload JSON memiliki data relays atau relay1
         if (isset($data['relays']) || isset($data['relay1'])) {
             $this->handleLampMessage($topic, $data);
         }
 
-        // 2. 🌡️ KHUSUS LINGKUNGAN: Jalankan jika ada data temperature
         if (str_contains($topic, 'telemetry') || isset($data['temperature_c'])) {
             $this->handleEnvironmentMessage($topic, $data);
         }
 
-        // 3. 🅿️ KHUSUS PARKIR: Jalankan jika topik mengandung kata parking
-        if (str_contains($topic, 'parking')) {
+        if (
+            str_contains($topic, 'parking') ||
+            array_key_exists('slot_code', $data) ||
+            array_key_exists('parking_total_slots', $data) ||
+            array_key_exists('parking_occupied_slots', $data) ||
+            array_key_exists('parking_available_slots', $data)
+        ) {
             $this->handleParkingMessage($topic, $data);
         }
 
@@ -91,7 +92,7 @@ class ListenMqtt extends Command
 
     private function handleEnvironmentMessage($topic, $data)
     {
-        $this->info("   🌡️ Memproses data lingkungan ESP32-S3...");
+        $this->info("   Memproses data lingkungan ESP32-S3...");
 
         try {
             $temp       = $data['temperature_c'] ?? 28.5;
@@ -109,11 +110,22 @@ class ListenMqtt extends Command
                 'updated_at'  => now()->format('Y-m-d H:i:s')
             ], now()->addMinutes(10));
 
-            $this->info("   ⚡ JALUR 1 (WEB): Tampilan web diperbarui secara real-time ke Cache.");
+            $this->info("   JALUR 1 (WEB): Cache lingkungan diperbarui.");
 
-            $lastLoggedTime = Cache::get('environment_last_logged_time');
+            $lastLoggedRaw = Cache::get('environment_last_logged_time');
+            $lastLoggedTime = null;
 
-            if (!$lastLoggedTime || now()->diffInMinutes($lastLoggedTime) >= 60) {
+            if ($lastLoggedRaw instanceof \DateTimeInterface) {
+                $lastLoggedTime = Carbon::instance($lastLoggedRaw);
+            } elseif (is_string($lastLoggedRaw) && $lastLoggedRaw !== '') {
+                try {
+                    $lastLoggedTime = Carbon::parse($lastLoggedRaw);
+                } catch (\Throwable $ignored) {
+                    $lastLoggedTime = null;
+                }
+            }
+
+            if (!$lastLoggedTime || $lastLoggedTime->diffInMinutes(now()) >= 60) {
                 EnvironmentLog::create([
                     'temperature' => $temp,
                     'humidity'    => $humidity,
@@ -122,44 +134,66 @@ class ListenMqtt extends Command
                     'water_level' => $waterLevel,
                 ]);
 
-                Cache::put('environment_last_logged_time', now(), now()->addHours(2));
-
-                $this->info("   💾 JALUR 2 (DATABASE): Rekap data berhasil disimpan ke MySQL!");
+                Cache::put('environment_last_logged_time', now()->format('Y-m-d H:i:s'), now()->addHours(2));
+                $this->info("   JALUR 2 (DATABASE): Rekap data disimpan ke MySQL.");
             }
-
-        } catch (\Exception $e) {
-            $this->error("   ❌ Gagal memproses data lingkungan: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->error("   Gagal memproses data lingkungan: " . $e->getMessage());
         }
     }
 
     private function handleParkingMessage($topic, $data)
     {
-        $this->info("   🅿️ Memproses data Smart Parking...");
+        $this->info("   [PARKIR] Memproses data Smart Parking...");
+
         try {
             $slotCode = $data['slot_code'] ?? null;
             $status   = $data['status'] ?? null;
 
             if ($slotCode && $status) {
                 Cache::put("parking_slot_{$slotCode}", [
-                    'slot_code' => $slotCode,
-                    'status'    => $status,
-                    'updated_at'=> now()->format('Y-m-d H:i:s')
-                ], now()->addMinutes(10));
-                $this->info("   ⚡ PARKING: Slot {$slotCode} diperbarui jadi {$status}");
+                    'slot_code'  => $slotCode,
+                    'status'     => $status,
+                    'updated_at' => now()->format('Y-m-d H:i:s')
+                ], now()->addDay());
+
+                $this->info("   [PARKIR SLOT] {$slotCode} -> {$status}");
             }
-        } catch (\Exception $e) {
-            $this->error("   ❌ Gagal memproses parkir: " . $e->getMessage());
+
+            if (
+                array_key_exists('parking_total_slots', $data) ||
+                array_key_exists('parking_occupied_slots', $data) ||
+                array_key_exists('parking_available_slots', $data)
+            ) {
+                $total     = (int) ($data['parking_total_slots'] ?? 10);
+                $occupied  = (int) ($data['parking_occupied_slots'] ?? 0);
+                $available = (int) ($data['parking_available_slots'] ?? max(0, $total - $occupied));
+                $isFull    = (bool) ($data['is_parking_full'] ?? ($available <= 0));
+                $nowStr    = now()->format('Y-m-d H:i:s');
+
+                Cache::put('smart_parking_summary', [
+                    'total_slots'     => $total,
+                    'occupied_slots'  => $occupied,
+                    'available_slots' => $available,
+                    'is_parking_full' => $isFull,
+                    'entry_gate_open' => (bool) ($data['entry_gate_open'] ?? false),
+                    'exit_gate_open'  => (bool) ($data['exit_gate_open'] ?? false),
+                    'ir_entry'        => (bool) ($data['ir_entry_detected'] ?? false),
+                    'ir_exit'         => (bool) ($data['ir_exit_detected'] ?? false),
+                    'updated_at'      => $nowStr
+                ], now()->addDay());
+
+                $this->info("   [PARKIR SUMMARY] Tersedia {$available}/{$total} (Terisi: {$occupied}) @ {$nowStr}");
+            }
+        } catch (\Throwable $e) {
+            $this->error("   [PARKIR ERROR] " . $e->getMessage());
         }
     }
 
-  private function handleLampMessage($topic, $data)
+    private function handleLampMessage($topic, $data)
     {
-        $this->info("   💡 Menerima data JSON mentah untuk lampu:");
-        $this->line(json_encode($data)); 
-
         try {
             $relays = $data['relays'] ?? $data;
-
             $mapping = [
                 'relay1' => 'L01',
                 'relay2' => 'L02',
@@ -169,25 +203,19 @@ class ListenMqtt extends Command
 
             foreach ($mapping as $relayKey => $sectorCode) {
                 $val = $relays[$relayKey] ?? ($data[$relayKey] ?? null);
-
-                // CETAK KE TERMINAL: Supaya kita tahu persis nilai dari ESP32 itu apa
-                $this->info("      -> Cek {$relayKey} ({$sectorCode}): " . var_export($val, true));
-
                 if ($val !== null) {
-                    // Paksa ubah ke boolean true jika nilainya true, 'true', 1, atau '1'
                     $isOn = ($val === true || $val === 'true' || $val === 1 || $val === '1' || strtolower((string)$val) === 'on');
                     $statusStr = $isOn ? 'on' : 'off';
 
-                    \Illuminate\Support\Facades\Cache::forget("smart_lamp_{$sectorCode}");
-                    \Illuminate\Support\Facades\Cache::put("smart_lamp_{$sectorCode}", [
+                    Cache::put("smart_lamp_{$sectorCode}", [
                         'sector_code' => $sectorCode,
                         'status'      => $statusStr,
                         'updated_at'  => now()->format('Y-m-d H:i:s')
                     ], now()->addDay());
                 }
             }
-        } catch (\Exception $e) {
-            $this->error("   ❌ Error: " . $e->getMessage());
+        } catch (\Throwable $e) {
+            $this->error("   [LAMPU ERROR] " . $e->getMessage());
         }
     }
 }

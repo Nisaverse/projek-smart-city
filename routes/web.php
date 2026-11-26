@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\IoTControlController; // <-- Jangan lupa import Controller kontrol ini
+use App\Http\Controllers\IoTControlController;
 
 // ===== HALAMAN PENGUNJUNG (PUBLIC - TANPA MIDDLEWARE) =====
 Route::get('/pengunjung', function () {
@@ -20,7 +20,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ===== PROTECTED ROUTES (HARUS LOGIN - DENGAN MIDDLEWARE) =====
 Route::middleware('admin')->group(function () {
-    
+
     // Redirect root ke dashboard
     Route::get('/', function () {
         return redirect('/dashboard');
@@ -29,7 +29,7 @@ Route::middleware('admin')->group(function () {
     // Dashboard Pages
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/smart-lamp', [DashboardController::class, 'smartLamp'])->name('smart-lamp');
-    
+
     // Route Suhu & Kelembapan (Menggantikan Smart Waste)
     Route::get('/smart-temp', [DashboardController::class, 'smartTemp'])->name('smart-temp');
     Route::get('/smart-waste', function () {
@@ -37,21 +37,22 @@ Route::middleware('admin')->group(function () {
     });
 
     Route::get('/smart-parking', [DashboardController::class, 'smartParking'])->name('smart-parking');
-    
+
     // Control Center
     Route::get('/control', [DashboardController::class, 'control'])->name('control');
     Route::get('/control-center', [DashboardController::class, 'control'])->name('control-center');
 
-    // ===== TAMBAHAN: RUTE HAPUS ARSIP LAPORAN MINGGUAN (IKON TEMPAT SAMPAH) =====
+    // ===== RUTE HAPUS ARSIP LAPORAN MINGGUAN =====
     Route::delete('/reports/{id}', [DashboardController::class, 'destroyReport'])->name('reports.destroy');
 
-    // ===== TAMBAHAN: RUTE KIRIM PERINTAH MQTT KONTROL =====
+    // ===== RUTE KIRIM PERINTAH MQTT KONTROL =====
     Route::post('/iot/control', [IoTControlController::class, 'sendCommand'])->name('iot.control');
 
     // ===== API ENDPOINTS (DATA) =====
     Route::get('/api/lamp', [DashboardController::class, 'apiLampData']);
     Route::get('/api/smart-lamp', [DashboardController::class, 'apiLampData']);
-    
+    Route::get('/api/control/state', [DashboardController::class, 'apiControlState']);
+
     // API Suhu & Kelembapan (Menggantikan /api/waste)
     Route::get('/api/environment', [DashboardController::class, 'apiEnvironmentData']);
     Route::get('/api/waste', [DashboardController::class, 'apiEnvironmentData']);
@@ -70,11 +71,11 @@ Route::middleware('admin')->group(function () {
     // ===== AUTO SETTINGS =====
     Route::get('/api/auto-settings', [DashboardController::class, 'getAutoSettings']);
     Route::post('/api/auto-settings', [DashboardController::class, 'updateAutoSettings']);
-    
+
     // Toggle Auto Schedule ON/OFF
     Route::post('/api/auto-schedule/toggle', [DashboardController::class, 'toggleAutoSchedule']);
-    
+
     // Toggle Auto Sensor ON/OFF
     Route::post('/api/auto-sensor/toggle', [DashboardController::class, 'toggleAutoSensor']);
-    
+
 });
