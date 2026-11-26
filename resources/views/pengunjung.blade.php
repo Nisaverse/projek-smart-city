@@ -578,7 +578,7 @@
       chatBody.scrollTop = chatBody.scrollHeight;
 
       try {
-        const response = await fetch('https://inherited-consistently-mac-associated.trycloudflare.com/webhook/chat-smartcity', {
+        const response = await fetch('https://publisher-gcc-prev-rings.trycloudflare.com/webhook/chat-smartcity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: message })
