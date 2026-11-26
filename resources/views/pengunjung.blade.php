@@ -225,10 +225,7 @@
       will-change: opacity, transform;
     }
 
-    /* CSS KARTU TELEMETRI 5 KOLOM */
-    @media (min-width: 992px) {
-      .col-lg-is-5 { flex: 0 0 auto; width: 20%; }
-    }
+    /* CSS KARTU TELEMETRI GRID */
     @keyframes cardEntrance {
       0% { opacity: 0; transform: translateY(30px); }
       100% { opacity: 1; transform: translateY(0); }
@@ -239,6 +236,8 @@
     .telemetri-card-item:nth-child(3) { animation-delay: 0.3s; }
     .telemetri-card-item:nth-child(4) { animation-delay: 0.4s; }
     .telemetri-card-item:nth-child(5) { animation-delay: 0.5s; }
+    .telemetri-card-item:nth-child(6) { animation-delay: 0.6s; }
+    .telemetri-card-item:nth-child(7) { animation-delay: 0.7s; }
 
     .telemetri-card-navy {
       background: linear-gradient(145deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.6) 100%) !important;
@@ -264,24 +263,30 @@
 
     /* CHATBOT CSS */
     .chat-float-btn {
-      position: fixed; bottom: 25px; right: 25px; background-color: #2AABEE; color: white;
-      width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
+      position: fixed !important; bottom: 25px !important; right: 25px !important; top: auto !important; left: auto !important;
+      background-color: #2AABEE; color: white;
+      width: 60px; height: 60px; border-radius: 50%; display: none; align-items: center;
       justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 20px rgba(42, 171, 238, 0.4);
-      cursor: pointer; z-index: 1000; transition: transform 0.2s, background-color 0.2s;
+      cursor: pointer; z-index: 1000 !important; transition: transform 0.2s, background-color 0.2s;
     }
     .chat-float-btn:hover { transform: scale(1.1); background-color: #229ED9; }
 
+    body:has(#welcomeSection:not([style*="display: none"])) .chat-float-btn,
+    body:has(#welcomeSection:not([style*="display: none"])) .chat-window {
+      display: none !important;
+    }
+
     .chat-window {
-      position: fixed; 
-      bottom: 95px; 
-      right: 25px; 
-      width: 360px; /* Lebar sedikit dirampingkan agar elegan */
+      position: fixed;
+      bottom: 95px;
+      right: 25px;
+      width: 360px;
       max-width: calc(100vw - 30px);
-      height: 460px; /* Tinggi dikurangi agar tidak terlalu menjulang ke atas */
+      height: 460px;
       background: #8FA2B5;
       background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
       background-size: 12px 12px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.25);
-      display: none; flex-direction: column; z-index: 9999; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
+      display: none; flex-direction: column; z-index: 1050; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
     }
     .tg-chat-header { background: #517DA2; color: white; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; min-height: 55px; }
     .tg-avatar { width: 40px; height: 40px; background: #2AABEE; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; overflow: hidden; }
@@ -293,17 +298,9 @@
     .tg-msg-user { align-self: flex-end; background: #EFFDDE; color: #111111; border-radius: 12px 12px 2px 12px; }
     .tg-time { position: absolute; bottom: 3px; right: 8px; font-size: 0.65rem; color: #888888; display: flex; align-items: center; gap: 3px; }
     .tg-msg-user .tg-time { color: #559145; }
-    .tg-keyboard-panel { background: #ffffff; border-top: 1px solid #e2e8f0; padding: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.08); animation: slideUp 0.2s ease-in-out; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .tg-inline-keyboard { display: grid; grid-template-columns: 1fr; gap: 6px; }
-    .tg-btn-inline { background: #F0F4F7; border: 1px solid #D6E0E8; color: #2AABEE; font-size: 0.8rem; font-weight: 600; padding: 8px 10px; border-radius: 8px; text-align: center; cursor: pointer; transition: background 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .tg-btn-inline:hover { background: #E1EBF2; color: #1D88C2; }
-    .tg-btn-inline:active { transform: scale(0.98); }
     .tg-chat-footer { background: #FFFFFF; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #E0E0E0; }
-    .tg-btn-cmd { background: #F0F4F8; color: #517DA2; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    .tg-btn-cmd:hover { background: #E2EBF3; }
 
-  /* --- PENGATURAN CHATBOT DI TENGAH LAYAR MOBILE --- */
+    /* --- PENGATURAN CHATBOT DI TENGAH LAYAR MOBILE --- */
     @media (max-width: 768px) {
       .chat-window {
         position: fixed !important;
@@ -317,57 +314,22 @@
         right: auto !important;
         border-radius: 20px !important;
         box-shadow: 0 15px 40px rgba(0,0,0,0.4) !important;
-      }  
-      
-      /* Mengatur ukuran font agar terbaca jelas tanpa kekecilan */
-      body {
-        font-size: 1.05rem !important;
       }
+
+      body { font-size: 1.05rem !important; }
       h1 { font-size: 2rem !important; }
       h2 { font-size: 1.65rem !important; }
       h3 { font-size: 1.35rem !important; }
-      p, .lead, span, div {
-        font-size: 1.05rem !important;
-        line-height: 1.7 !important;
-      }
+      p, .lead, span, div { font-size: 1.05rem !important; line-height: 1.7 !important; }
 
-      /* Padding section agar tidak terlalu mepet pinggir layar HP */
-      section, .container {
-        padding-left: 20px !important;
-        padding-right: 20px !important;
-      }
+      section, .container { padding-left: 20px !important; padding-right: 20px !important; }
 
-      /* Welcome screen penyesuaian vertikal */
-      #welcomeSection {
-        padding: 20px 15px !important;
-        justify-content: space-around !important;
-        text-align: center;
-      }
-      .welcome-title {
-        font-size: 2.2rem !important;
-        line-height: 1.25 !important;
-      }
-      .welcome-desc {
-        font-size: 1rem !important;
-      }
-      .welcome-preview-container {
-        justify-content: center !important;
-        flex-wrap: wrap !important;
-      }
+      #welcomeSection { padding: 20px 15px !important; justify-content: space-around !important; text-align: center; }
+      .welcome-title { font-size: 2.2rem !important; line-height: 1.25 !important; }
+      .welcome-desc { font-size: 1rem !important; }
+      .welcome-preview-container { justify-content: center !important; flex-wrap: wrap !important; }
 
-      /* Kartu telemetri dan jarak antar elemen */
-      .telemetri-card-navy {
-        margin-bottom: 16px !important;
-      }
-
-      /* Jendela chatbot memenuhi layar bawah dengan nyaman */
-      .chat-window {
-        width: 100vw !important;
-        height: 85vh !important;
-        bottom: 0 !important;
-        right: 0 !important;
-        border-radius: 20px 20px 0 0 !important;
-      }
+      .telemetri-card-navy { margin-bottom: 16px !important; }
     }
   </style>
 </head>
@@ -385,8 +347,153 @@
     <!-- BERANDA / HERO -->
     @include('partials.hero')
 
-    <!-- TELEMETRI 5 KARTU -->
-    @include('partials.telemetri')
+    <!-- TELEMETRI 7 KARTU (LINGKUNGAN & IOT) -->
+    <section id="telemetri" style="background: linear-gradient(135deg, #0b1329 0%, #1e3a8a 100%); color: #ffffff; padding-top: 5rem; padding-bottom: 7rem;">
+      <div class="container-fluid px-4 px-lg-5 py-3">
+        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+          <h6 class="text-info fw-bold text-uppercase" style="letter-spacing: 1.5px; font-size: 0.85rem;">Live Kondisi Lingkungan</h6>
+          <h2 class="fw-bold text-white mb-2">Kondisi Lingkungan Saat Ini</h2>
+          <p class="text-light opacity-75">Pantauan langsung kondisi cuaca, kualitas lingkungan, serta status perangkat Smart City kawasan Alun-Alun Kota Tegal.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+          <!-- 1. Suhu Saat Ini -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+            <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Suhu Saat Ini</div>
+                  <h3 class="fw-bold text-white mb-0" style="font-size: 2rem; letter-spacing: -0.5px;" id="temp-value">27.4 &deg;C</h3>
+                </div>
+                <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(251, 191, 36, 0.18); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35);">
+                  <i class="fa-solid fa-temperature-half fs-5"></i>
+                </div>
+              </div>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Suhu sekitar</span>
+                <span id="badge-temp" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Kelembaban -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+            <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Kelembaban</div>
+                  <h3 class="fw-bold text-white mb-0" style="font-size: 2rem; letter-spacing: -0.5px;" id="humidity-value">50 %</h3>
+                </div>
+                <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35);">
+                  <i class="fa-solid fa-droplet fs-5"></i>
+                </div>
+              </div>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-info me-2" style="font-size: 0.55rem;"></i> Kelembaban relatif</span>
+                <span id="badge-humidity" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Kualitas Udara -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+            <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Kualitas Udara</div>
+                  <h3 class="fw-bold text-white mb-0" style="font-size: 2rem; letter-spacing: -0.5px;" id="aqi-value">42 AQI</h3>
+                </div>
+                <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(74, 222, 128, 0.18); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.35);">
+                  <i class="fa-solid fa-wind fs-5"></i>
+                </div>
+              </div>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Kondisi Baik & Sehat</span>
+                <span id="badge-aqi" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Status Hujan -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+            <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Status Hujan</div>
+                  <h3 class="fw-bold text-white mb-0" style="font-size: 1.6rem; line-height: 1.2;" id="rain-value">Mendung</h3>
+                </div>
+                <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(148, 163, 184, 0.18); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.35);">
+                  <i class="fa-solid fa-cloud-rain fs-5"></i>
+                </div>
+              </div>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-light me-2" style="font-size: 0.55rem;"></i> Presipitasi Terdeteksi</span>
+                <span id="badge-rain" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Air Sungai -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+            <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Air Sungai</div>
+                  <h3 class="fw-bold text-white mb-0" style="font-size: 2rem; letter-spacing: -0.5px;" id="water-value">120 cm</h3>
+                </div>
+                <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(13, 202, 240, 0.18); color: #0dcaf0; border: 1px solid rgba(13, 202, 240, 0.35);">
+                  <i class="fa-solid fa-water fs-5"></i>
+                </div>
+              </div>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-success me-2" style="font-size: 0.55rem;"></i> Aman Terkendali</span>
+                <span id="badge-water" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Smart Lamp -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+            <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Smart Lamp</div>
+                  <h3 class="fw-bold text-white mb-0" style="font-size: 1.5rem; line-height: 1.2;" id="smart-lamp-value">3 / 4 Sektor Aktif</h3>
+                </div>
+                <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(234, 179, 8, 0.18); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.35);">
+                  <i class="fa-solid fa-lightbulb fs-5"></i>
+                </div>
+              </div>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Sektor lampu menyala</span>
+                <span id="badge-lamp" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Smart Parking -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+            <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Smart Parking</div>
+                  <h3 class="fw-bold text-white mb-0" style="font-size: 1.5rem; line-height: 1.2;" id="smart-parking-value">10 Slot</h3>
+                </div>
+                <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.18); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.35);">
+                  <i class="fa-solid fa-square-parking fs-5"></i>
+                </div>
+              </div>
+              <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+                <span><i class="fa-solid fa-circle-dot text-primary me-2" style="font-size: 0.55rem;"></i> Total 10 slot parkir</span>
+                <span id="badge-parking" class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
 
     <!-- TENTANG -->
     @include('partials.tentang')
@@ -410,6 +517,13 @@
 
   <!-- JAVASCRIPT KONTROL ANIMASI & ENGINE CHATBOT -->
   <script>
+    function setChatbotVisibility(isVisible) {
+      const chatBtn = document.querySelector('.chat-float-btn');
+      const chatWin = document.getElementById('chatWindow');
+      if (chatBtn) chatBtn.style.display = isVisible ? 'flex' : 'none';
+      if (!isVisible && chatWin) chatWin.style.display = 'none';
+    }
+
     function triggerHeroAnimation() {
       const badge = document.querySelector('.hero-pro-badge');
       const title = document.querySelector('.hero-pro-title');
@@ -498,19 +612,20 @@
     setInterval(() => {
       currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
       let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
-      
+
       if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
       if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
-    }, 4000); // Waktu diperpanjang sedikit jadi 4 detik agar lebih nyaman
+    }, 4000);
 
     function enterWebsite() {
       const mainContent = document.getElementById('mainWebsiteContent');
-      if(!welcomeSec || !mainContent) return;
+      if (!welcomeSec || !mainContent) return;
       welcomeSec.style.opacity = '0';
       welcomeSec.style.transform = 'scale(1.04)';
       setTimeout(() => {
         welcomeSec.style.display = 'none';
         mainContent.style.display = 'block';
+        setChatbotVisibility(true);
         triggerHeroAnimation();
         setTimeout(() => {
           mainContent.style.opacity = '1';
@@ -521,7 +636,8 @@
 
     function returnToWelcome() {
       const mainContent = document.getElementById('mainWebsiteContent');
-      if(!welcomeSec || !mainContent) return;
+      if (!welcomeSec || !mainContent) return;
+      setChatbotVisibility(false);
       mainContent.style.opacity = '0';
       setTimeout(() => {
         mainContent.style.display = 'none';
@@ -578,7 +694,7 @@
       chatBody.scrollTop = chatBody.scrollHeight;
 
       try {
-        const response = await fetch('https://inherited-consistently-mac-associated.trycloudflare.com/webhook/chat-smartcity', {
+        const response = await fetch('https://publisher-gcc-prev-rings.trycloudflare.com/webhook/chat-smartcity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: message })
@@ -626,17 +742,41 @@
         .then(result => {
           if (result.status === 'success') {
             let d = result.data;
-            if(document.getElementById('temp-value')) document.getElementById('temp-value').innerText = d.temperature + ' °C';
-            if(document.getElementById('humidity-value')) document.getElementById('humidity-value').innerText = d.humidity + ' %';
-            if(document.getElementById('aqi-value')) document.getElementById('aqi-value').innerText = d.air_quality + ' AQI';
-            if(document.getElementById('rain-value')) document.getElementById('rain-value').innerText = d.rain_status;
-            if(document.getElementById('water-value')) document.getElementById('water-value').innerText = d.water_level + ' cm';
+            if (document.getElementById('temp-value')) document.getElementById('temp-value').innerText = d.temperature + ' °C';
+            if (document.getElementById('humidity-value')) document.getElementById('humidity-value').innerText = d.humidity + ' %';
+            if (document.getElementById('aqi-value')) document.getElementById('aqi-value').innerText = d.air_quality + ' AQI';
+            if (document.getElementById('rain-value')) document.getElementById('rain-value').innerText = d.rain_status;
+            if (document.getElementById('water-value')) document.getElementById('water-value').innerText = d.water_level + ' cm';
+
+            // Smart Lamp: jumlah sektor lampu yang aktif
+            if (document.getElementById('smart-lamp-value')) {
+              if (typeof d.smart_lamp === 'number' || typeof d.active_lamp_sectors === 'number') {
+                const aktif = d.smart_lamp ?? d.active_lamp_sectors;
+                const totalSektor = d.total_lamp_sectors || 4;
+                document.getElementById('smart-lamp-value').innerText = `${aktif} / ${totalSektor} Sektor Aktif`;
+              } else {
+                document.getElementById('smart-lamp-value').innerText = d.smart_lamp || '3 / 4 Sektor Aktif';
+              }
+            }
+
+            // Smart Parking: kapasitas 10 slot
+            if (document.getElementById('smart-parking-value')) {
+              const maxSlot = 10;
+              if (typeof d.smart_parking === 'number') {
+                const slotKosong = Math.min(Math.max(d.smart_parking, 0), maxSlot);
+                document.getElementById('smart-parking-value').innerText = `${slotKosong} / ${maxSlot} Slot Kosong`;
+              } else {
+                document.getElementById('smart-parking-value').innerText = d.smart_parking || '10 Slot';
+              }
+            }
           }
         })
         .catch(error => console.error('Gagal memuat data monitoring:', error));
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      setChatbotVisibility(false);
+
       const sendBtn = document.getElementById('sendBtn');
       const chatInput = document.getElementById('chatInput');
       const initTime = document.getElementById('initialTime');
