@@ -19,6 +19,7 @@ class DashboardController extends Controller
     private const DEFAULT_DEVICE_ID = 'esp32s3-9C3B21AD4F7C';
     private const MQTT_HOST = 'broker.hivemq.com';
     private const MQTT_PORT = 1883;
+    private const IOT_TIMEOUT_SECONDS = 20;
 
     public function __construct(IoTStateManager $stateManager)
     {
@@ -52,22 +53,67 @@ class DashboardController extends Controller
         return view('dashboard.control');
     }
 
+    // ===== HELPER CEK STATUS ONLINE / OFFLINE IoT =====
+
+    private function parseTimestamp(?string $value): ?Carbon
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        try {
+            return Carbon::parse($value);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    private function isTimestampFresh(?Carbon $timestamp, int $maxAgeSeconds = self::IOT_TIMEOUT_SECONDS): bool
+    {
+        if (!$timestamp) {
+            return false;
+        }
+
+        return $timestamp->diffInSeconds(now()) <= $maxAgeSeconds;
+    }
+
     // ===== API ENDPOINTS (GET DATA REAL-TIME) =====
 
     public function apiLampData()
     {
-        return response()->json([
+        $lamps = [
             'L01' => Cache::get('smart_lamp_L01', ['sector_code' => 'L01', 'status' => 'inactive']),
             'L02' => Cache::get('smart_lamp_L02', ['sector_code' => 'L02', 'status' => 'inactive']),
             'L03' => Cache::get('smart_lamp_L03', ['sector_code' => 'L03', 'status' => 'inactive']),
             'L04' => Cache::get('smart_lamp_L04', ['sector_code' => 'L04', 'status' => 'inactive']),
+        ];
+
+        $latestTime = null;
+        foreach ($lamps as $lamp) {
+            if (is_array($lamp)) {
+                $dt = $this->parseTimestamp($lamp['updated_at'] ?? null);
+                if ($dt && (!$latestTime || $dt->greaterThan($latestTime))) {
+                    $latestTime = $dt;
+                }
+            }
+        }
+
+        $isOnline = $this->isTimestampFresh($latestTime);
+
+        return response()->json([
+            'L01'        => $lamps['L01'],
+            'L02'        => $lamps['L02'],
+            'L03'        => $lamps['L03'],
+            'L04'        => $lamps['L04'],
+            'iot_status' => $isOnline ? 'Online' : 'Offline',
+            'is_online'  => $isOnline,
         ]);
     }
 
     public function apiControlState()
     {
         $envCached = Cache::get('latest_environment_data', []);
-        $espLightingMode = $envCached['lighting_mode'] ?? null;
+        $espLightingMode = is_array($envCached) ? ($envCached['lighting_mode'] ?? null) : null;
 
         $mode = Cache::get('control_mode');
         if (!$mode && $espLightingMode) {
@@ -75,16 +121,21 @@ class DashboardController extends Controller
         }
         $mode = $mode ?: 'manual';
 
+        $envTime = is_array($envCached) ? $this->parseTimestamp($envCached['updated_at'] ?? null) : null;
+        $isOnline = $this->isTimestampFresh($envTime);
+
         return response()->json([
-            'mode'           => $mode,
-            'lighting_mode'  => $espLightingMode ?? (str_starts_with($mode, 'auto') ? 'auto' : 'manual'),
-            'lamps'          => [
+            'mode'          => $mode,
+            'lighting_mode' => $espLightingMode ?? (str_starts_with($mode, 'auto') ? 'auto' : 'manual'),
+            'iot_status'    => $isOnline ? 'Online' : 'Offline',
+            'is_online'     => $isOnline,
+            'lamps'         => [
                 'L01' => Cache::get('smart_lamp_L01', ['sector_code' => 'L01', 'status' => 'off']),
                 'L02' => Cache::get('smart_lamp_L02', ['sector_code' => 'L02', 'status' => 'off']),
                 'L03' => Cache::get('smart_lamp_L03', ['sector_code' => 'L03', 'status' => 'off']),
                 'L04' => Cache::get('smart_lamp_L04', ['sector_code' => 'L04', 'status' => 'off']),
             ],
-            'updated_at'     => now()->format('Y-m-d H:i:s'),
+            'updated_at'    => now()->format('Y-m-d H:i:s'),
         ]);
     }
 
@@ -97,6 +148,7 @@ class DashboardController extends Controller
 
         $slots = [];
         $hasSlotCache = false;
+        $latestSlotTime = null;
 
         for ($i = 1; $i <= 10; $i++) {
             $code = 'P' . str_pad($i, 2, '0', STR_PAD_LEFT);
@@ -105,6 +157,12 @@ class DashboardController extends Controller
             if ($cachedSlot) {
                 $slots[$code] = $cachedSlot;
                 $hasSlotCache = true;
+                if (is_array($cachedSlot)) {
+                    $dt = $this->parseTimestamp($cachedSlot['updated_at'] ?? null);
+                    if ($dt && (!$latestSlotTime || $dt->greaterThan($latestSlotTime))) {
+                        $latestSlotTime = $dt;
+                    }
+                }
             }
         }
 
@@ -132,26 +190,27 @@ class DashboardController extends Controller
             }
         }
 
+        $summaryTime = is_array($summary) ? $this->parseTimestamp($summary['updated_at'] ?? null) : null;
+        $effectiveTime = $summaryTime ?? $latestSlotTime;
+        $isOnline = $this->isTimestampFresh($effectiveTime);
+
         return response()->json([
-            'summary' => $summary ?? ($fallback['summary'] ?? null),
-            'slots'   => $slots,
+            'summary'    => $summary ?? ($fallback['summary'] ?? null),
+            'slots'      => $slots,
+            'iot_status' => $isOnline ? 'Online' : 'Offline',
+            'is_online'  => $isOnline,
         ]);
     }
 
-    // Melayani data Suhu & Kelembapan (DHT Sensor & Monitoring)
+    // Melayani data Suhu & Kelembapan (DHT Sensor & Monitoring Admin)
     public function apiEnvironmentData()
     {
         $cached = Cache::get('latest_environment_data');
 
         if (is_array($cached) && !empty($cached)) {
-            $timeStr = now()->format('H:i:s');
-            if (!empty($cached['updated_at'])) {
-                try {
-                    $timeStr = Carbon::parse($cached['updated_at'])->format('H:i:s');
-                } catch (\Throwable $e) {
-                    $timeStr = now()->format('H:i:s');
-                }
-            }
+            $cachedDt = $this->parseTimestamp($cached['updated_at'] ?? null);
+            $isOnline = $this->isTimestampFresh($cachedDt);
+            $timeStr = $cachedDt ? $cachedDt->format('H:i:s') : now()->format('H:i:s');
 
             return response()->json([
                 'has_data'    => true,
@@ -160,6 +219,8 @@ class DashboardController extends Controller
                 'air_quality' => (int) ($cached['air_quality'] ?? 0),
                 'rain_status' => $cached['rain_status'] ?? 'Kering',
                 'water_level' => (float) ($cached['water_level'] ?? 0),
+                'iot_status'  => $isOnline ? 'Online' : 'Offline',
+                'is_online'   => $isOnline,
                 'timestamp'   => $timeStr,
             ]);
         }
@@ -175,6 +236,8 @@ class DashboardController extends Controller
                     'air_quality' => (int) ($latest->air_quality ?? 0),
                     'rain_status' => $latest->rain_status ?? 'Cerah',
                     'water_level' => (float) ($latest->water_level ?? 0),
+                    'iot_status'  => 'Offline',
+                    'is_online'   => false,
                     'timestamp'   => $latest->created_at->format('H:i:s'),
                 ]);
             }
@@ -188,6 +251,8 @@ class DashboardController extends Controller
             'air_quality' => '--',
             'rain_status' => 'Menunggu data',
             'water_level' => '--',
+            'iot_status'  => 'Offline',
+            'is_online'   => false,
             'timestamp'   => now()->format('H:i:s'),
         ]);
     }
@@ -197,16 +262,40 @@ class DashboardController extends Controller
     {
         $cached = Cache::get('latest_environment_data');
 
+        $activeLamps = 0;
+        for ($i = 1; $i <= 4; $i++) {
+            $lamp = Cache::get('smart_lamp_L0' . $i);
+            if (is_array($lamp) && strtolower((string) ($lamp['status'] ?? '')) === 'on') {
+                $activeLamps++;
+            }
+        }
+
+        $parkingSummary = Cache::get('smart_parking_summary');
+        $totalSlots     = is_array($parkingSummary) ? (int) ($parkingSummary['total_slots'] ?? 10) : 10;
+        $availableSlots = is_array($parkingSummary) ? (int) ($parkingSummary['available_slots'] ?? 10) : 10;
+        $occupiedSlots  = is_array($parkingSummary)
+            ? (int) ($parkingSummary['occupied_slots'] ?? max(0, $totalSlots - $availableSlots))
+            : 0;
+
         if (is_array($cached) && !empty($cached)) {
+            $cachedDt = $this->parseTimestamp($cached['updated_at'] ?? null);
+            $isOnline = $this->isTimestampFresh($cachedDt);
+
             return response()->json([
                 'status' => 'success',
                 'data'   => [
-                    'temperature' => (float) ($cached['temperature'] ?? 0),
-                    'humidity'    => (float) ($cached['humidity'] ?? 0),
-                    'air_quality' => (int) ($cached['air_quality'] ?? 0),
-                    'rain_status' => $cached['rain_status'] ?? 'Kering',
-                    'water_level' => (float) ($cached['water_level'] ?? 0),
-                    'iot_status'  => 'Online',
+                    'temperature'   => (float) ($cached['temperature'] ?? 0),
+                    'humidity'      => (float) ($cached['humidity'] ?? 0),
+                    'air_quality'   => (int) ($cached['air_quality'] ?? 0),
+                    'rain_status'   => $cached['rain_status'] ?? 'Kering',
+                    'water_level'   => (float) ($cached['water_level'] ?? 0),
+                    'iot_status'    => $isOnline ? 'Online' : 'Offline',
+                    'is_online'     => $isOnline,
+                    'lamps_active'  => $activeLamps,
+                    'lamps_total'   => 4,
+                    'parking_total' => $totalSlots,
+                    'parking_avail' => $availableSlots,
+                    'parking_used'  => $occupiedSlots,
                 ],
             ]);
         }
@@ -218,12 +307,18 @@ class DashboardController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'data'   => [
-                        'temperature' => (float) $latest->temperature,
-                        'humidity'    => (float) $latest->humidity,
-                        'air_quality' => (int) ($latest->air_quality ?? 0),
-                        'rain_status' => $latest->rain_status ?? 'Cerah',
-                        'water_level' => (float) ($latest->water_level ?? 0),
-                        'iot_status'  => 'Online',
+                        'temperature'   => (float) $latest->temperature,
+                        'humidity'      => (float) $latest->humidity,
+                        'air_quality'   => (int) ($latest->air_quality ?? 0),
+                        'rain_status'   => $latest->rain_status ?? 'Cerah',
+                        'water_level'   => (float) ($latest->water_level ?? 0),
+                        'iot_status'    => 'Offline',
+                        'is_online'     => false,
+                        'lamps_active'  => $activeLamps,
+                        'lamps_total'   => 4,
+                        'parking_total' => $totalSlots,
+                        'parking_avail' => $availableSlots,
+                        'parking_used'  => $occupiedSlots,
                     ],
                 ]);
             }
@@ -233,12 +328,18 @@ class DashboardController extends Controller
         return response()->json([
             'status' => 'empty',
             'data'   => [
-                'temperature' => '--',
-                'humidity'    => '--',
-                'air_quality' => '--',
-                'rain_status' => 'Menunggu data',
-                'water_level' => '--',
-                'iot_status'  => 'Offline',
+                'temperature'   => '--',
+                'humidity'      => '--',
+                'air_quality'   => '--',
+                'rain_status'   => 'Menunggu data',
+                'water_level'   => '--',
+                'iot_status'    => 'Offline',
+                'is_online'     => false,
+                'lamps_active'  => $activeLamps,
+                'lamps_total'   => 4,
+                'parking_total' => $totalSlots,
+                'parking_avail' => $availableSlots,
+                'parking_used'  => $occupiedSlots,
             ],
         ]);
     }

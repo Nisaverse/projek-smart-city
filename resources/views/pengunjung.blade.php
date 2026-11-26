@@ -516,361 +516,377 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- JAVASCRIPT KONTROL ANIMASI & ENGINE CHATBOT -->
-  <script>
-    function setChatbotVisibility(isVisible) {
-      const chatBtn = document.querySelector('.chat-float-btn');
-      const chatWin = document.getElementById('chatWindow');
-      if (chatBtn) chatBtn.style.display = isVisible ? 'flex' : 'none';
-      if (!isVisible && chatWin) chatWin.style.display = 'none';
-    }
+<script>
+  function setChatbotVisibility(isVisible) {
+    const chatBtn = document.querySelector('.chat-float-btn');
+    const chatWin = document.getElementById('chatWindow');
+    if (chatBtn) chatBtn.style.display = isVisible ? 'flex' : 'none';
+    if (!isVisible && chatWin) chatWin.style.display = 'none';
+  }
 
-    function triggerHeroAnimation() {
-      const badge = document.querySelector('.hero-pro-badge');
-      const title = document.querySelector('.hero-pro-title');
-      const desc = document.querySelector('.hero-pro-desc');
-      const btn = document.querySelector('.hero-pro-btn');
-      const elements = [badge, title, desc, btn];
-      elements.forEach(el => { if (el) el.style.animation = 'none'; });
-      void document.body.offsetHeight;
-      elements.forEach(el => { if (el) el.style.animation = ''; });
-    }
+  function triggerHeroAnimation() {
+    const badge = document.querySelector('.hero-pro-badge');
+    const title = document.querySelector('.hero-pro-title');
+    const desc = document.querySelector('.hero-pro-desc');
+    const btn = document.querySelector('.hero-pro-btn');
+    const elements = [badge, title, desc, btn];
+    elements.forEach(el => { if (el) el.style.animation = 'none'; });
+    void document.body.offsetHeight;
+    elements.forEach(el => { if (el) el.style.animation = ''; });
+  }
 
-    function triggerTentangAnimation() {
-      const tentangSection = document.getElementById('tentang');
-      if (!tentangSection) return;
-      tentangSection.classList.remove('tentang-active');
-      void tentangSection.offsetWidth;
-      tentangSection.classList.add('tentang-active');
-    }
+  function triggerTentangAnimation() {
+    const tentangSection = document.getElementById('tentang');
+    if (!tentangSection) return;
+    tentangSection.classList.remove('tentang-active');
+    void tentangSection.offsetWidth;
+    tentangSection.classList.add('tentang-active');
+  }
 
-    function triggerLayananAnimation() {
-      const layananSection = document.getElementById('layanan');
-      if (!layananSection) return;
-      const targetElements = layananSection.querySelectorAll('h1, h2, h3, h4, p, .card');
-      targetElements.forEach((el, index) => {
-        el.classList.remove('animate-layanan-left', 'animate-layanan-right');
-        el.style.animationDelay = '0s';
-        void el.offsetWidth;
-        const delay = (index * 0.1).toFixed(2);
-        el.style.animationDelay = `${delay}s`;
+  function triggerLayananAnimation() {
+    const layananSection = document.getElementById('layanan');
+    if (!layananSection) return;
+    const targetElements = layananSection.querySelectorAll('h1, h2, h3, h4, p, .card');
+    targetElements.forEach((el, index) => {
+      el.classList.remove('animate-layanan-left', 'animate-layanan-right');
+      el.style.animationDelay = '0s';
+      void el.offsetWidth;
+      const delay = (index * 0.1).toFixed(2);
+      el.style.animationDelay = `${delay}s`;
 
-        if (index % 2 === 0) {
-          el.classList.add('animate-layanan-left');
-        } else {
-          el.classList.add('animate-layanan-right');
-        }
-      });
-    }
-
-    function triggerLokasiAnimation() {
-      const lokasiSection = document.getElementById('kontak');
-      if (!lokasiSection) return;
-      const elements = lokasiSection.querySelectorAll('h1, h2, h3, h4, p, .badge, .card, iframe');
-      elements.forEach((el, index) => {
-        el.classList.remove('animate-lokasi-up');
-        el.style.animationDelay = '0s';
-        void el.offsetWidth;
-        const delay = (index * 0.09).toFixed(2);
-        el.style.animationDelay = `${delay}s`;
-        el.classList.add('animate-lokasi-up');
-      });
-    }
-
-    function triggerTelemetriAnimation() {
-      const telemetriSection = document.getElementById('telemetri');
-      if (!telemetriSection) return;
-      const cards = telemetriSection.querySelectorAll('.card');
-      cards.forEach((card, index) => {
-        card.classList.remove('animate-telemetri-smooth');
-        card.style.animationDelay = '0s';
-        void card.offsetWidth;
-        const delay = (index * 0.12).toFixed(2);
-        card.style.animationDelay = `${delay}s`;
-        card.classList.add('animate-telemetri-smooth');
-      });
-    }
-
-    const backgroundImages = [
-      "image/alun-alun-tegal.jpeg",
-      "image/balaikota.jpeg",
-      "image/masjid agung.jpeg",
-      "image/taman pancasila.jpeg",
-      "image/stasiun.jpeg",
-      "image/water ledeng.jpeg"
-    ];
-
-    // PRELOAD GAMBAR AGAR TIDAK KEDIP HITAM
-    backgroundImages.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-    });
-
-    let currentBgIndex = 0;
-    const welcomeSec = document.getElementById('welcomeSection');
-    const heroDashboard = document.querySelector('.hero-observatorium');
-
-    setInterval(() => {
-      currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
-      let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
-
-      if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
-      if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
-    }, 4000);
-
-    function enterWebsite() {
-      const mainContent = document.getElementById('mainWebsiteContent');
-      if (!welcomeSec || !mainContent) return;
-      welcomeSec.style.opacity = '0';
-      welcomeSec.style.transform = 'scale(1.04)';
-      setTimeout(() => {
-        welcomeSec.style.display = 'none';
-        mainContent.style.display = 'block';
-        setChatbotVisibility(true);
-        triggerHeroAnimation();
-        setTimeout(() => {
-          mainContent.style.opacity = '1';
-          window.scrollTo(0, 0);
-        }, 50);
-      }, 500);
-    }
-
-    function returnToWelcome() {
-      const mainContent = document.getElementById('mainWebsiteContent');
-      if (!welcomeSec || !mainContent) return;
-      setChatbotVisibility(false);
-      mainContent.style.opacity = '0';
-      setTimeout(() => {
-        mainContent.style.display = 'none';
-        welcomeSec.style.display = 'flex';
-        welcomeSec.style.opacity = '1';
-        welcomeSec.style.transform = 'scale(1)';
-        window.scrollTo(0, 0);
-      }, 500);
-    }
-
-    // --- ENGINE UTAMA CHATBOT (SITY) ---
-    function getTimeNow() {
-      const d = new Date();
-      return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
-    }
-
-    function toggleChatWindow() {
-      const chatWin = document.getElementById('chatWindow');
-      if (!chatWin) return;
-      if (chatWin.style.display === 'flex') {
-        chatWin.style.display = 'none';
+      if (index % 2 === 0) {
+        el.classList.add('animate-layanan-left');
       } else {
-        chatWin.style.display = 'flex';
+        el.classList.add('animate-layanan-right');
       }
+    });
+  }
+
+  function triggerLokasiAnimation() {
+    const lokasiSection = document.getElementById('kontak');
+    if (!lokasiSection) return;
+    const elements = lokasiSection.querySelectorAll('h1, h2, h3, h4, p, .badge, .card, iframe');
+    elements.forEach((el, index) => {
+      el.classList.remove('animate-lokasi-up');
+      el.style.animationDelay = '0s';
+      void el.offsetWidth;
+      const delay = (index * 0.09).toFixed(2);
+      el.style.animationDelay = `${delay}s`;
+      el.classList.add('animate-lokasi-up');
+    });
+  }
+
+  function triggerTelemetriAnimation() {
+    const telemetriSection = document.getElementById('telemetri');
+    if (!telemetriSection) return;
+    const cards = telemetriSection.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+      card.classList.remove('animate-telemetri-smooth');
+      card.style.animationDelay = '0s';
+      void card.offsetWidth;
+      const delay = (index * 0.12).toFixed(2);
+      card.style.animationDelay = `${delay}s`;
+      card.classList.add('animate-telemetri-smooth');
+    });
+  }
+
+  const backgroundImages = [
+    "image/alun-alun-tegal.jpeg",
+    "image/balaikota.jpeg",
+    "image/masjid agung.jpeg",
+    "image/taman pancasila.jpeg",
+    "image/stasiun.jpeg",
+    "image/water ledeng.jpeg"
+  ];
+
+  // PRELOAD GAMBAR AGAR TIDAK KEDIP HITAM
+  backgroundImages.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+
+  let currentBgIndex = 0;
+  const welcomeSec = document.getElementById('welcomeSection');
+  const heroDashboard = document.querySelector('.hero-observatorium');
+
+  setInterval(() => {
+    currentBgIndex = (currentBgIndex + 1) % backgroundImages.length;
+    let newBgUrl = `linear-gradient(rgba(11, 19, 41, 0.25), rgba(11, 19, 41, 0.68)), url('${backgroundImages[currentBgIndex]}')`;
+
+    if (welcomeSec) welcomeSec.style.backgroundImage = newBgUrl;
+    if (heroDashboard) heroDashboard.style.backgroundImage = newBgUrl;
+  }, 4000);
+
+  function enterWebsite() {
+    const mainContent = document.getElementById('mainWebsiteContent');
+    if (!welcomeSec || !mainContent) return;
+    welcomeSec.style.opacity = '0';
+    welcomeSec.style.transform = 'scale(1.04)';
+    setTimeout(() => {
+      welcomeSec.style.display = 'none';
+      mainContent.style.display = 'block';
+      setChatbotVisibility(true);
+      triggerHeroAnimation();
+      setTimeout(() => {
+        mainContent.style.opacity = '1';
+        window.scrollTo(0, 0);
+      }, 50);
+    }, 500);
+  }
+
+  function returnToWelcome() {
+    const mainContent = document.getElementById('mainWebsiteContent');
+    if (!welcomeSec || !mainContent) return;
+    setChatbotVisibility(false);
+    mainContent.style.opacity = '0';
+    setTimeout(() => {
+      mainContent.style.display = 'none';
+      welcomeSec.style.display = 'flex';
+      welcomeSec.style.opacity = '1';
+      welcomeSec.style.transform = 'scale(1)';
+      window.scrollTo(0, 0);
+    }, 500);
+  }
+
+  // --- ENGINE UTAMA CHATBOT (SITY) ---
+  function getTimeNow() {
+    const d = new Date();
+    return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+  }
+
+  function toggleChatWindow() {
+    const chatWin = document.getElementById('chatWindow');
+    if (!chatWin) return;
+    if (chatWin.style.display === 'flex') {
+      chatWin.style.display = 'none';
+    } else {
+      chatWin.style.display = 'flex';
     }
+  }
 
-    async function sendMessage() {
-      const chatInput = document.getElementById('chatInput');
-      const chatBody = document.getElementById('chatBody');
-      if (!chatInput || !chatBody) return;
+  async function sendMessage() {
+    const chatInput = document.getElementById('chatInput');
+    const chatBody = document.getElementById('chatBody');
+    if (!chatInput || !chatBody) return;
 
-      const message = chatInput.value.trim();
-      if (!message) return;
+    const message = chatInput.value.trim();
+    if (!message) return;
 
-      const userMsgHtml = `
-        <div class="tg-msg tg-msg-user">
-          ${message}
+    const userMsgHtml = `
+      <div class="tg-msg tg-msg-user">
+        ${message}
+        <div class="tg-time">${getTimeNow()}</div>
+      </div>
+    `;
+    chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
+
+    chatInput.value = '';
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    const loadingId = 'loading-' + Date.now();
+    const loadingHtml = `
+      <div class="tg-msg tg-msg-bot" id="${loadingId}">
+        <i>🤖 Sity sedang mengetik...</i>
+        <div class="tg-time">${getTimeNow()}</div>
+      </div>
+    `;
+    chatBody.insertAdjacentHTML('beforeend', loadingHtml);
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+    try {
+      const response = await fetch('https://publisher-gcc-prev-rings.trycloudflare.com/webhook/chat-smartcity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message })
+      });
+
+      const data = await response.json();
+      document.getElementById(loadingId)?.remove();
+
+      let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
+      if (Array.isArray(data) && data.length > 0) {
+        aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
+      } else if (typeof data === 'object') {
+        aiReply = data.output || data.text || data.message || data.response || JSON.stringify(data);
+      }
+
+      const botMsgHtml = `
+        <div class="tg-msg tg-msg-bot">
+          <b>🤖 Sity Smartcity Bot</b><br>
+          ${aiReply}
           <div class="tg-time">${getTimeNow()}</div>
         </div>
       `;
-      chatBody.insertAdjacentHTML('beforeend', userMsgHtml);
-
-      chatInput.value = '';
+      chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
       chatBody.scrollTop = chatBody.scrollHeight;
 
-      const loadingId = 'loading-' + Date.now();
-      const loadingHtml = `
-        <div class="tg-msg tg-msg-bot" id="${loadingId}">
-          <i>🤖 Sity sedang mengetik...</i>
+    } catch (err) {
+      console.error("Error chatbot:", err);
+      document.getElementById(loadingId)?.remove();
+
+      const errorMsgHtml = `
+        <div class="tg-msg tg-msg-bot" style="background:#fee2e2; color:#991b1b;">
+          <b>🤖 Sity Smartcity Bot</b><br>
+          Gagal terhubung ke server AI Chatbot. Pastikan workflow n8n statusnya Active/Publish.
           <div class="tg-time">${getTimeNow()}</div>
         </div>
       `;
-      chatBody.insertAdjacentHTML('beforeend', loadingHtml);
+      chatBody.insertAdjacentHTML('beforeend', errorMsgHtml);
       chatBody.scrollTop = chatBody.scrollHeight;
-
-      try {
-        const response = await fetch('https://publisher-gcc-prev-rings.trycloudflare.com/webhook/chat-smartcity', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: message })
-        });
-
-        const data = await response.json();
-        document.getElementById(loadingId)?.remove();
-
-        let aiReply = "Maaf, terjadi kendala saat memproses jawaban.";
-        if (Array.isArray(data) && data.length > 0) {
-          aiReply = data[0].output || data[0].text || data[0].message || data[0].response || JSON.stringify(data[0]);
-        } else if (typeof data === 'object') {
-          aiReply = data.output || data.text || data.message || data.response || JSON.stringify(data);
-        }
-
-        const botMsgHtml = `
-          <div class="tg-msg tg-msg-bot">
-            <b>🤖 Sity Smartcity Bot</b><br>
-            ${aiReply}
-            <div class="tg-time">${getTimeNow()}</div>
-          </div>
-        `;
-        chatBody.insertAdjacentHTML('beforeend', botMsgHtml);
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-      } catch (err) {
-        console.error("Error chatbot:", err);
-        document.getElementById(loadingId)?.remove();
-
-        const errorMsgHtml = `
-          <div class="tg-msg tg-msg-bot" style="background:#fee2e2; color:#991b1b;">
-            <b>🤖 Sity Smartcity Bot</b><br>
-            Gagal terhubung ke server AI Chatbot. Pastikan workflow n8n statusnya Active/Publish.
-            <div class="tg-time">${getTimeNow()}</div>
-          </div>
-        `;
-        chatBody.insertAdjacentHTML('beforeend', errorMsgHtml);
-        chatBody.scrollTop = chatBody.scrollHeight;
-      }
     }
+  }
 
-    function fetchPublicEnvironmentData() {
-      fetch('/api/public-environment')
-        .then(response => response.json())
-        .then(result => {
-          if (result.status === 'success') {
-            let d = result.data;
-            if (document.getElementById('temp-value')) document.getElementById('temp-value').innerText = d.temperature + ' °C';
-            if (document.getElementById('humidity-value')) document.getElementById('humidity-value').innerText = d.humidity + ' %';
-            if (document.getElementById('aqi-value')) document.getElementById('aqi-value').innerText = d.air_quality + ' AQI';
-            if (document.getElementById('rain-value')) document.getElementById('rain-value').innerText = d.rain_status;
-            if (document.getElementById('water-value')) document.getElementById('water-value').innerText = d.water_level + ' cm';
+  function fetchPublicEnvironmentData() {
+    fetch('/api/public-environment', { cache: 'no-store' })
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'success' && result.data) {
+          const d = result.data;
 
-            // Smart Lamp: jumlah sektor lampu yang aktif
-            if (document.getElementById('smart-lamp-value')) {
-              if (typeof d.smart_lamp === 'number' || typeof d.active_lamp_sectors === 'number') {
-                const aktif = d.smart_lamp ?? d.active_lamp_sectors;
-                const totalSektor = d.total_lamp_sectors || 4;
-                document.getElementById('smart-lamp-value').innerText = `${aktif} / ${totalSektor} Sektor Aktif`;
-              } else {
-                document.getElementById('smart-lamp-value').innerText = d.smart_lamp || '3 / 4 Sektor Aktif';
-              }
-            }
+          const tempEl = document.getElementById('temp-value');
+          const humEl  = document.getElementById('humidity-value');
+          const aqiEl  = document.getElementById('aqi-value');
+          const rainEl = document.getElementById('rain-value');
+          const watEl  = document.getElementById('water-value');
+          const lampEl = document.getElementById('smart-lamp-value');
+          const parkEl = document.getElementById('smart-parking-value');
 
-            // Smart Parking: kapasitas 10 slot
-            if (document.getElementById('smart-parking-value')) {
-              const maxSlot = 10;
-              if (typeof d.smart_parking === 'number') {
-                const slotKosong = Math.min(Math.max(d.smart_parking, 0), maxSlot);
-                document.getElementById('smart-parking-value').innerText = `${slotKosong} / ${maxSlot} Slot Kosong`;
-              } else {
-                document.getElementById('smart-parking-value').innerText = d.smart_parking || '10 Slot';
-              }
+          if (tempEl && d.temperature !== '--' && d.temperature !== undefined) {
+            tempEl.innerText = `${Number(d.temperature).toFixed(1)} °C`;
+          }
+          if (humEl && d.humidity !== '--' && d.humidity !== undefined) {
+            humEl.innerText = `${Math.round(Number(d.humidity))} %`;
+          }
+          if (aqiEl && d.air_quality !== '--' && d.air_quality !== undefined) {
+            aqiEl.innerText = `${Number(d.air_quality)} AQI`;
+          }
+          if (rainEl && d.rain_status) {
+            rainEl.innerText = d.rain_status;
+          }
+          if (watEl && d.water_level !== '--' && d.water_level !== undefined) {
+            watEl.innerText = `${Number(d.water_level)} cm`;
+          }
+
+          // Smart Lamp: jumlah sektor lampu yang aktif dari backend admin
+          if (lampEl) {
+            const aktif = d.lamps_active ?? d.smart_lamp ?? d.active_lamp_sectors;
+            const totalSektor = d.lamps_total ?? d.total_lamp_sectors ?? 4;
+            if (aktif !== undefined && aktif !== null) {
+              lampEl.innerText = `${aktif} / ${totalSektor} Sektor Aktif`;
             }
           }
-        })
-        .catch(error => console.error('Gagal memuat data monitoring:', error));
+
+          // Smart Parking: slot tersedia dari kapasitas parkir
+          if (parkEl) {
+            const maxSlot = Number(d.parking_total ?? 10);
+            const availRaw = d.parking_avail ?? d.smart_parking;
+            if (availRaw !== undefined && availRaw !== null && !Number.isNaN(Number(availRaw))) {
+              const slotKosong = Math.min(Math.max(Number(availRaw), 0), maxSlot);
+              parkEl.innerText = `${slotKosong} / ${maxSlot} Slot Kosong`;
+            }
+          }
+        }
+      })
+      .catch(error => console.error('Gagal memuat data monitoring:', error));
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setChatbotVisibility(false);
+
+    const sendBtn = document.getElementById('sendBtn');
+    const chatInput = document.getElementById('chatInput');
+    const initTime = document.getElementById('initialTime');
+
+    if (initTime) initTime.innerText = getTimeNow();
+
+    if (sendBtn) {
+      sendBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        sendMessage();
+      });
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      setChatbotVisibility(false);
-
-      const sendBtn = document.getElementById('sendBtn');
-      const chatInput = document.getElementById('chatInput');
-      const initTime = document.getElementById('initialTime');
-
-      if (initTime) initTime.innerText = getTimeNow();
-
-      if (sendBtn) {
-        sendBtn.addEventListener('click', function(e) {
+    if (chatInput) {
+      chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
           e.preventDefault();
           sendMessage();
-        });
-      }
+        }
+      });
+    }
 
-      if (chatInput) {
-        chatInput.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMessage();
-          }
-        });
-      }
+    const navLinks = document.querySelectorAll('#navbarNav .nav-link[href^="#"]');
+    const sections = document.querySelectorAll('#mainWebsiteContent section[id]');
 
-      const navLinks = document.querySelectorAll('#navbarNav .nav-link[href^="#"]');
-      const sections = document.querySelectorAll('#mainWebsiteContent section[id]');
-
-      function setActiveMenu(id) {
-        navLinks.forEach(link => {
-          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
-        });
-      }
-
+    function setActiveMenu(id) {
       navLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-          const targetId = this.getAttribute('href').substring(1);
-          const target = document.getElementById(targetId);
-          const navbar = document.querySelector('#mainWebsiteContent .navbar');
-          const navbarCollapse = document.getElementById('navbarNav');
+        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+      });
+    }
 
-          if (!target || !navbar) return;
-          event.preventDefault();
+    navLinks.forEach(link => {
+      link.addEventListener('click', function (event) {
+        const targetId = this.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
+        const navbar = document.querySelector('#mainWebsiteContent .navbar');
+        const navbarCollapse = document.getElementById('navbarNav');
+
+        if (!target || !navbar) return;
+        event.preventDefault();
+        setActiveMenu(targetId);
+
+        if (targetId === 'beranda') triggerHeroAnimation();
+        if (targetId === 'tentang') triggerTentangAnimation();
+        if (targetId === 'layanan') triggerLayananAnimation();
+        if (targetId === 'telemetri') triggerTelemetriAnimation();
+        if (targetId === 'kontak') triggerLokasiAnimation();
+
+        const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
+        const scrollToTarget = () => {
+          const navbarHeight = navbar.getBoundingClientRect().height;
+          const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
+          const scrollTop = Math.max(0, targetTop - navbarHeight);
+          window.scrollTo({ top: scrollTop, behavior: 'smooth' });
+        };
+
+        if (isMobile && navbarCollapse && navbarCollapse.classList.contains('show') && window.bootstrap) {
+          const collapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
+          collapse.hide();
+          navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
+        } else {
+          scrollToTarget();
+        }
+
+        history.pushState(null, '', '#' + targetId);
+      });
+    });
+
+    let isBerandaAnimated = true;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const targetId = entry.target.id;
+        if (entry.isIntersecting) {
           setActiveMenu(targetId);
-
-          if (targetId === 'beranda') triggerHeroAnimation();
-          if (targetId === 'tentang') triggerTentangAnimation();
+          if (targetId === 'tentang') entry.target.classList.add('tentang-active');
           if (targetId === 'layanan') triggerLayananAnimation();
           if (targetId === 'telemetri') triggerTelemetriAnimation();
           if (targetId === 'kontak') triggerLokasiAnimation();
-
-          const isMobile = window.matchMedia('(max-width: 767.98px)').matches;
-          const scrollToTarget = () => {
-            const navbarHeight = navbar.getBoundingClientRect().height;
-            const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
-            const scrollTop = Math.max(0, targetTop - navbarHeight);
-            window.scrollTo({ top: scrollTop, behavior: 'smooth' });
-          };
-
-          if (isMobile && navbarCollapse && navbarCollapse.classList.contains('show') && window.bootstrap) {
-            const collapse = bootstrap.Collapse.getInstance(navbarCollapse) || new bootstrap.Collapse(navbarCollapse, { toggle: false });
-            collapse.hide();
-            navbarCollapse.addEventListener('hidden.bs.collapse', scrollToTarget, { once: true });
-          } else {
-            scrollToTarget();
+          if (targetId === 'beranda' && !isBerandaAnimated) {
+            triggerHeroAnimation();
+            isBerandaAnimated = true;
           }
-
-          history.pushState(null, '', '#' + targetId);
-        });
+        } else {
+          if (targetId === 'tentang') entry.target.classList.remove('tentang-active');
+          if (targetId === 'beranda') isBerandaAnimated = false;
+        }
       });
+    }, { root: null, rootMargin: '-90px 0px -30% 0px', threshold: 0.15 });
 
-      let isBerandaAnimated = true;
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const targetId = entry.target.id;
-          if (entry.isIntersecting) {
-            setActiveMenu(targetId);
-            if (targetId === 'tentang') entry.target.classList.add('tentang-active');
-            if (targetId === 'layanan') triggerLayananAnimation();
-            if (targetId === 'telemetri') triggerTelemetriAnimation();
-            if (targetId === 'kontak') triggerLokasiAnimation();
-            if (targetId === 'beranda' && !isBerandaAnimated) {
-              triggerHeroAnimation();
-              isBerandaAnimated = true;
-            }
-          } else {
-            if (targetId === 'tentang') entry.target.classList.remove('tentang-active');
-            if (targetId === 'beranda') isBerandaAnimated = false;
-          }
-        });
-      }, { root: null, rootMargin: '-90px 0px -30% 0px', threshold: 0.15 });
+    sections.forEach(section => observer.observe(section));
 
-      sections.forEach(section => observer.observe(section));
-
-      fetchPublicEnvironmentData();
-      setInterval(fetchPublicEnvironmentData, 5000);
-    });
-  </script>
+    fetchPublicEnvironmentData();
+    setInterval(fetchPublicEnvironmentData, 5000);
+  });
+</script>
 </body>
 </html>

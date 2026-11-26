@@ -118,9 +118,9 @@
             <div class="stat-top-card">
                 <div>
                     <small class="text-dark fw-bold" style="font-size: 0.75rem;">Status IoT</small>
-                    <h4 class="fw-bold my-1 text-dark" id="envIotStatus">Offline</h4>
+                    <h4 class="fw-bold my-1 text-danger" id="envIotStatus">Offline</h4>
                 </div>
-                <small class="text-dark fw-bold" style="font-size: 0.75rem;" id="envIotDesc">Menunggu data</small>
+                <small class="text-danger fw-bold" style="font-size: 0.75rem;" id="envIotDesc">Terputus</small>
             </div>
         </div>
 
@@ -238,8 +238,30 @@
         });
     }
 
+    function updateEnvIotStatus(isOnline) {
+        const statusEl = document.getElementById('envIotStatus');
+        const descEl = document.getElementById('envIotDesc');
+        if (!statusEl || !descEl) return;
+
+        if (isOnline) {
+            statusEl.textContent = 'Online';
+            statusEl.classList.remove('text-danger');
+            statusEl.classList.add('text-dark');
+            descEl.textContent = 'Terhubung';
+            descEl.classList.remove('text-danger');
+            descEl.classList.add('text-success');
+        } else {
+            statusEl.textContent = 'Offline';
+            statusEl.classList.remove('text-dark');
+            statusEl.classList.add('text-danger');
+            descEl.textContent = 'Terputus';
+            descEl.classList.remove('text-success');
+            descEl.classList.add('text-danger');
+        }
+    }
+
     function fetchEnvironmentData() {
-        fetch('/api/environment')
+        fetch('/api/environment?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (data && data.has_data === true) {
@@ -249,31 +271,29 @@
                     const rainStatus = data.rain_status;
                     const waterLevel = data.water_level;
                     const timeStr = data.timestamp;
+                    const isOnline = Boolean(data.is_online) || String(data.iot_status || '').toLowerCase() === 'online';
 
-                    // Update Nilai di Kartu
                     document.getElementById('envTemp').textContent = temp + ' °C';
                     document.getElementById('envHumidity').textContent = hum + ' %';
                     document.getElementById('envAqi').textContent = aqi + ' AQI';
                     document.getElementById('envRain').textContent = rainStatus;
                     document.getElementById('envWaterLevel').textContent = waterLevel + ' cm';
 
-                    document.getElementById('envIotStatus').textContent = 'Online';
-                    document.getElementById('envIotDesc').textContent = 'Terhubung';
+                    updateEnvIotStatus(isOnline);
 
-                    // Kualitas Udara Badge Status
                     const aqiStatus = document.getElementById('envAqiStatus');
                     if (aqi <= 50) {
                         aqiStatus.textContent = 'Baik';
-                        aqiStatus.className = ' text-dark px-2 py-1 rounded-pill';
+                        aqiStatus.className = 'text-dark px-2 py-1 rounded-pill';
                     } else {
                         aqiStatus.textContent = 'Kurang Sehat';
-                        aqiStatus.className = ' text-dark px-2 py-1 rounded-pill';
+                        aqiStatus.className = 'text-dark px-2 py-1 rounded-pill';
                     }
 
-                    // Status Hujan Desc
-                    document.getElementById('envRainDesc').textContent = rainStatus.toLowerCase().includes('hujan') ? 'Presipitasi Terdeteksi' : 'Tidak Presipitasi';
+                    document.getElementById('envRainDesc').textContent = String(rainStatus).toLowerCase().includes('hujan')
+                        ? 'Presipitasi Terdeteksi'
+                        : 'Tidak Presipitasi';
 
-                    // Status Air Sungai Badge
                     const waterBadge = document.getElementById('envWaterStatus');
                     if (waterLevel > 200) {
                         waterBadge.textContent = 'Bahaya (Banjir)';
@@ -286,8 +306,7 @@
                         waterBadge.className = 'text-dark px-2 py-1 rounded-pill';
                     }
 
-                    // Update Grafik Real-Time
-                    if (envChart) {
+                    if (envChart && isOnline) {
                         envChart.data.labels.push(timeStr);
                         envChart.data.datasets[0].data.push(temp);
                         envChart.data.datasets[1].data.push(hum);
@@ -300,16 +319,17 @@
                         envChart.update();
                     }
                 } else {
-                    // Jika Database Kosong / Belum Ada Data
                     document.getElementById('envTemp').textContent = '-- °C';
                     document.getElementById('envHumidity').textContent = '-- %';
                     document.getElementById('envAqi').textContent = '-- AQI';
                     document.getElementById('envRain').textContent = 'Menunggu';
                     document.getElementById('envWaterLevel').textContent = '-- cm';
-                    document.getElementById('envIotStatus').textContent = 'Offline';
-                    document.getElementById('envIotDesc').textContent = 'Menunggu data';
+                    updateEnvIotStatus(false);
                 }
-            }).catch(() => {});
+            })
+            .catch(() => {
+                updateEnvIotStatus(false);
+            });
     }
 
     document.addEventListener('DOMContentLoaded', () => {

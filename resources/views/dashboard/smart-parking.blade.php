@@ -138,10 +138,10 @@
             <div class="stat-top-card">
                 <div>
                     <div class="text-dark mb-1" style="font-size: 0.85rem; font-weight: 700;">Status IoT</div>
-                    <h3 class="fw-bold mb-1 text-dark" id="iotMainStatus">-</h3>
+                    <h3 class="fw-bold mb-1 text-danger" id="iotMainStatus">Offline</h3>
                 </div>
                 <div style="font-size: 0.8rem;" class="text-dark fw-bold mt-2">
-                    <span id="iotStatusText">Menunggu data perangkat</span>
+                    <span id="iotStatusText"><span class="text-danger">● Terputus</span></span>
                 </div>
             </div>
         </div>
@@ -197,6 +197,9 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 
@@ -237,7 +240,6 @@
 
         let availableCount = 0;
         let occupiedCount = 0;
-        let hasDataFromIoT = false;
 
         const dbSlotMap = {};
         const rawSlots = (apiData && typeof apiData === 'object' && !Array.isArray(apiData))
@@ -252,7 +254,7 @@
             });
         } else if (rawSlots && typeof rawSlots === 'object') {
             Object.keys(rawSlots).forEach(key => {
-                if (key !== 'summary') {
+                if (key !== 'summary' && key !== 'iot_status' && key !== 'is_online') {
                     dbSlotMap[key] = rawSlots[key];
                 }
             });
@@ -263,7 +265,6 @@
 
             let timeStr = 'Belum Update';
             if (slotInfo.updated_at) {
-                hasDataFromIoT = true;
                 const d = new Date(String(slotInfo.updated_at).replace(' ', 'T'));
                 timeStr = isNaN(d.getTime())
                     ? slotInfo.updated_at
@@ -321,12 +322,20 @@
         document.getElementById('barOccupied').style.width = pctOccupied + '%';
         document.getElementById('textOccupiedDesc').textContent = `Area terisi (${pctOccupied}%)`;
 
-        if (hasDataFromIoT || (apiData && apiData.summary && apiData.summary.updated_at)) {
-            document.getElementById('iotMainStatus').textContent = 'Online';
-            document.getElementById('iotStatusText').innerHTML = '<span class="text-success">● Terhubung</span>';
+        const isOnline = Boolean(apiData && apiData.is_online) || String((apiData && apiData.iot_status) || '').toLowerCase() === 'online';
+        const iotMainEl = document.getElementById('iotMainStatus');
+        const iotSubEl = document.getElementById('iotStatusText');
+
+        if (isOnline) {
+            iotMainEl.textContent = 'Online';
+            iotMainEl.classList.remove('text-danger');
+            iotMainEl.classList.add('text-dark');
+            iotSubEl.innerHTML = '<span class="text-success">● Terhubung</span>';
         } else {
-            document.getElementById('iotMainStatus').textContent = '-';
-            document.getElementById('iotStatusText').textContent = 'Menunggu data perangkat';
+            iotMainEl.textContent = 'Offline';
+            iotMainEl.classList.remove('text-dark');
+            iotMainEl.classList.add('text-danger');
+            iotSubEl.innerHTML = '<span class="text-danger">● Terputus / Tidak ada data</span>';
         }
 
         applySlotFilter();
@@ -341,10 +350,10 @@
     }
 
     function fetchParkingDataFromDB() {
-        fetch('/api/parking?t=' + new Date().getTime())
+        fetch('/api/parking?t=' + new Date().getTime(), { cache: 'no-store' })
             .then(res => res.json())
             .then(data => renderParkingUI(data))
-            .catch(() => renderParkingUI({}));
+            .catch(() => renderParkingUI({ is_online: false, iot_status: 'Offline' }));
     }
 
     document.addEventListener('DOMContentLoaded', () => {
