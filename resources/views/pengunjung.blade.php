@@ -265,11 +265,16 @@
     .chat-float-btn {
       position: fixed !important; bottom: 25px !important; right: 25px !important; top: auto !important; left: auto !important;
       background-color: #2AABEE; color: white;
-      width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
+      width: 60px; height: 60px; border-radius: 50%; display: none; align-items: center;
       justify-content: center; font-size: 1.6rem; box-shadow: 0 4px 20px rgba(42, 171, 238, 0.4);
-      cursor: pointer; z-index: 99999 !important; transition: transform 0.2s, background-color 0.2s;
+      cursor: pointer; z-index: 1000 !important; transition: transform 0.2s, background-color 0.2s;
     }
     .chat-float-btn:hover { transform: scale(1.1); background-color: #229ED9; }
+
+    body:has(#welcomeSection:not([style*="display: none"])) .chat-float-btn,
+    body:has(#welcomeSection:not([style*="display: none"])) .chat-window {
+      display: none !important;
+    }
 
     .chat-window {
       position: fixed;
@@ -281,7 +286,7 @@
       background: #8FA2B5;
       background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
       background-size: 12px 12px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.25);
-      display: none; flex-direction: column; z-index: 9999; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
+      display: none; flex-direction: column; z-index: 1050; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
     }
     .tg-chat-header { background: #517DA2; color: white; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex-shrink: 0; min-height: 55px; }
     .tg-avatar { width: 40px; height: 40px; background: #2AABEE; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: white; overflow: hidden; }
@@ -512,6 +517,13 @@
 
   <!-- JAVASCRIPT KONTROL ANIMASI & ENGINE CHATBOT -->
   <script>
+    function setChatbotVisibility(isVisible) {
+      const chatBtn = document.querySelector('.chat-float-btn');
+      const chatWin = document.getElementById('chatWindow');
+      if (chatBtn) chatBtn.style.display = isVisible ? 'flex' : 'none';
+      if (!isVisible && chatWin) chatWin.style.display = 'none';
+    }
+
     function triggerHeroAnimation() {
       const badge = document.querySelector('.hero-pro-badge');
       const title = document.querySelector('.hero-pro-title');
@@ -613,6 +625,7 @@
       setTimeout(() => {
         welcomeSec.style.display = 'none';
         mainContent.style.display = 'block';
+        setChatbotVisibility(true);
         triggerHeroAnimation();
         setTimeout(() => {
           mainContent.style.opacity = '1';
@@ -624,6 +637,7 @@
     function returnToWelcome() {
       const mainContent = document.getElementById('mainWebsiteContent');
       if (!welcomeSec || !mainContent) return;
+      setChatbotVisibility(false);
       mainContent.style.opacity = '0';
       setTimeout(() => {
         mainContent.style.display = 'none';
@@ -680,7 +694,7 @@
       chatBody.scrollTop = chatBody.scrollHeight;
 
       try {
-        const response = await fetch('https://publisher-gcc-prev-rings.trycloudflare.com/webhook/chat-smartcity', {
+        const response = await fetch('https://inherited-consistently-mac-associated.trycloudflare.com/webhook/chat-smartcity', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: message })
@@ -761,6 +775,8 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      setChatbotVisibility(false);
+
       const sendBtn = document.getElementById('sendBtn');
       const chatInput = document.getElementById('chatInput');
       const initTime = document.getElementById('initialTime');
