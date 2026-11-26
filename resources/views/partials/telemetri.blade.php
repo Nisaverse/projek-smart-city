@@ -105,43 +105,43 @@
         </div>
       </div>
 
-      <!-- 6. Smart Lamp (BARU) -->
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
-        <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
-          <div class="d-flex justify-content-between align-items: start">
-            <div>
-              <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Smart Lamp</div>
-              <h3 class="fw-bold text-white mb-0" style="font-size: 1.6rem; line-height: 1.2;" id="smart-lamp-value">Aktif (85%)</h3>
-            </div>
-            <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(234, 179, 8, 0.18); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.35);">
-              <i class="fa-solid fa-lightbulb fs-5"></i>
-            </div>
-          </div>
-          <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-            <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Pencahayaan Otomatis</span>
-            <span class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
-          </div>
-        </div>
+     <!-- 6. Smart Lamp -->
+<div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+  <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Smart Lamp</div>
+        <h3 class="fw-bold text-white mb-0" style="font-size: 1.5rem; line-height: 1.2;" id="smart-lamp-value">3 / 4 Sektor Aktif</h3>
       </div>
+      <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(234, 179, 8, 0.18); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.35);">
+        <i class="fa-solid fa-lightbulb fs-5"></i>
+      </div>
+    </div>
+    <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+      <span><i class="fa-solid fa-circle-dot text-warning me-2" style="font-size: 0.55rem;"></i> Sektor lampu menyala</span>
+      <span class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+    </div>
+  </div>
+</div>
 
-      <!-- 7. Smart Parking (BARU) -->
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
-        <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
-          <div class="d-flex justify-content-between align-items: start">
-            <div>
-              <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Smart Parking</div>
-              <h3 class="fw-bold text-white mb-0" style="font-size: 1.6rem; line-height: 1.2;" id="smart-parking-value">14 Slot Kosong</h3>
-            </div>
-            <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.18); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.35);">
-              <i class="fa-solid fa-square-parking fs-5"></i>
-            </div>
-          </div>
-          <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
-            <span><i class="fa-solid fa-circle-dot text-primary me-2" style="font-size: 0.55rem;"></i> Area Alun-Alun Tegal</span>
-            <span class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
-          </div>
-        </div>
+<!-- 7. Smart Parking -->
+<div class="col-12 col-sm-6 col-md-4 col-lg-3 telemetri-card-item">
+  <div class="card telemetri-card-navy p-4 h-100 d-flex flex-column justify-content-between" style="min-height: 230px;">
+    <div class="d-flex justify-content-between align-items-start">
+      <div>
+        <div class="text-light opacity-75 small mb-1" style="font-size: 0.8rem; font-weight: 600;">Smart Parking</div>
+        <h3 class="fw-bold text-white mb-0" style="font-size: 1.5rem; line-height: 1.2;" id="smart-parking-value">10 Slot</h3>
       </div>
+      <div class="shadow-sm" style="width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.18); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.35);">
+        <i class="fa-solid fa-square-parking fs-5"></i>
+      </div>
+    </div>
+    <div class="text-light opacity-75 border-top pt-3 mt-2 d-flex align-items-center justify-content-between" style="font-size: 0.78rem; border-color: rgba(255, 255, 255, 0.12) !important;">
+      <span><i class="fa-solid fa-circle-dot text-primary me-2" style="font-size: 0.55rem;"></i> Total 10 slot parkir</span>
+      <span class="badge bg-success bg-opacity-25 text-success px-2 py-0.5" style="font-size: 0.65rem; border-radius: 10px;">Online</span>
+    </div>
+  </div>
+</div>
 
     </div>
   </div>
