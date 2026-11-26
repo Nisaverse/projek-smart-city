@@ -197,22 +197,6 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Aktivitas Terbaru -->
-            <div class="parking-white-card">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold m-0" style="color: #0f172a;">Aktivitas Terbaru</h6>
-                    <a href="#" class="text-decoration-none text-primary" style="font-size: 0.8rem; font-weight: 600;">Lihat Semua</a>
-                </div>
-                <div class="text-center py-4 text-dark opacity-75">
-                    <i class="fas fa-clock fa-2x mb-2 text-dark opacity-50"></i>
-                    <p class="mb-0" style="font-size: 0.85rem; font-weight: 600;">Belum ada aktivitas</p>
-                    <small style="font-size: 0.72rem;">Data aktivitas parkir akan muncul setelah perangkat IoT mengirimkan informasi.</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 @endsection
 
